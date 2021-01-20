@@ -78,7 +78,7 @@ api.include_router(auth.router,prefix="/api/user",tags=["user"])
 
 api.include_router(phase1.router,prefix="/api/phase1",tags=["phase1"])
 
-# api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
+api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
 
 
 @api.get("/")
