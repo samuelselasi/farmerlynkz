@@ -30,7 +30,7 @@ services:
           PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
           PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
         ports:
-          - "8989:80"
+          - "${PGADMIN_PORT}:80"
         depends_on:
           - db
         networks:
@@ -45,7 +45,7 @@ services:
          DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
        
         ports: 
-          - "81:81"
+          - "${API_PORT}:81"
         networks: 
           - test_network 
 
