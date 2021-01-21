@@ -17,6 +17,27 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: gender_type; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.gender_type AS ENUM (
+    'male',
+    'female'
+);
+
+
+--
+-- Name: role_type; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.role_type AS ENUM (
+    'Director',
+    'Admin',
+    'Normal'
+);
+
+
+--
 -- Name: annual_appraisal(integer, character varying, character varying, integer, character varying, integer, date, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -79,6 +100,41 @@ insert into public.competency(Category,Weight,Sub,Main,ID,AppraisalID)
 values(stdCategory,stdWeight,stdSub,stdMain ,stdID ,stdAppraisalID )
 
 ;
+
+return 'inserted successfully';
+end;
+$$;
+
+
+--
+-- Name: deadline(date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.deadline(stdstart date, stdending date) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+insert into public.deadline(start_date,ending)
+values(stdstart,stdending)
+;
+
+return 'inserted successfully';
+end;
+$$;
+
+
+--
+-- Name: deadline(integer, character varying, date, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.deadline(stdid integer, stdtype character varying, stdstart date, stdend date) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+insert into public.deadline(id,type,Date,start,ending)
+values(stdid,stdtype,stdstart,stdend);
 
 return 'inserted successfully';
 end;
@@ -166,6 +222,22 @@ $$;
 
 
 --
+-- Name: delete_staff(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.delete_staff(stdid integer) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+delete from staff
+where ID=stdid;
+return 'Deleted';
+	   end;
+$$;
+
+
+--
 -- Name: delete_training_recieved(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -178,6 +250,26 @@ delete from training_recieved
 where ID=stdid;
 return 'Deleted';
 	   end;
+$$;
+
+
+--
+-- Name: email_insert_trigger_fnc(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.email_insert_trigger_fnc() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+
+BEGIN
+--   NEW.staff."Email" := NEW.hash."email";
+INSERT INTO "hash" ( "email")
+
+         VALUES(NEW."Email");
+RETURN NEW;
+
+END;
+
 $$;
 
 
@@ -228,7 +320,7 @@ BEGIN
     done := false;
     WHILE NOT done LOOP
         new_hash := md5(''||now()::text||random()::text);
-        done := NOT exists(SELECT 1 FROM staff WHERE Email=new_hash);
+        done := NOT exists(SELECT 1 FROM hash WHERE email=new_hash);
     END LOOP;
     RETURN new_hash;
 END;
@@ -244,7 +336,7 @@ CREATE FUNCTION public.get_annual_appraisal() RETURNS jsonb
     AS $$
 declare annual_appraisal_details  jsonb;
 begin
-select * into annual_appraisal_details from annual_appraisal;
+select json_agg (annual_appraisal) from annual_appraisal into annual_appraisal_details;
 return annual_appraisal_details;
 	   end;
 $$;
@@ -259,7 +351,9 @@ CREATE FUNCTION public.get_annual_plan() RETURNS jsonb
     AS $$
 declare annual_plan_details jsonb;
 begin
-select * into annual_plan_details from annual_plan;
+select json_agg (annual_plan) from annual_plan into annual_plan_details ;
+
+
 return annual_plan_details;
 	   end;
 $$;
@@ -274,7 +368,7 @@ CREATE FUNCTION public.get_appraisal_form() RETURNS jsonb
     AS $$
 declare appraisal_form_details jsonb;
 begin
-select * into appraisal_form_details from appraisal_form;
+select json_agg (annual_plan) from appraisal_form into appraisal_form_details  ;
 return appraisal_form_details;
 	   end;
 $$;
@@ -289,8 +383,24 @@ CREATE FUNCTION public.get_competency() RETURNS jsonb
     AS $$
 declare competency_details jsonb;
 begin
-select * into competency_details  from competency;
+select json_agg (competency) from competency into competency_details ;
+
 return competency_details ;
+	   end;
+$$;
+
+
+--
+-- Name: get_deadline(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_deadline() RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare deadline_details  jsonb;
+begin
+select json_agg (deadline) from deadline into deadline_details ;
+return deadline_details;
 	   end;
 $$;
 
@@ -304,7 +414,9 @@ CREATE FUNCTION public.get_endofyear_review() RETURNS jsonb
     AS $$
 declare endofyear_review_detals jsonb;
 begin
-select * into endofyear_review_detals  from endofyear_review;
+select json_agg (endofyear_review) from competency into endofyear_review_detals  ;
+
+
 return endofyear_review_detals  ;
 	   end;
 $$;
@@ -319,8 +431,94 @@ CREATE FUNCTION public.get_form() RETURNS jsonb
     AS $$
 declare form_detals jsonb;
 begin
-select * into form_detals  from form_completion;
+select json_agg (form_completion) from form_completion into form_detals ;
+
 return form_detals  ;
+	   end;
+$$;
+
+
+--
+-- Name: get_hash(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_hash() RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare hash_email jsonb;
+begin
+select json_agg(quickaccess) from quickaccess into hash_email;
+return hash_email;
+	   end;
+$$;
+
+
+--
+-- Name: get_hash_for_form_details(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_hash_for_form_details() RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare hash_form jsonb;
+begin
+select json_agg(annual_plan) from annual_plan into hash_form;
+return hash_form;
+	   end;
+$$;
+
+
+--
+-- Name: get_list_of_appraisee(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_list_of_appraisee(user_id integer) RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare list_appraisee jsonb;
+declare user_role character varying;
+begin
+select s.role into user_role from staff s where s.ID=user_id;
+if user_role='Admin' then
+select json_agg (staff) from staff into list_appraisee;
+elsif user_role='Director' then
+select json_agg (staff) from staff where supervisor=user_id into list_appraisee;
+else 
+select '[]'::jsonb into list_appraisee;
+end if;
+return list_appraisee;
+end;
+$$;
+
+
+--
+-- Name: get_list_of_completed_form(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_list_of_completed_form() RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare list_completed_form jsonb;
+begin
+select json_agg ( annual_plan ) from list_completed_form into list_completed_form where status=1;
+
+return  list_completed_form ;
+	   end;
+$$;
+
+
+--
+-- Name: get_list_of_incomplete_form(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_list_of_incomplete_form() RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare list_incomplete_form jsonb;
+begin
+select json_agg ( annual_plan ) from list_incomplete_forminto list_completed_form where status=0;
+
+return  list_incomplete_form ;
 	   end;
 $$;
 
@@ -334,7 +532,7 @@ CREATE FUNCTION public.get_midyear_review() RETURNS jsonb
     AS $$
 declare midyear_review_detals jsonb;
 begin
-select * into midyear_review_detals  from midyear_review;
+select json_agg ( midyear_review) from midyear_review_detals  into midyear_review_detals ;
 return midyear_review_detals  ;
 	   end;
 $$;
@@ -349,7 +547,8 @@ CREATE FUNCTION public.get_staff() RETURNS jsonb
     AS $$
 declare staff_details jsonb;
 begin
-select * into staff_details from staff  ;
+select json_agg ( staff) from staff_details into staff_details;
+ 
 return staff_details;
 	   end;
 $$;
@@ -364,7 +563,8 @@ CREATE FUNCTION public.get_training_recieved() RETURNS jsonb
     AS $$
 declare training_recieved_details jsonb;
 begin
-select * into training_recieved_details  from training_recieved;
+select json_agg (training_recieved) from training_recieved_details into training_recieved_details;
+
 return training_recieved_details   ;
 	   end;
 $$;
@@ -404,19 +604,19 @@ $$;
 
 
 --
--- Name: staff(character varying, character varying, character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
+-- Name: staff(character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.staff(stdid character varying, stdfname character varying, stdsname character varying, stdoname character varying, stdgender character varying, stdsupervisor character varying, stdemail character varying) RETURNS character varying
+CREATE FUNCTION public.staff(stdid character varying, stdfname character varying, stdsname character varying, stdoname character varying, stdgender character varying, stdsupervisor character varying, stdemail character varying, stdrole character varying) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
 begin
-insert into public.Staff(ID,Fname,Sname,Oname,Gender,Supervisor,Email)
-values(stdID,stdFname,stdSname,stdOname,stdGender,stdSupervisor,stdEmail);
+insert into public.Staff(ID,Fname,Sname,Oname,Gender,Supervisor,Email,role)
+values(stdID,stdFname,stdSname,stdOname,stdGender,stdSupervisor,stdEmail,stdrole);
 return 'inserted successfully';
 	   end;
-	   $$;
+$$;
 
 
 --
@@ -532,6 +732,22 @@ $$;
 
 
 --
+-- Name: update_deadline(character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_deadline(stdstart character varying, stdend character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin 
+update deadline set start=stdstart,ending=stdend
+where ID=stdid;
+return 'Data Saved';
+	   end;
+$$;
+
+
+--
 -- Name: update_endofyear_review(character varying, integer, character varying, integer, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -591,6 +807,22 @@ begin
 update annual_appraisal set Status=1
 where ID=stdid;
 return 'Status Changed';
+	   end;
+$$;
+
+
+--
+-- Name: update_staff(character varying); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_staff(stdrole character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin 
+update staff set role=stdrole
+where ID=stdid;
+return 'Data Saved';
 	   end;
 $$;
 
@@ -661,6 +893,38 @@ CREATE TABLE public.competency (
 
 
 --
+-- Name: deadline; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.deadline (
+    type character varying NOT NULL,
+    start_date date NOT NULL,
+    ending date NOT NULL,
+    id integer NOT NULL
+);
+
+
+--
+-- Name: deadline_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.deadline_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: deadline_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.deadline_id_seq OWNED BY public.deadline.id;
+
+
+--
 -- Name: endofyear_review; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -693,7 +957,8 @@ CREATE TABLE public.form_completion (
 --
 
 CREATE TABLE public.hash (
-    hash character varying(1000) DEFAULT public.generate_hash()
+    hash character varying(1000) DEFAULT public.generate_hash() NOT NULL,
+    email character varying NOT NULL
 );
 
 
@@ -741,13 +1006,14 @@ CREATE TABLE public.quickaccess (
 --
 
 CREATE TABLE public.staff (
-    "ID" integer NOT NULL,
+    id integer NOT NULL,
     "Fname" character varying NOT NULL,
     "Sname" character varying NOT NULL,
     "Oname" character varying NOT NULL,
-    "Gender" character varying NOT NULL,
-    "Supervisor" character varying NOT NULL,
-    "Email" character varying
+    "Email" character varying NOT NULL,
+    supervisor integer,
+    gender public.gender_type,
+    role public.role_type
 );
 
 
@@ -763,6 +1029,13 @@ CREATE TABLE public.training_recieved (
     "Field" character varying NOT NULL,
     "Appraisal ID" integer NOT NULL
 );
+
+
+--
+-- Name: deadline id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deadline ALTER COLUMN id SET DEFAULT nextval('public.deadline_id_seq'::regclass);
 
 
 --
@@ -790,6 +1063,12 @@ CREATE TABLE public.training_recieved (
 
 
 --
+-- Data for Name: deadline; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
 -- Data for Name: endofyear_review; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -805,11 +1084,14 @@ CREATE TABLE public.training_recieved (
 -- Data for Name: hash; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.hash (hash) VALUES (NULL);
-INSERT INTO public.hash (hash) VALUES (NULL);
-INSERT INTO public.hash (hash) VALUES ('$$');
-INSERT INTO public.hash (hash) VALUES ('LJrtLTVIqGH41STaKKaJ');
-INSERT INTO public.hash (hash) VALUES ('FDkAiCprTjvZUDt9PgYw');
+INSERT INTO public.hash (hash, email) VALUES ('84d6d32717678804ec92bc0985041202', 'sjhchasc@gamil.com');
+INSERT INTO public.hash (hash, email) VALUES ('5e6fd0286f2d76e93c019655bb44b2ce', 'abshcas@gamail.com');
+INSERT INTO public.hash (hash, email) VALUES ('cb44caa45308c8618ca0c72f32134980', 'jgsh@gmail.com');
+INSERT INTO public.hash (hash, email) VALUES ('5f221c619d80cc8b2ba3f74f1d774c4d', 'ek@gmail.com');
+INSERT INTO public.hash (hash, email) VALUES ('6d172c4e5d851a7c620b12e761f8fe43', 'gshdfhg@yahoo.com
+');
+INSERT INTO public.hash (hash, email) VALUES ('45c7b06a158ca62707c5d05dad1d6fd9', 'jdshd@gmail.com');
+INSERT INTO public.hash (hash, email) VALUES ('3ae8dfacdce9fe071ac45bad18256b6f', 'dhff@gmail.com');
 
 
 --
@@ -835,12 +1117,28 @@ INSERT INTO public.quickaccess (hash, email) VALUES ('D09A68B37FB01BA3BDB1F529',
 -- Data for Name: staff; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (1, 'prince', 'addo', 'adjei', 'sjhchasc@gamil.com', 3, 'male', 'Director');
+INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (2, 'trtry', 'hh', 'llrkr', 'abshcas@gamail.com', 1, 'male', 'Normal');
+INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (3, 'lolo
+', 'vivi', 'reono', 'jgsh@gmail.com', 3, 'female', 'Admin');
+INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (4, 'solo', 'gogo', 'bnbn', 'ek@gmail.com', 1, 'female', 'Normal');
+INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (5, 'fofo', 'sasa', 'fefe', 'gshdfhg@yahoo.com
+', 3, 'male', 'Director');
+INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (6, 'qwq', 'frfr', 'hh', 'jdshd@gmail.com', 5, 'male', 'Normal');
+INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (7, 'jdsf', 'kjdks', 'hedf', 'dhff@gmail.com', 5, 'male', 'Normal');
 
 
 --
 -- Data for Name: training_recieved; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+
+
+--
+-- Name: deadline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.deadline_id_seq', 1, false);
 
 
 --
@@ -880,7 +1178,7 @@ ALTER TABLE ONLY public.quickaccess
 --
 
 ALTER TABLE ONLY public.staff
-    ADD CONSTRAINT "Staff_id" UNIQUE ("ID");
+    ADD CONSTRAINT "Staff_id" UNIQUE (id);
 
 
 --
@@ -888,7 +1186,7 @@ ALTER TABLE ONLY public.staff
 --
 
 ALTER TABLE ONLY public.staff
-    ADD CONSTRAINT "Staff_pkey" PRIMARY KEY ("ID");
+    ADD CONSTRAINT "Staff_pkey" PRIMARY KEY (id);
 
 
 --
@@ -940,11 +1238,27 @@ ALTER TABLE ONLY public.competency
 
 
 --
+-- Name: deadline deadline_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.deadline
+    ADD CONSTRAINT deadline_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: form_completion form_completion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.form_completion
     ADD CONSTRAINT form_completion_pkey PRIMARY KEY ("ID");
+
+
+--
+-- Name: hash hash_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hash
+    ADD CONSTRAINT hash_pkey PRIMARY KEY (email);
 
 
 --
@@ -972,6 +1286,13 @@ ALTER TABLE ONLY public.training_recieved
 
 
 --
+-- Name: staff email_insert_trigger; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER email_insert_trigger AFTER INSERT OR UPDATE ON public.staff FOR EACH ROW EXECUTE FUNCTION public.email_insert_trigger_fnc();
+
+
+--
 -- Name: quickaccess EFK; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -984,7 +1305,7 @@ ALTER TABLE ONLY public.quickaccess
 --
 
 ALTER TABLE ONLY public."logIn"
-    ADD CONSTRAINT "Staff ID" FOREIGN KEY ("StaffID") REFERENCES public.staff("ID") NOT VALID;
+    ADD CONSTRAINT "Staff ID" FOREIGN KEY ("StaffID") REFERENCES public.staff(id) NOT VALID;
 
 
 --
@@ -1032,7 +1353,7 @@ ALTER TABLE ONLY public.midyear_review
 --
 
 ALTER TABLE ONLY public.appraisal_form
-    ADD CONSTRAINT appstaffid FOREIGN KEY ("StaffID") REFERENCES public.staff("ID") NOT VALID;
+    ADD CONSTRAINT appstaffid FOREIGN KEY ("StaffID") REFERENCES public.staff(id) NOT VALID;
 
 
 --
@@ -1041,6 +1362,14 @@ ALTER TABLE ONLY public.appraisal_form
 
 ALTER TABLE ONLY public.competency
     ADD CONSTRAINT "comFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form("ID") NOT VALID;
+
+
+--
+-- Name: hash emailfk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.hash
+    ADD CONSTRAINT emailfk FOREIGN KEY (email) REFERENCES public.staff("Email") NOT VALID;
 
 
 --

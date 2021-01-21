@@ -9,6 +9,8 @@ from routers.auth_router import models
 from routers.staff_router import models
 from routers.phase1_router import models
 
+from routers.appraiser import models
+
 from fastapi.security import OAuth2PasswordBearer
 
 from services import email
@@ -73,6 +75,7 @@ from routers.staff_router import main as staff
 
 from routers.phase1_router import main as phase1
 
+from routers.appraiser import main as appraiser
 
 api.include_router(auth.router,prefix="/api/user",tags=["user"])
 
@@ -80,6 +83,7 @@ api.include_router(phase1.router,prefix="/api/phase1",tags=["phase1"])
 
 api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
 
+api.include_router(appraiser.router,prefix="/api/appraiser", tags=["appraiser"])
 
 @api.get("/")
 def welcome():
