@@ -50,7 +50,7 @@ template = """
 
 
 @api.post("/send email")
-async def background_send(email: EmailSchema, background_tasks) -> JSONResponse:
+async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     fm = FastMail(conf)
     
     for item in user_hash_list:

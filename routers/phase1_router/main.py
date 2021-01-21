@@ -11,13 +11,13 @@ router = APIRouter()
 
 
 
-# @router.post("/create/{hash}")
-# async def create_phase1(payload:List[schemas.create_phase1], hash:str, db: Session = Depends(get_db)):
-#     return await crud.create_phase1(db, payload)
+@router.post("/create/{hash}")
+async def create_phase1(payload:List[schemas.create_phase1], hash:str, db: Session = Depends(get_db)):
+    return await crud.create_phase1(db, payload)
 
-# @router.delete("/delete/{id}")
-# async def delete_phase1(id: int, db: Session = Depends(get_db)):
-#     return await crud.delete_phase1(db, id)
+@router.delete("/delete/{id}")
+async def delete_phase1(id: int, db: Session = Depends(get_db)):
+    return await crud.delete_phase1(db, id)
 
 
     
@@ -27,7 +27,7 @@ async def check_email_hash(db: Session = Depends(get_db)):
 
 @router.post("/generate_email_hash")
 async def generate_email_hash(db: Session = Depends(get_db)):
-    return
+    return await crud.generate_email_hash(db)
 
 @router.get("form/{hash}")
 async def read_hash_form(hash: str, db: Session = Depends(get_db)):
