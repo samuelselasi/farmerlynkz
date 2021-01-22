@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from . import crud, schemas
-from typing import List, Optional
 from pydantic import UUID4, EmailStr
+from sqlalchemy.orm import Session
+from typing import List, Optional
+from . import crud, schemas
 from main import get_db
 
+
+
 router = APIRouter()
-
-
-
 
 
 @router.post("/create/{hash}")
@@ -19,8 +18,6 @@ async def create_phase1(payload:List[schemas.create_phase1], hash:str, db: Sessi
 async def delete_phase1(id: int, db: Session = Depends(get_db)):
     return await crud.delete_phase1(db, id)
 
-
-    
 @router.post("/check_email_hash")
 async def check_email_hash(db: Session = Depends(get_db)):
     return await crud.check_email_hash(db)

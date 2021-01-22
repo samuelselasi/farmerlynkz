@@ -1,7 +1,5 @@
-from sqlalchemy.orm import Session
-
 from fastapi import Depends, HTTPException
-
+from sqlalchemy.orm import Session
 from . import models, schemas
 
 
@@ -22,11 +20,6 @@ async def create_phase1( db: Session, phase1: schemas.create_phase1 ):
 #     db.commit()
 #     if updated:
 #         return await get_phase1_by_id(db, id)
-
-
-
-
-
 
 
 

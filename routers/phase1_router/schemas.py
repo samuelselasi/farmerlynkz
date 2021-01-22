@@ -1,5 +1,4 @@
 from typing import List, Optional
-
 from pydantic import BaseModel
 
 
@@ -10,7 +9,6 @@ class FormBase(BaseModel):
     title: Optional[str]
     metatitle: Optional[str]
     body: List[str]
-
 
 
 class create_phase1(BaseModel):
@@ -34,8 +32,6 @@ class approve_phase1(BaseModel):
     # target: FormBase
     # resource_required: FormBase
     status:bool
-
-
 
 
 class get_Phase1(BaseModel):

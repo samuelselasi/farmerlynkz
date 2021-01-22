@@ -4,6 +4,11 @@ from sqlalchemy.orm import Session
 
 from . import models, schemas
 
+from datetime import datetime, time, timedelta
+from typing import Optional
+from uuid import UUID
+
+from fastapi import Body, FastAPI
 
 
 
@@ -68,3 +73,22 @@ async def update_user(db: Session, id: int, payload: schemas.UserCreate):
     db.commit()
     return res
 
+
+
+async def create_deadline( db: Session, AdminDeadline: schemas.CreateDeadlineTable ):
+    for item in AdminDeadline:
+        AdminDeadline = models.AdminDeadline(type=str(item.type.dict()), start_date=datetime(item.start_date.dict()), end_date=datetime(item.resource_required.dict()) )
+        db.add(AdminDeadline)
+    db.commit()
+    return 'success'
+
+
+
+async def read_deadline_table(db: Session, skip:int, limit:int, search:str, value:str):
+    base = db.query(models.AdminDeadline)
+    if search and value:
+        try:
+            base = base.filter(models.AdminDeadline.__table__.c[search].like("%" + value + "%"))
+        except KeyError:
+            return base.offset(skip).limit(limit).all()
+    return base.offset(skip).limit(limit).all()
