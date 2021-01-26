@@ -50,22 +50,25 @@ async def delete_phase1(db: Session, id: int):
 #     return 'success'
 
 async def check_email_hash(db:Session):
-    res = db.execute(""" select * from hash  """)
+    res = db.execute(""" select generate_hash() """)
     if res.rowcount:
         # send hash to corresponding emails
         pass
-        print(res.rowcount)
     return res.fetchall()
+
+async def read_hash_form(hash_:str, db:Session):
+    res = db.execute(""" select get_hash_verification(:hash_) """,{'hash_':hash_})
+    res = res.first()
+    if not res["get_hash_verification"]:
+        raise HTTPException(status_code=404)
+    return res["get_hash_verification"]
+
+#/////////////////////////////////////////////////////////////
+
+
 
 async def generate_email_hash(db: Session, hash:str):
     pass
-
-async def read_hash_form(hash_:str, db:Session):
-    res = db.execute(""" select * from hash where hash =:hash_ """,{'hash_':hash_})
-    res = res.first()
-    if not res:
-        raise HTTPException(status_code=404)
-    return res
 
 async def read_phase_1(db: Session, skip:int, limit:int, search:str, value:str):
     base = db.query(models.phase1)

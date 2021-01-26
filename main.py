@@ -79,7 +79,7 @@ from routers.appraiser import main as appraiser
 
 api.include_router(auth.router,prefix="/api/user",tags=["user"])
 
-api.include_router(phase1.router,prefix="/api/phase1",tags=["phase1"])
+api.include_router(phase1.router,prefix="/api/review",tags=["review"])
 
 api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
 

@@ -1,32 +1,22 @@
 from fastapi import Depends, HTTPException
-
 from sqlalchemy.orm import Session
-
+from fastapi import Body, FastAPI
 from . import models, schemas
-
-from datetime import datetime, time, timedelta
 from typing import Optional
 from uuid import UUID
-
-from fastapi import Body, FastAPI
-
+from sqlalchemy import DateTime
 
 
-
-async def login(payload: schemas.UserCreate, db:Session):
-    user = db.query(models.User).filter(models.User.email==payload.email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="{} not found".format(payload.email))
-
-    if models.User.verify_hash(payload.password, user.password):
-        return user
-    else:
-        raise HTTPException(status_code=401)
-
+async def create_deadline( db: Session, deadline: schemas.CreateDeadlineTable ):
+    for item in deadline:
+        deadline = models.AdminDeadline(deadline_type=str(item.deadline_type.dict()), start_date=DateTime(item.start_date.dict()), end_date=DateTime(item.end_date.dict()) )
+        db.add(deadline)
+    db.commit()
+    return 'success'
 
 
 async def create_user( user: schemas.UserCreate , db: Session):
-    db_user = models.User(email=user.email, password=models.User.generate_hash(user.password))
+    db_user = models.User(email=user.email, password=models.User.generate_hash(user.password))                                                                                                                                              
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -44,6 +34,14 @@ async def get_users(db: Session, skip: int = 0, limit: int = 100, search:str=Non
     return base.offset(skip).limit(limit).all()
 
 
+async def read_deadline_table(db: Session, skip:int, limit:int, search:str, value:str):
+    base = db.query(models.AdminDeadline)
+    if search and value:
+        try:
+            base = base.filter(models.AdminDeadline.__table__.c[search].like("%" + value + "%"))
+        except KeyError:
+            return base.offset(skip).limit(limit).all()
+    return base.offset(skip).limit(limit).all()
 
 async def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -75,20 +73,7 @@ async def update_user(db: Session, id: int, payload: schemas.UserCreate):
 
 
 
-async def create_deadline( db: Session, AdminDeadline: schemas.CreateDeadlineTable ):
-    for item in AdminDeadline:
-        AdminDeadline = models.AdminDeadline(type=str(item.type.dict()), start_date=datetime(item.start_date.dict()), end_date=datetime(item.resource_required.dict()) )
-        db.add(AdminDeadline)
-    db.commit()
-    return 'success'
+
+    
 
 
-
-async def read_deadline_table(db: Session, skip:int, limit:int, search:str, value:str):
-    base = db.query(models.AdminDeadline)
-    if search and value:
-        try:
-            base = base.filter(models.AdminDeadline.__table__.c[search].like("%" + value + "%"))
-        except KeyError:
-            return base.offset(skip).limit(limit).all()
-    return base.offset(skip).limit(limit).all()

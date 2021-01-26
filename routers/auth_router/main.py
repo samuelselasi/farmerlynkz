@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from datetime import datetime, time, timedelta
 from pydantic import UUID4, EmailStr
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from fastapi import Body, FastAPI
+from typing import Optional
 from . import crud, schemas
 from main import get_db
-
-from datetime import datetime, time, timedelta
-from typing import Optional
 from uuid import UUID
 
-from fastapi import Body, FastAPI
+
 
 
 
@@ -58,11 +58,16 @@ async def delete_user(id: int, db: Session = Depends(get_db)):
 async def update_user(id: int, payload: schemas.UserCreate, db: Session = Depends(get_db)):
     return await crud.update_user(db,id,payload)
 
-
+'''
 @router.post("/deadline/")
-async def create_deadline(payload:List[schemas.CreateDeadlineTable], db: Session = Depends(get_db)):
+async def create_deadline(payload:schemas.CreateDeadlineTable, db: Session = Depends(get_db)):
     return await crud.create_deadline(payload,db)
+'''
 
 @router.get("/")
 async def read_deadline_table(db: Session = Depends(get_db), skip: int = 0, limit: int = 100, search:str=None, value:str=None):
     return await crud.read_deadline_table(db,skip,limit,search,value)
+
+@router.post("/create/{hash}")
+async def create_deadline(payload:List[schemas.CreateDeadlineTable], hash:str, db: Session = Depends(get_db)):
+    return await crud.create_deadline(db, payload)

@@ -1,15 +1,11 @@
-from typing import List, Optional
-from pydantic import BaseModel
-
 from datetime import datetime, time, timedelta
+from typing import List, Optional
+from fastapi import Body, FastAPI
+from pydantic import BaseModel
 from typing import Optional
 from uuid import UUID
-
-from fastapi import Body, FastAPI
-
-
-
-
+import datetime
+# from sqlalchemy import DateTime
 
 class UserBase(BaseModel):
     email: str
@@ -24,8 +20,8 @@ class User(UserBase):
 
 class DeadlineTable(BaseModel):
     title: Optional[str]
-    metatitle: Optional[datetime]
-    body: List[datetime]
+    metatitle: Optional[datetime.datetime]
+    body: Optional[datetime.datetime]
 
 
 class CreateDeadlineTable(BaseModel):

@@ -12,8 +12,8 @@ services:
             POSTGRES_HOST_AUTH_METHOD: trust
 
         restart: always
-        # ports:
-        # - 8434:5432
+        ports:
+        - 8434:5432
 
         networks:
         - test_network

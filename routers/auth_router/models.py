@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
 from passlib.hash import pbkdf2_sha256 as sha256
 from datetime import datetime, time, timedelta
 from sqlalchemy.orm import relationship
@@ -27,8 +27,8 @@ class AdminDeadline(Base):
     __tablename__ = "deadline"
     
     id = Column(Integer, primary_key=True, index=True)
-    deadline_type = Column(String, index=True)
-    start_date = str(datetime)
-    end_date = str(datetime)
+    deadline_type = Column(DateTime)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
 
 
