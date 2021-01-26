@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from pydantic import UUID4, EmailStr
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -19,8 +19,8 @@ async def delete_phase1(id: int, db: Session = Depends(get_db)):
     return await crud.delete_phase1(db, id)
 
 @router.post("/check_email_hash")
-async def check_email_hash(db: Session = Depends(get_db)):
-    return await crud.check_email_hash(db)
+async def check_email_hash(background_tasks:BackgroundTasks, db: Session = Depends(get_db)):
+    return await crud.check_email_hash(db, background_tasks)
 
 @router.post("/generate_email_hash")
 async def generate_email_hash(db: Session = Depends(get_db)):

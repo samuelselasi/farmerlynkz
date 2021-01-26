@@ -1,6 +1,7 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from . import models, schemas
+from services import background_send
 
 
 
@@ -49,12 +50,11 @@ async def delete_phase1(db: Session, id: int):
 #     db.commit()
 #     return 'success'
 
-async def check_email_hash(db:Session):
-    res = db.execute(""" select generate_hash() """)
+async def check_email_hash(db:Session, background_tasks):
+    res = db.execute(""" select * from hash """)
     if res.rowcount:
-        # send hash to corresponding emails
-        pass
-    return res.fetchall()
+        await background_send(res.fetchall(), background_tasks)
+    return 'success'
 
 async def read_hash_form(hash_:str, db:Session):
     res = db.execute(""" select get_hash_verification(:hash_) """,{'hash_':hash_})

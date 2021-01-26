@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
--- Dumped by pg_dump version 12.5 (Ubuntu 12.5-0ubuntu0.20.04.1)
+-- Dumped from database version 12.5 (Ubuntu 12.5-0ubuntu0.20.10.1)
+-- Dumped by pg_dump version 12.5 (Ubuntu 12.5-0ubuntu0.20.10.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -125,16 +125,17 @@ $$;
 
 
 --
--- Name: deadline(integer, character varying, date, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: deadline(date, character varying, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.deadline(stdid integer, stdtype character varying, stdstart date, stdend date) RETURNS character varying
+CREATE FUNCTION public.deadline(stdstart date, stdtype character varying, stdending date) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
-declare
+declare 
 begin
-insert into public.deadline(id,type,Date,start,ending)
-values(stdid,stdtype,stdstart,stdend);
+insert into public.deadline(start_date,type,ending)
+values(stdstart,stdtype,stdending)
+;
 
 return 'inserted successfully';
 end;
@@ -314,15 +315,15 @@ CREATE FUNCTION public.generate_hash() RETURNS text
     LANGUAGE plpgsql
     AS $$
 DECLARE
-    new_hash text;
-    done bool;
+   ddate date;
+  hash character varying;
 BEGIN
-    done := false;
-    WHILE NOT done LOOP
-        new_hash := md5(''||now()::text||random()::text);
-        done := NOT exists(SELECT 1 FROM hash WHERE email=new_hash);
-    END LOOP;
-    RETURN new_hash;
+    select date from appraisal_form into ddate where date='2020-10-10';
+  if not found then
+  raise notice'date mismatch';	  		
+else  select md5(''||now()::text||random()::text) into hash;
+  end if;
+    RETURN hash;
 END;
 $$;
 
@@ -454,16 +455,28 @@ $$;
 
 
 --
--- Name: get_hash_for_form_details(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: get_hash_verification(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.get_hash_for_form_details() RETURNS jsonb
+CREATE FUNCTION public.get_hash_verification(stdhash character varying) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
-declare hash_form jsonb;
+declare
+verified bool;
+user_email character varying;
+user_details jsonb;
 begin
-select json_agg(annual_plan) from annual_plan into hash_form;
-return hash_form;
+select exists(select email from hash where hash=stdhash) into verified;
+if verified='true' then
+select email from hash where hash=stdhash into user_email;
+select json_agg((staff.fname, staff.sname, staff.oname, appraisal_form.department, appraisal_form.position))
+from staff inner join appraisal_form on appraisal_form.staff_id=staff.id where staff.email=user_email
+into user_details;
+else
+select '[]'::jsonb into user_details;
+end if;
+
+return user_details;
 	   end;
 $$;
 
@@ -567,6 +580,24 @@ select json_agg (training_recieved) from training_recieved_details into training
 
 return training_recieved_details   ;
 	   end;
+$$;
+
+
+--
+-- Name: hash_insert_trigger_fnc(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.hash_insert_trigger_fnc() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+
+INSERT INTO "annual_plan" ( "form_hash")
+
+         VALUES(NEW."hash");
+RETURN NEW;
+
+END;
 $$;
 
 
@@ -859,8 +890,7 @@ CREATE TABLE public."annual_plan " (
     "ID" integer NOT NULL,
     "AnnualPlanID" integer NOT NULL,
     "Status" character varying NOT NULL,
-    "DateStart" date NOT NULL,
-    "DateEnd" date NOT NULL
+    form_hash character varying
 );
 
 
@@ -869,12 +899,12 @@ CREATE TABLE public."annual_plan " (
 --
 
 CREATE TABLE public.appraisal_form (
-    "Department" character varying NOT NULL,
-    "Grade" integer NOT NULL,
-    "Position" character varying NOT NULL,
-    "ID" integer NOT NULL,
-    "Date" date NOT NULL,
-    "StaffID" integer NOT NULL
+    department character varying NOT NULL,
+    grade integer NOT NULL,
+    "position" character varying NOT NULL,
+    id integer NOT NULL,
+    date date NOT NULL,
+    staff_id integer NOT NULL
 );
 
 
@@ -1007,10 +1037,10 @@ CREATE TABLE public.quickaccess (
 
 CREATE TABLE public.staff (
     id integer NOT NULL,
-    "Fname" character varying NOT NULL,
-    "Sname" character varying NOT NULL,
-    "Oname" character varying NOT NULL,
-    "Email" character varying NOT NULL,
+    fname character varying NOT NULL,
+    sname character varying NOT NULL,
+    oname character varying NOT NULL,
+    email character varying NOT NULL,
     supervisor integer,
     gender public.gender_type,
     role public.role_type
@@ -1054,6 +1084,7 @@ ALTER TABLE ONLY public.deadline ALTER COLUMN id SET DEFAULT nextval('public.dea
 -- Data for Name: appraisal_form; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.appraisal_form (department, grade, "position", id, date, staff_id) VALUES ('research', 2, 'under', 1, '2020-10-10', 2);
 
 
 --
@@ -1092,6 +1123,7 @@ INSERT INTO public.hash (hash, email) VALUES ('6d172c4e5d851a7c620b12e761f8fe43'
 ');
 INSERT INTO public.hash (hash, email) VALUES ('45c7b06a158ca62707c5d05dad1d6fd9', 'jdshd@gmail.com');
 INSERT INTO public.hash (hash, email) VALUES ('3ae8dfacdce9fe071ac45bad18256b6f', 'dhff@gmail.com');
+INSERT INTO public.hash (hash, email) VALUES ('8be2ef424afa86e6d6789fe4eda38336', 'kjhcvuifdshfj@gamil.com');
 
 
 --
@@ -1117,15 +1149,16 @@ INSERT INTO public.quickaccess (hash, email) VALUES ('D09A68B37FB01BA3BDB1F529',
 -- Data for Name: staff; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (1, 'prince', 'addo', 'adjei', 'sjhchasc@gamil.com', 3, 'male', 'Director');
-INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (2, 'trtry', 'hh', 'llrkr', 'abshcas@gamail.com', 1, 'male', 'Normal');
-INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (3, 'lolo
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (1, 'prince', 'addo', 'adjei', 'sjhchasc@gamil.com', 3, 'male', 'Director');
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (2, 'trtry', 'hh', 'llrkr', 'abshcas@gamail.com', 1, 'male', 'Normal');
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (3, 'lolo
 ', 'vivi', 'reono', 'jgsh@gmail.com', 3, 'female', 'Admin');
-INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (4, 'solo', 'gogo', 'bnbn', 'ek@gmail.com', 1, 'female', 'Normal');
-INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (5, 'fofo', 'sasa', 'fefe', 'gshdfhg@yahoo.com
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (4, 'solo', 'gogo', 'bnbn', 'ek@gmail.com', 1, 'female', 'Normal');
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (5, 'fofo', 'sasa', 'fefe', 'gshdfhg@yahoo.com
 ', 3, 'male', 'Director');
-INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (6, 'qwq', 'frfr', 'hh', 'jdshd@gmail.com', 5, 'male', 'Normal');
-INSERT INTO public.staff (id, "Fname", "Sname", "Oname", "Email", supervisor, gender, role) VALUES (7, 'jdsf', 'kjdks', 'hedf', 'dhff@gmail.com', 5, 'male', 'Normal');
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (6, 'qwq', 'frfr', 'hh', 'jdshd@gmail.com', 5, 'male', 'Normal');
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (7, 'jdsf', 'kjdks', 'hedf', 'dhff@gmail.com', 5, 'male', 'Normal');
+INSERT INTO public.staff (id, fname, sname, oname, email, supervisor, gender, role) VALUES (8, 'cjhasco', 'sckjashjc', 'aslncklas', 'kjhcvuifdshfj@gamil.com', 5, 'male', 'Normal');
 
 
 --
@@ -1146,7 +1179,7 @@ SELECT pg_catalog.setval('public.deadline_id_seq', 1, false);
 --
 
 ALTER TABLE ONLY public.appraisal_form
-    ADD CONSTRAINT "App_id" UNIQUE ("ID");
+    ADD CONSTRAINT "App_id" UNIQUE (id);
 
 
 --
@@ -1154,7 +1187,7 @@ ALTER TABLE ONLY public.appraisal_form
 --
 
 ALTER TABLE ONLY public.staff
-    ADD CONSTRAINT "Email" UNIQUE ("Email");
+    ADD CONSTRAINT "Email" UNIQUE (email);
 
 
 --
@@ -1226,7 +1259,7 @@ ALTER TABLE ONLY public."annual_plan "
 --
 
 ALTER TABLE ONLY public.appraisal_form
-    ADD CONSTRAINT appraisal_form_pkey PRIMARY KEY ("ID");
+    ADD CONSTRAINT appraisal_form_pkey PRIMARY KEY (id);
 
 
 --
@@ -1293,11 +1326,18 @@ CREATE TRIGGER email_insert_trigger AFTER INSERT OR UPDATE ON public.staff FOR E
 
 
 --
+-- Name: hash hash_insert_trigger; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER hash_insert_trigger AFTER INSERT OR UPDATE ON public.hash FOR EACH ROW EXECUTE FUNCTION public.hash_insert_trigger_fnc();
+
+
+--
 -- Name: quickaccess EFK; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.quickaccess
-    ADD CONSTRAINT "EFK" FOREIGN KEY (email) REFERENCES public.staff("Email") NOT VALID;
+    ADD CONSTRAINT "EFK" FOREIGN KEY (email) REFERENCES public.staff(email) NOT VALID;
 
 
 --
@@ -1313,7 +1353,7 @@ ALTER TABLE ONLY public."logIn"
 --
 
 ALTER TABLE ONLY public.training_recieved
-    ADD CONSTRAINT "TAppIdF" FOREIGN KEY ("Appraisal ID") REFERENCES public.appraisal_form("ID") NOT VALID;
+    ADD CONSTRAINT "TAppIdF" FOREIGN KEY ("Appraisal ID") REFERENCES public.appraisal_form(id) NOT VALID;
 
 
 --
@@ -1321,7 +1361,7 @@ ALTER TABLE ONLY public.training_recieved
 --
 
 ALTER TABLE ONLY public.annual_appraisal
-    ADD CONSTRAINT "anapFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form("ID") NOT VALID;
+    ADD CONSTRAINT "anapFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form(id) NOT VALID;
 
 
 --
@@ -1337,7 +1377,7 @@ ALTER TABLE ONLY public.midyear_review
 --
 
 ALTER TABLE ONLY public."annual_plan "
-    ADD CONSTRAINT annplnf FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form("ID") NOT VALID;
+    ADD CONSTRAINT annplnf FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form(id) NOT VALID;
 
 
 --
@@ -1345,7 +1385,7 @@ ALTER TABLE ONLY public."annual_plan "
 --
 
 ALTER TABLE ONLY public.midyear_review
-    ADD CONSTRAINT "apidFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form("ID") NOT VALID;
+    ADD CONSTRAINT "apidFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form(id) NOT VALID;
 
 
 --
@@ -1353,7 +1393,7 @@ ALTER TABLE ONLY public.midyear_review
 --
 
 ALTER TABLE ONLY public.appraisal_form
-    ADD CONSTRAINT appstaffid FOREIGN KEY ("StaffID") REFERENCES public.staff(id) NOT VALID;
+    ADD CONSTRAINT appstaffid FOREIGN KEY (staff_id) REFERENCES public.staff(id) NOT VALID;
 
 
 --
@@ -1361,7 +1401,7 @@ ALTER TABLE ONLY public.appraisal_form
 --
 
 ALTER TABLE ONLY public.competency
-    ADD CONSTRAINT "comFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form("ID") NOT VALID;
+    ADD CONSTRAINT "comFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form(id) NOT VALID;
 
 
 --
@@ -1369,7 +1409,7 @@ ALTER TABLE ONLY public.competency
 --
 
 ALTER TABLE ONLY public.hash
-    ADD CONSTRAINT emailfk FOREIGN KEY (email) REFERENCES public.staff("Email") NOT VALID;
+    ADD CONSTRAINT emailfk FOREIGN KEY (email) REFERENCES public.staff(email) NOT VALID;
 
 
 --
@@ -1377,7 +1417,7 @@ ALTER TABLE ONLY public.hash
 --
 
 ALTER TABLE ONLY public.endofyear_review
-    ADD CONSTRAINT "eoyFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form("ID") NOT VALID;
+    ADD CONSTRAINT "eoyFK" FOREIGN KEY ("AppraisalID") REFERENCES public.appraisal_form(id) NOT VALID;
 
 
 --
@@ -1393,7 +1433,7 @@ ALTER TABLE ONLY public.endofyear_review
 --
 
 ALTER TABLE ONLY public.form_completion
-    ADD CONSTRAINT "fcomFK" FOREIGN KEY ("Appraisal ID") REFERENCES public.appraisal_form("ID");
+    ADD CONSTRAINT "fcomFK" FOREIGN KEY ("Appraisal ID") REFERENCES public.appraisal_form(id);
 
 
 --
