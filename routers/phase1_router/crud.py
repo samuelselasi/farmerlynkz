@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from . import models, schemas
-from services import background_send
+from services.email import background_send
 
 
 
