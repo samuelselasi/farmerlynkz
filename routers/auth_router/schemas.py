@@ -24,7 +24,7 @@ class DeadlineTable(BaseModel):
     body: Optional[datetime.datetime]
 
 
-class CreateDeadlineTable(BaseModel):
+class create_deadline(BaseModel):
     deadline_type: DeadlineTable
     start_date: DeadlineTable
     end_date: DeadlineTable

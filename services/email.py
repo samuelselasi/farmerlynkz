@@ -8,10 +8,10 @@ from pydantic import EmailStr
 from typing import List
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "b2827718362716",
-    MAIL_PASSWORD = "36acf794e089d9",
-    MAIL_FROM = "test@email.com",
-    MAIL_PORT = 25 or 465 or 587 or 2525,
+    MAIL_USERNAME = "a97a6351fa551d",
+    MAIL_PASSWORD = "8608ab42c0b55f",
+    MAIL_FROM = "a@a.com",
+    MAIL_PORT = 25,
     MAIL_SERVER = "smtp.mailtrap.io",
     MAIL_TLS = True,
     MAIL_SSL = False,

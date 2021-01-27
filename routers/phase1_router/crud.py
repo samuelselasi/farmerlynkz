@@ -1,54 +1,10 @@
 from fastapi import Depends, HTTPException, BackgroundTasks
+from services.email import background_send
 from sqlalchemy.orm import Session
 from . import models, schemas
-from services.email import background_send
 
 
 
-
-async def create_phase1( db: Session, phase1: schemas.create_phase1 ):
-    for item in phase1:
-        phase1 = models.phase1(kra=str(item.kra.dict()), target=str(item.target.dict()), resource_required=str(item.resource_required.dict()) )
-        db.add(phase1)
-    db.commit()
-    return 'success'
-
-# async def update_phase1(db:Session, id:int, phase1:schemas.update_phase1):
-#     phase1 = await get_phase1_by_id(db, id)
-#     if not phase1:
-#         raise HTTPException(status_code=404)
-#     updated = db.query(models.phase1).filter(models.phase1.id==id).update(phase1.dict(exclude_unset=True))
-#     db.commit()
-#     if updated:
-#         return await get_phase1_by_id(db, id)
-
-
-
-async def delete_phase1(db: Session, id: int):
-    phase1 = db.query(models.phase1).filter(models.phase1.id == id).first()
-    if not phase1:
-        return 'staff not found'
-    db.delete(phase1)
-    db.commit()
-    return 'staff deleted'
-
-
-
-#  async def update_phase1(db: Session, id: int, payload: schemas.create_phase1):
-#     phase1 = db.query(models.phase1).filter(models.phase1.id == id).first()
-#     if not phase1:
-#         return 'staff not found'
-#     res = db.query(models.phase1).filter(models.phase1.id == id).update(payload)
-#     db.commit()
-#     return res
-
-
-
-# async def approve_phase1( db: Session, phase1: schemas.approve_phase1 ):
-#     phase1 = models.phase1(id= int, kra=phase1.kra, target=phase1.target, resource_required=phase1.resource_required)
-#     db.add(phase1)
-#     db.commit()
-#     return 'success'
 
 async def check_email_hash(db:Session, background_tasks):
     res = db.execute(""" select * from hash """)
@@ -59,13 +15,30 @@ async def check_email_hash(db:Session, background_tasks):
 async def read_hash_form(hash_:str, db:Session):
     res = db.execute(""" select get_hash_verification(:hash_) """,{'hash_':hash_})
     res = res.first()
-    if not res["get_hash_verification"]:
-        raise HTTPException(status_code=404)
+    # print(res)
+    # print(res["get_hash_verification"])
+    # print(dir(res))
+    # print(res.scalar())
+    # if not res:
+        # raise HTTPException(status_code=404)
     return res["get_hash_verification"]
 
 #/////////////////////////////////////////////////////////////
 
+async def create_phase1( db: Session, phase1: schemas.create_phase1 ):
+    for item in phase1:
+        phase1 = models.phase1(kra=str(item.kra.dict()), target=str(item.target.dict()), resource_required=str(item.resource_required.dict()) )
+        db.add(phase1)
+    db.commit()
+    return 'success'
 
+async def delete_phase1(db: Session, id: int):
+    phase1 = db.query(models.phase1).filter(models.phase1.id == id).first()
+    if not phase1:
+        return 'staff not found'
+    db.delete(phase1)
+    db.commit()
+    return 'staff deleted'
 
 async def generate_email_hash(db: Session, hash:str):
     pass
@@ -88,4 +61,29 @@ async def update_hash_form(db: Session, hash:str):
 async def  update_phase_1_by_id(db: Session, id: int):
     pass
     
-   
+
+
+# async def update_phase1(db:Session, id:int, phase1:schemas.update_phase1):
+#     phase1 = await get_phase1_by_id(db, id)
+#     if not phase1:
+#         raise HTTPException(status_code=404)
+#     updated = db.query(models.phase1).filter(models.phase1.id==id).update(phase1.dict(exclude_unset=True))
+#     db.commit()
+#     if updated:
+#         return await get_phase1_by_id(db, id)
+
+#  async def update_phase1(db: Session, id: int, payload: schemas.create_phase1):
+#     phase1 = db.query(models.phase1).filter(models.phase1.id == id).first()
+#     if not phase1:
+#         return 'staff not found'
+#     res = db.query(models.phase1).filter(models.phase1.id == id).update(payload)
+#     db.commit()
+#     return res
+
+
+
+# async def approve_phase1( db: Session, phase1: schemas.approve_phase1 ):
+#     phase1 = models.phase1(id= int, kra=phase1.kra, target=phase1.target, resource_required=phase1.resource_required)
+#     db.add(phase1)
+#     db.commit()
+#     return 'success'
