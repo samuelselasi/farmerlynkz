@@ -10,11 +10,11 @@ from main import get_db
 router = APIRouter()
 
 
-@router.post("/create/{hash}")
-async def create_phase1(payload:List[schemas.create_phase1], hash:str, db: Session = Depends(get_db)):
-    return await crud.create_phase1(db, payload)
+@router.post("/{hash}")
+async def create_review_start(payload:List[schemas.create_review_start], hash:str, db: Session = Depends(get_db)):
+    return await crud.create_review_start(db, payload)
 
-@router.delete("/delete/{id}")
+@router.delete("/{id}")
 async def delete_phase1(id: int, db: Session = Depends(get_db)):
     return await crud.delete_phase1(db, id)
 
@@ -46,6 +46,11 @@ async def update_hash_form(hash:str, payload: schemas.UpdateForm, db: Session = 
 async def update_phase_1_by_id(id: int, payload: schemas.UpdateForm, db: Session = Depends(get_db)):
     return await crud.update_phase_1_by_id(db,id,payload)
 
-@router.post("/approve/{hash}")
+@router.post("/{hash}")
 async def approve_phase1(payload:List[schemas.approve_phase1], hash:str, db: Session = Depends(get_db)):
     return await crud.approve_phase1(payload,db)
+
+@router.post("/create")
+async def create_hash_form(create_hash_form:schemas.create_review_start, db: Session = Depends(get_db)):
+    return await crud.create_hash_form(create_hash_form, db)
+

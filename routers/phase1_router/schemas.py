@@ -3,15 +3,13 @@ from pydantic import BaseModel
 
 
 class FormBase(BaseModel):
-    title: Optional[str]
-    metatitle: Optional[str]
-    body: List[str]
-
-class create_phase1(BaseModel):
-    kra: FormBase
-    target: FormBase
-    resource_required: FormBase
-
+    kra: str
+    target: str
+    resource_required: str
+    form_id: int
+class create_review_start(FormBase):
+    pass
+    
 class UpdateForm(BaseModel):
     kra: FormBase
     target: FormBase

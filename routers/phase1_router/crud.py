@@ -6,6 +6,12 @@ from . import models, schemas
 
 
 
+async def create_hash_form(create_review_start: schemas.create_review_start, db:Session):
+    res = db.execute(""""INSERT INTO table_name (kra, target , resource_required) VALUES (:kra, :target, :resource_required);""",{'kra':create_review_start.kra, 'target':create_review_start.target,'resource_required':create_review_start.resource_required})
+    db.commit
+    return res
+
+
 async def check_email_hash(db:Session, background_tasks):
     res = db.execute(""" select * from hash """)
     if res.rowcount:
@@ -14,18 +20,12 @@ async def check_email_hash(db:Session, background_tasks):
 
 async def read_hash_form(hash_:str, db:Session):
     res = db.execute(""" select get_hash_verification(:hash_) """,{'hash_':hash_})
-    res = res.first()
-    # print(res)
-    # print(res["get_hash_verification"])
-    # print(dir(res))
-    # print(res.scalar())
-    # if not res:
-        # raise HTTPException(status_code=404)
+    res = res.fetchall()
     return res["get_hash_verification"]
 
 #/////////////////////////////////////////////////////////////
 
-async def create_phase1( db: Session, phase1: schemas.create_phase1 ):
+async def create_review_start( db: Session, phase1: schemas.create_review_start ):
     for item in phase1:
         phase1 = models.phase1(kra=str(item.kra.dict()), target=str(item.target.dict()), resource_required=str(item.resource_required.dict()) )
         db.add(phase1)

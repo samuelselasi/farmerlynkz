@@ -8,24 +8,25 @@ from sqlalchemy import DateTime
 from datetime import date
 
 
-async def create_deadline(db:Session):
-    res = db.execute(""" INSERT INTO public.deadline(type, start_date, ending, id) VALUES (:type, :start_date, :ending, :id); """,{'type':'123', 'start_date':date(2019,12,1), 'ending':date(2020,11,11), 'id':7})
+async def create_deadline( deadline: schemas.create_deadline, db:Session):
+    res = db.execute(""" INSERT INTO public.deadline(type, start_date, ending) VALUES (:type, :start_date, :ending); """,{'type':deadline.type, 'start_date':deadline.start_date, 'ending':deadline.ending})
     db.commit()
     return res
 
 async def read_deadline_table(db:Session):
     res = db.execute(""" select * from deadline """)
-    res = res.first()
-    #if not res["deadline"]:
-     #   raise HTTPException(status_code=404)
+    res = res.fetchall()
     return res
 
-async def create_user( user: schemas.UserCreate , db: Session):
-    db_user = models.User(email=user.email, password=models.User.generate_hash(user.password))                                                                                                                                              
-    db.add(db_user)
+async def create_staff( user: schemas.UserCreate, db:Session):
+    res = db.execute("""INSERT INTO public.staff(fname, sname, oname, email, supervisor, gender, role, department, position, grade) VALUES (:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :position, :grade);""",{'fname':user.fname, 'sname':user.sname, 'oname':user.oname, 'email':user.email, 'supervisor':user.supervisor, 'gender':user.gender, 'role':user.role, 'department':user.department, 'position':user.position, 'grade':user.grade})
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    return res
+
+async def read_staff(db:Session):
+    res = db.execute(""" select * from staff """)
+    res = res.fetchall()
+    return res
 
 async def get_users(db: Session, skip: int = 0, limit: int = 100, search:str=None, value:str=None):
     base = db.query(models.User)
