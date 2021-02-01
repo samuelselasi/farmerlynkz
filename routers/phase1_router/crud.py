@@ -4,11 +4,39 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
+async def create_appraisal_form(appraisal_form: schemas.create_appraisal_form, db:Session):
+    res = db.execute("""INSERT INTO public.appraisal_form(department, grade, position, appraisal_form_id, date, staff_id) 
+    VALUES (:department, :grade, :position, :appraisal_form_id, :date, :staff_id);""",
+    {'department': appraisal_form.department, 'grade': appraisal_form.grade, 'position': appraisal_form.position, 'appraisal_form_id':appraisal_form.appraisal_form_id, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
+    db.commit()
+    return res
 
+async def read_appraisal_form(db:Session):
+    res = db.execute("""SELECT department, grade, "position", appraisal_form_id, date, staff_id FROM public.appraisal_form;""")
+    res = res.fetchall()
+    return res
 
-async def create_hash_form(create_review_start: schemas.create_review_start, db:Session):
-    res = db.execute(""""INSERT INTO table_name (kra, target , resource_required) VALUES (:kra, :target, :resource_required);""",{'kra':create_review_start.kra, 'target':create_review_start.target,'resource_required':create_review_start.resource_required})
-    db.commit
+async def create_annual_plan(annual_plan: schemas.create_annual_plan, db:Session):
+    res = db.execute("""INSERT INTO public.annual_plan(result_areas, target, resources, annual_plan_id, status, form_hash)
+    VALUES (:result_areas, :target, :resources, :annual_plan_id, :status, :form_hash);""",{'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'annual_plan_id': annual_plan.annual_plan_id,'status':annual_plan.status, 'form_hash':annual_plan.form_hash})
+    db.commit()
+    return res
+
+async def read_annual_plan(db:Session):
+    res = db.execute("""SELECT result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash FROM public.annual_plan;""")
+    res = res.fetchall()
+    return res
+
+async def create_annual_appraisal(annual_appraisal: schemas.create_annual_appraisal, db:Session):
+    res = db.execute("""INSERT INTO public.annual_appraisal(grade, comment, field, appraisal_form_id, status, annual_appraisal_id) 
+    VALUES (:grade, :comment, :field, :appraisal_form_id, :status, :annual_appraisal_id);""",
+    {'grade':annual_appraisal.grade, 'comment':annual_appraisal.comment,'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'status':annual_appraisal.status, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
+    db.commit()
+    return res
+
+async def read_annual_appraisal(db:Session):
+    res = db.execute("""SELECT grade, comment, field, appraisal_form_id, status, annual_appraisal_id FROM public.annual_appraisal;""")
+    res = res.fetchall()
     return res
 
 
@@ -24,13 +52,14 @@ async def read_hash_form(hash_:str, db:Session):
     return res["get_hash_verification"]
 
 #/////////////////////////////////////////////////////////////
-
+'''
 async def create_review_start( db: Session, phase1: schemas.create_review_start ):
     for item in phase1:
         phase1 = models.phase1(kra=str(item.kra.dict()), target=str(item.target.dict()), resource_required=str(item.resource_required.dict()) )
         db.add(phase1)
     db.commit()
     return 'success'
+    '''
 
 async def delete_phase1(db: Session, id: int):
     phase1 = db.query(models.phase1).filter(models.phase1.id == id).first()

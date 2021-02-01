@@ -9,12 +9,12 @@ from datetime import date
 
 
 async def create_deadline( deadline: schemas.create_deadline, db:Session):
-    res = db.execute(""" INSERT INTO public.deadline(type, start_date, ending) VALUES (:type, :start_date, :ending); """,{'type':deadline.type, 'start_date':deadline.start_date, 'ending':deadline.ending})
+    res = db.execute(""" INSERT INTO public.deadline(deadline_type, start_date, ending) VALUES (:deadline_type, :start_date, :ending); """,{'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
     db.commit()
     return res
 
 async def read_deadline_table(db:Session):
-    res = db.execute(""" select * from deadline """)
+    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id FROM public.deadline; """)
     res = res.fetchall()
     return res
 
@@ -24,7 +24,7 @@ async def create_staff( user: schemas.UserCreate, db:Session):
     return res
 
 async def read_staff(db:Session):
-    res = db.execute(""" select * from staff """)
+    res = db.execute(""" SELECT staff_id, fname, sname, oname, email, supervisor, gender, role, department, "position", grade FROM public.staff; """)
     res = res.fetchall()
     return res
 

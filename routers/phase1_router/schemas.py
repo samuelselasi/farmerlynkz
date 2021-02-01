@@ -1,15 +1,40 @@
+from datetime import datetime, time, timedelta
 from typing import List, Optional
 from pydantic import BaseModel
 
 
 class FormBase(BaseModel):
-    kra: str
-    target: str
-    resource_required: str
-    form_id: int
-class create_review_start(FormBase):
+    result_areas: str
+    target: str 
+    resources: str 
+    appraisal_form_id: int
+    annual_plan_id: int 
+    status: int
+    form_hash: str  
+
+class AnnualAppraisal(BaseModel):
+    grade: int
+    comment: str 
+    field: str 
+    appraisal_form_id: int 
+    status: int 
+    annual_appraisal_id: int
+
+class AppraisalForm(BaseModel):
+    department: str 
+    grade: int 
+    position: str 
+    appraisal_form_id:int 
+    date: datetime
+    staff_id: int
+
+class create_appraisal_form(AppraisalForm):
+    pass
+class create_annual_plan(FormBase):
     pass
     
+class create_annual_appraisal(AnnualAppraisal):
+    pass
 class UpdateForm(BaseModel):
     kra: FormBase
     target: FormBase

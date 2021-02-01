@@ -54,10 +54,6 @@ $$;
 
 
 --
--- Name: add_staff(character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
--
-
---
 -- Name: annual_appraisal(integer, character varying, character varying, integer, character varying, bigint); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -130,13 +126,13 @@ $$;
 -- Name: deadline(character varying, date, date, bigint); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.deadline(stdtype character varying, stdstart date, stdending date, stddeadline_id bigint) RETURNS character varying
+CREATE FUNCTION public.deadline(stddeadline_type character varying, stdstart date, stdending date, stddeadline_id bigint) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
 begin
-insert into public.deadline(type,start_date,ending,deadline_id)
-values(stdstart,stdending)
+insert into public.deadline(deadline_type,start_date,ending,deadline_id)
+values(stddeadline_type,stdstart,stdending)
 ;
 
 return 'inserted successfully';
@@ -303,8 +299,8 @@ type_date date;
 generate integer;
 begin
 select start_date from deadline into type_date;
-if start_date= now() then select appraisal_form_id from appraisal_form into generate;
-
+if type_date=now() then select appraisal_form_id from appraisal_form into generate;
+else  return 'The film could not be found'; 
 return generate;
 end if;
 end;
@@ -372,7 +368,7 @@ CREATE FUNCTION public.get_appraisal_form() RETURNS jsonb
     AS $$
 declare appraisal_form_details jsonb;
 begin
-select json_agg (annual_plan) from appraisal_form into appraisal_form_details  ;
+select json_agg (appraisal_form) from appraisal_form into appraisal_form_details  ;
 return appraisal_form_details;
 	   end;
 $$;
@@ -416,42 +412,77 @@ $$;
 CREATE FUNCTION public.get_endofyear_review() RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
-declare endofyear_review_detals jsonb;
+declare endofyear_review_details jsonb;
 begin
-select json_agg (endofyear_review) from competency into endofyear_review_detals  ;
+select json_agg (endofyear_review) from endofyear_review into endofyear_review_details  ;
 
-return endofyear_review_detals  ;
+return endofyear_review_details  ;
 	   end;
 $$;
 
 
 --
--- Name: get_form(); Type: FUNCTION; Schema: public; Owner: -
+-- Name: get_entire_hash_table(); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.get_form() RETURNS jsonb
-    LANGUAGE plpgsql
-    AS $$
-declare form_detals jsonb;
-begin
-select json_agg (form_completion) from form_completion into form_detals ;
-
-return form_detals  ;
-	   end;
-$$;
-
-
---
--- Name: get_hash(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.get_hash() RETURNS jsonb
+CREATE FUNCTION public.get_entire_hash_table() RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
 declare hash_email jsonb;
 begin
 select json_agg(hash_table) from hash_table into hash_email;
 return hash_email;
+	   end;
+$$;
+
+
+--
+-- Name: get_form_details_yearly(integer, integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_form_details_yearly(vstaff_id integer, vform_year integer) RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare results jsonb; 
+begin
+SELECT json_agg (form_details) FROM (
+	SELECT
+	appraisal_form.appraisal_form_id,
+	extract(year from appraisal_form.date) as appraisal_year,
+	staff.fname as firstname,
+	staff.sname as lastname,
+	staff.oname as middlename,
+	staff.email,
+	staff.gender,
+	yearly_details.department,
+	yearly_details.position,
+	yearly_details.grade,	
+	annual_plan.result_areas,
+	annual_plan.target,
+	annual_plan.resources,
+	midyear_review.progress_review,
+	midyear_review.remarks,
+	endofyear_review.assessment,
+	endofyear_review.score,
+	endofyear_review.comment,
+	endofyear_review.weight
+		
+FROM
+	staff 
+INNER JOIN appraisal_form  
+    ON staff.staff_id=appraisal_form.staff_id
+INNER JOIN yearly_details  
+    ON staff.staff_id=yearly_details.staff_id	
+	RIGHT JOIN annual_plan  
+    ON appraisal_form.appraisal_form_id=annual_plan.appraisal_form_id
+	RIGHT JOIN midyear_review  
+    ON appraisal_form.appraisal_form_id = midyear_review.appraisal_form_id
+	RIGHT JOIN endofyear_review  
+    ON appraisal_form.appraisal_form_id  =endofyear_review  .appraisal_form_id
+	WHERE staff.staff_id = vstaff_id 
+	AND appraisal_form.date is null OR extract(year from appraisal_form.date) = vform_year
+	AND extract(year from yearly_details.year) = vform_year) form_details into results; 
+RETURN results;	
 	   end;
 $$;
 
@@ -468,11 +499,11 @@ verified bool;
 user_email character varying;
 user_details jsonb;
 begin
-select exists(select email from hash where hash=stdhash) into verified;
+select exists(select email from hash_table where hash=stdhash) into verified;
 if verified='true' then
-select email from hash where hash=stdhash into user_email;
-select json_agg(json_build_object('colname',staff.faname))
-from staff inner join appraisal_form on appraisal_form.staff_id=staff.id where staff.email=user_email
+select email from hash_table where hash=stdhash into user_email;
+select json_agg(json_build_object('fname',staff.fname,'sname',staff.staff_id,'department',appraisal_form.department,'grade',appraisal_form.grade,'position',appraisal_form.position))
+from staff inner join appraisal_form on appraisal_form.staff_id=staff.staff_id where staff.email=user_email
 into user_details;
 else
 select '[]'::jsonb into user_details;
@@ -562,7 +593,7 @@ CREATE FUNCTION public.get_staff() RETURNS jsonb
     AS $$
 declare staff_details jsonb;
 begin
-select json_agg ( staff) from staff_details into staff_details;
+select json_agg ( staff) from staff into staff_details;
  
 return staff_details;
 	   end;
@@ -637,27 +668,10 @@ $$;
 
 
 --
--- Name: start_date(); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.start_date() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-	
-		 INSERT INTO "yearly_details"("year")
-		 VALUES(now());
-
-	RETURN NEW;
-END;
-$$;
-
-
---
 -- Name: training_recieved(bigint, character varying, character varying, date, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.training_recieved(stdtraining_recieved_id bigint, stdinstitution character varying, stdprogramme character varying, stddate date, stdappraisalid integer) RETURNS character varying
+CREATE FUNCTION public.training_recieved(stdtraining_recieved_id bigint, stdinstitution character varying, stdprogramme character varying, stddate date, stdappraisal_id integer) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
@@ -665,6 +679,70 @@ begin
 insert into public.Staff(training_recieved_id,institution,programme,date,appraisal_id)
 values(stdtarining_recieved_id,stdinstitution,stdProgramme,date ,stdappraisal_id);
 return 'inserted successfully';
+	   end;
+$$;
+
+
+--
+-- Name: update_annual_appraisal_status(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_annual_appraisal_status(stdannual_appraisal_id integer) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+update annual_appraisal set Status=1
+where annual_appraisal=stdannual_appraisal_id;
+return 'Status Changed';
+	   end;
+$$;
+
+
+--
+-- Name: update_annual_plan_status(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_annual_plan_status(stdannual_plan_id integer) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+update annual_plan set Status=1
+where annual_plan_id=stdannual_plan_id;
+return 'Status Changed';
+	   end;
+$$;
+
+
+--
+-- Name: update_endofyyear_review_status(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_endofyyear_review_status(stdendofyear_review_id integer) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+update annual_appraisal set Status=1
+where annual_appraisal=stdendofyear_review_id;
+return 'Status Changed';
+	   end;
+$$;
+
+
+--
+-- Name: update_midyyear_review_status(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_midyyear_review_status(stdmidyyear_review_id integer) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+update annual_appraisal set Status=1
+where annual_appraisal=stdmidyyear_review_id;
+return 'Status Changed';
 	   end;
 $$;
 
@@ -698,7 +776,7 @@ CREATE TABLE public.annual_appraisal (
     grade integer NOT NULL,
     comment character varying NOT NULL,
     field character varying NOT NULL,
-    appraisal_id bigint NOT NULL,
+    appraisal_form_id bigint NOT NULL,
     status character varying NOT NULL,
     annual_appraisal_id integer NOT NULL
 );
@@ -720,7 +798,7 @@ CREATE SEQUENCE public.annual_appraisal_appraisal_id_seq
 -- Name: annual_appraisal_appraisal_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.annual_appraisal_appraisal_id_seq OWNED BY public.annual_appraisal.appraisal_id;
+ALTER SEQUENCE public.annual_appraisal_appraisal_id_seq OWNED BY public.annual_appraisal.appraisal_form_id;
 
 
 --
@@ -731,7 +809,7 @@ CREATE TABLE public.annual_plan (
     result_areas character varying,
     target character varying,
     resources character varying,
-    appraisal_id integer,
+    appraisal_form_id integer,
     annual_plan_id bigint NOT NULL,
     status integer,
     form_hash character varying
@@ -800,7 +878,7 @@ CREATE TABLE public.competency (
     sub integer NOT NULL,
     main character varying NOT NULL,
     competency_id bigint NOT NULL,
-    appraisal_id integer NOT NULL
+    appraisal_form_id integer NOT NULL
 );
 
 
@@ -828,7 +906,7 @@ ALTER SEQUENCE public.competency_competency_id_seq OWNED BY public.competency.co
 --
 
 CREATE TABLE public.deadline (
-    type character varying NOT NULL,
+    deadline_type character varying NOT NULL,
     start_date date,
     ending date NOT NULL,
     deadline_id bigint NOT NULL
@@ -852,40 +930,6 @@ CREATE SEQUENCE public.deadline_deadline_id_seq
 --
 
 ALTER SEQUENCE public.deadline_deadline_id_seq OWNED BY public.deadline.deadline_id;
-
-
---
--- Name: dummy; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.dummy (
-    form_hash character varying,
-    result_areas character varying,
-    resources character varying,
-    appraisal_id integer,
-    annual_plan_id integer,
-    status integer,
-    dummy_id bigint NOT NULL
-);
-
-
---
--- Name: dummy_dummy_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.dummy_dummy_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: dummy_dummy_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.dummy_dummy_id_seq OWNED BY public.dummy.dummy_id;
 
 
 --
@@ -1124,19 +1168,39 @@ ALTER SEQUENCE public.training_recieved_training_recieved_id_seq OWNED BY public
 --
 
 CREATE TABLE public.yearly_details (
-    department character varying,
-    grade integer,
-    "position" character varying,
-    year date DEFAULT now(),
-    staff_id integer
+    department character varying NOT NULL,
+    grade integer NOT NULL,
+    "position" character varying NOT NULL,
+    year date DEFAULT now() NOT NULL,
+    staff_id integer NOT NULL,
+    yearly_details_id bigint NOT NULL
 );
 
 
 --
--- Name: annual_appraisal appraisal_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: yearly_details_yearly_details_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.annual_appraisal ALTER COLUMN appraisal_id SET DEFAULT nextval('public.annual_appraisal_appraisal_id_seq'::regclass);
+CREATE SEQUENCE public.yearly_details_yearly_details_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: yearly_details_yearly_details_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.yearly_details_yearly_details_id_seq OWNED BY public.yearly_details.yearly_details_id;
+
+
+--
+-- Name: annual_appraisal appraisal_form_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annual_appraisal ALTER COLUMN appraisal_form_id SET DEFAULT nextval('public.annual_appraisal_appraisal_id_seq'::regclass);
 
 
 --
@@ -1165,13 +1229,6 @@ ALTER TABLE ONLY public.competency ALTER COLUMN competency_id SET DEFAULT nextva
 --
 
 ALTER TABLE ONLY public.deadline ALTER COLUMN deadline_id SET DEFAULT nextval('public.deadline_deadline_id_seq'::regclass);
-
-
---
--- Name: dummy dummy_id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.dummy ALTER COLUMN dummy_id SET DEFAULT nextval('public.dummy_dummy_id_seq'::regclass);
 
 
 --
@@ -1224,6 +1281,13 @@ ALTER TABLE ONLY public.training_recieved ALTER COLUMN training_recieved_id SET 
 
 
 --
+-- Name: yearly_details yearly_details_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.yearly_details ALTER COLUMN yearly_details_id SET DEFAULT nextval('public.yearly_details_yearly_details_id_seq'::regclass);
+
+
+--
 -- Data for Name: annual_appraisal; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -1233,39 +1297,39 @@ ALTER TABLE ONLY public.training_recieved ALTER COLUMN training_recieved_id SET 
 -- Data for Name: annual_plan; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_id, annual_plan_id, status, form_hash) VALUES (NULL, NULL, NULL, NULL, 10, NULL, 'b718250900c83705b813ba1a0ee51319');
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash) VALUES ('Everything', 'Execute', 'Good', 16, 32, 1, '96ba5594d7d04f71150a81c417f53a34');
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash) VALUES (NULL, NULL, NULL, NULL, 34, 1, '60e8beba18e9a8550e725038b584df17');
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash) VALUES (NULL, NULL, NULL, NULL, 33, 1, '777179eebfcc3fee3648cbfc6fb3ea86');
 
 
 --
 -- Data for Name: appraisal_form; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.appraisal_form (department, grade, "position", appraisal_form_id, date, staff_id) VALUES ('Research', 100, 'Developer', 16, '2021-02-20', 1);
 
 
 --
 -- Data for Name: competency; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.competency (category, weight, sub, main, competency_id, appraisal_form_id) VALUES ('Body', 10, 12, 'Coder', 1, 16);
 
 
 --
 -- Data for Name: deadline; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.deadline (type, start_date, ending, deadline_id) VALUES ('start', '2021-10-10', '2021-12-12', 1);
-
-
---
--- Data for Name: dummy; Type: TABLE DATA; Schema: public; Owner: -
---
-
-INSERT INTO public.dummy (form_hash, result_areas, resources, appraisal_id, annual_plan_id, status, dummy_id) VALUES ('43ee95bca3696ee7a8c6061d3e079261', NULL, NULL, NULL, NULL, NULL, 1);
+INSERT INTO public.deadline (deadline_type, start_date, ending, deadline_id) VALUES ('Start', '2021-02-20', '2021-03-30', 1);
+INSERT INTO public.deadline (deadline_type, start_date, ending, deadline_id) VALUES ('Mid', '2021-03-30', '2020-08-08', 2);
+INSERT INTO public.deadline (deadline_type, start_date, ending, deadline_id) VALUES ('End', '2021-04-02', '2021-08-21', 3);
 
 
 --
 -- Data for Name: endofyear_review; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status) VALUES ('Well Done', 100, 'improve', 16, 1, 32, 200, 1);
 
 
 --
@@ -1278,13 +1342,16 @@ INSERT INTO public.dummy (form_hash, result_areas, resources, appraisal_id, annu
 -- Data for Name: hash_table; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('b718250900c83705b813ba1a0ee51319', 'djfjfsdfdsfds', 14);
+INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('96ba5594d7d04f71150a81c417f53a34', 'paddo144@gmail.com', 39);
+INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('777179eebfcc3fee3648cbfc6fb3ea86', 'great@gamil.com', 40);
 
 
 --
 -- Data for Name: logIn; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public."logIn" (staff_id, username, email, password, login_id) VALUES (1, 'iwan', 'paddo144@gmail.com', 'asdd', 1);
+INSERT INTO public."logIn" (staff_id, username, email, password, login_id) VALUES (23, 'sammy', 'sammy@gmail.com', 'dcd', 5);
 
 
 --
@@ -1297,7 +1364,8 @@ INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('b718250900c8
 -- Data for Name: staff; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, "position", grade) VALUES (3, 'dfdhf', 'djfj', 'djfj', 'djfjfsdfdsfds', 1, 'djfsdsdj', 'djfjasfafsafa', 'djfsfasfsafsdfsdfj', 'djfjsdfwdfdsgsdgdsgsg', 6655);
+INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, "position", grade) VALUES (1, 'PRINCE', 'ADDO', 'ADEJI', 'paddo144@gmail.com', 1, 'male', 'Admin', 'Research', 'Manager', 100);
+INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, "position", grade) VALUES (23, 'SAMMY', 'AKI', 'PAWPAW', 'great@gamil.com', 2, 'male', 'Director', 'Consultancy', 'Developer', 90);
 
 
 --
@@ -1310,8 +1378,8 @@ INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gend
 -- Data for Name: yearly_details; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.yearly_details (department, grade, "position", year, staff_id) VALUES (NULL, NULL, NULL, '2021-01-28', NULL);
-INSERT INTO public.yearly_details (department, grade, "position", year, staff_id) VALUES ('djfsfasfsafsdfsdfj', 6655, 'djfjsdfwdfdsgsdgdsgsg', '2021-01-28', 3);
+INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('Research', 100, 'Manager', '2021-01-29', 1, 22);
+INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('Consultancy', 90, 'Developer', '2021-01-29', 23, 23);
 
 
 --
@@ -1325,14 +1393,14 @@ SELECT pg_catalog.setval('public.annual_appraisal_appraisal_id_seq', 1, false);
 -- Name: annual_plan _annual_plan_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."annual_plan _annual_plan_id_seq"', 10, true);
+SELECT pg_catalog.setval('public."annual_plan _annual_plan_id_seq"', 34, true);
 
 
 --
 -- Name: appraisal_form_appraisal_form_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.appraisal_form_appraisal_form_id_seq', 1, false);
+SELECT pg_catalog.setval('public.appraisal_form_appraisal_form_id_seq', 16, true);
 
 
 --
@@ -1346,14 +1414,7 @@ SELECT pg_catalog.setval('public.competency_competency_id_seq', 1, false);
 -- Name: deadline_deadline_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.deadline_deadline_id_seq', 1, false);
-
-
---
--- Name: dummy_dummy_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.dummy_dummy_id_seq', 1, true);
+SELECT pg_catalog.setval('public.deadline_deadline_id_seq', 4, true);
 
 
 --
@@ -1374,14 +1435,14 @@ SELECT pg_catalog.setval('public.form_completion_form_completion_id_seq', 1, fal
 -- Name: hash_table_hash_table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.hash_table_hash_table_id_seq', 14, true);
+SELECT pg_catalog.setval('public.hash_table_hash_table_id_seq', 41, true);
 
 
 --
 -- Name: logIn_login_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."logIn_login_id_seq"', 1, false);
+SELECT pg_catalog.setval('public."logIn_login_id_seq"', 5, true);
 
 
 --
@@ -1395,7 +1456,7 @@ SELECT pg_catalog.setval('public.midyear_review_midyear_review_id_seq', 1, false
 -- Name: staff_staff_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.staff_staff_id_seq', 3, true);
+SELECT pg_catalog.setval('public.staff_staff_id_seq', 23, true);
 
 
 --
@@ -1403,6 +1464,13 @@ SELECT pg_catalog.setval('public.staff_staff_id_seq', 3, true);
 --
 
 SELECT pg_catalog.setval('public.training_recieved_training_recieved_id_seq', 1, false);
+
+
+--
+-- Name: yearly_details_yearly_details_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.yearly_details_yearly_details_id_seq', 23, true);
 
 
 --
@@ -1470,19 +1538,27 @@ ALTER TABLE ONLY public.deadline
 
 
 --
--- Name: dummy dummy_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.dummy
-    ADD CONSTRAINT dummy_pkey PRIMARY KEY (dummy_id);
-
-
---
 -- Name: staff email_uq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.staff
     ADD CONSTRAINT email_uq UNIQUE (email);
+
+
+--
+-- Name: endofyear_review endofyear_review_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.endofyear_review
+    ADD CONSTRAINT endofyear_review_pkey PRIMARY KEY (endofyear_review_id);
+
+
+--
+-- Name: form_completion form_completion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.form_completion
+    ADD CONSTRAINT form_completion_pkey PRIMARY KEY (form_completion_id);
 
 
 --
@@ -1534,6 +1610,14 @@ ALTER TABLE ONLY public.training_recieved
 
 
 --
+-- Name: yearly_details yearly_details_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.yearly_details
+    ADD CONSTRAINT yearly_details_pkey PRIMARY KEY (yearly_details_id);
+
+
+--
 -- Name: staff email_insert_trigger; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -1548,13 +1632,6 @@ CREATE TRIGGER hash_insert_trigger AFTER INSERT ON public.hash_table FOR EACH RO
 
 
 --
--- Name: annual_plan start_date_trigger; Type: TRIGGER; Schema: public; Owner: -
---
-
-CREATE TRIGGER start_date_trigger AFTER INSERT OR UPDATE ON public.annual_plan FOR EACH ROW EXECUTE FUNCTION public.start_date();
-
-
---
 -- Name: staff yearly_details; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -1566,7 +1643,7 @@ CREATE TRIGGER yearly_details AFTER INSERT ON public.staff FOR EACH ROW EXECUTE 
 --
 
 ALTER TABLE ONLY public.annual_appraisal
-    ADD CONSTRAINT ann_fk FOREIGN KEY (appraisal_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
+    ADD CONSTRAINT ann_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
 
 
 --
@@ -1574,7 +1651,7 @@ ALTER TABLE ONLY public.annual_appraisal
 --
 
 ALTER TABLE ONLY public.annual_plan
-    ADD CONSTRAINT ann_fk FOREIGN KEY (appraisal_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
+    ADD CONSTRAINT ann_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
 
 
 --

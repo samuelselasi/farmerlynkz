@@ -29,10 +29,10 @@ class User(UserBase):
 
 
 class DeadlineTable(BaseModel):
-    type: str
+    deadline_type: str
     start_date: Optional[datetime.datetime]
     ending: Optional[datetime.datetime]
-
+    deadline_id: int
 
 class create_deadline(DeadlineTable):
     pass
@@ -41,4 +41,5 @@ class create_deadline(DeadlineTable):
 class read_deadline_table(BaseModel):
     deadline_type: DeadlineTable
     start_date: DeadlineTable
-    end_date: DeadlineTable
+    ending: DeadlineTable
+    deadline_id: DeadlineTable
