@@ -104,6 +104,24 @@ $$;
 
 
 --
+-- Name: appraisalformid_insert_trigger_fnc(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.appraisalformid_insert_trigger_fnc() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+
+INSERT INTO "annual_plan"("appraisal_form_id")
+
+         VALUES(NEW."appraisal_form_id");
+RETURN NEW;
+
+END;
+$$;
+
+
+--
 -- Name: competency(character varying, integer, character varying, character varying, bigint, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -150,7 +168,7 @@ CREATE FUNCTION public.delete_annual_appraisal(stdannual_appraisal_id bigint) RE
 declare
 begin
 delete from annual_appraisal
-where ID=stdannual_appraisal_id;
+where staff_id=stdannual_appraisal_id;
 return 'Deleted';
 	   end;
 $$;
@@ -166,7 +184,7 @@ CREATE FUNCTION public.delete_annual_plan(stdannual_plan_id bigint) RETURNS char
 declare
 begin
 delete from annual_plan
-where ID=stdannual_plan_id;
+where staff_id=stdannual_plan_id;
 return 'Deleted';
 	   end;
 $$;
@@ -182,7 +200,7 @@ CREATE FUNCTION public.delete_appraisal_form(stdappraisal_form_id bigint) RETURN
 declare
 begin
 delete from appraisal_form
-where ID=stdappraisal_form_id;
+where staff_id=stdappraisal_form_id;
 return 'Deleted';
 	   end;
 $$;
@@ -198,7 +216,7 @@ CREATE FUNCTION public.delete_competency(stdcompetency_id integer) RETURNS chara
 declare
 begin
 delete from competency
-where ID=stdcompetency_id;
+where staff_id=stdcompetency_id;
 return 'Deleted';
 	   end;
 $$;
@@ -214,7 +232,7 @@ CREATE FUNCTION public.delete_endofyear_review(stdendofyear_review_id bigint) RE
 declare
 begin
 delete from endofyear_review
-where ID=stdendofyear_review_id;
+where staff_id=stdendofyear_review_id;
 return 'Deleted';
 	   end;
 $$;
@@ -230,7 +248,7 @@ CREATE FUNCTION public.delete_staff(stdstaff_id bigint) RETURNS character varyin
 declare
 begin
 delete from staff
-where ID=stdstaff_id;
+where staff_id=stdstaff_id;
 return 'Deleted';
 	   end;
 $$;
@@ -811,7 +829,7 @@ CREATE TABLE public.annual_plan (
     resources character varying,
     appraisal_form_id integer,
     annual_plan_id bigint NOT NULL,
-    status integer,
+    status integer DEFAULT 0,
     form_hash character varying
 );
 
@@ -944,7 +962,7 @@ CREATE TABLE public.endofyear_review (
     endofyear_review_id bigint NOT NULL,
     annual_plan_id integer,
     weight integer,
-    status integer
+    status integer DEFAULT 0
 );
 
 
@@ -1066,11 +1084,11 @@ ALTER SEQUENCE public."logIn_login_id_seq" OWNED BY public."logIn".login_id;
 
 CREATE TABLE public.midyear_review (
     midyear_review_id bigint NOT NULL,
-    progress_review character varying NOT NULL,
-    remarks character varying NOT NULL,
-    status integer NOT NULL,
-    appraisal_form_id integer NOT NULL,
-    annual_plan_id integer NOT NULL
+    progress_review character varying,
+    remarks character varying,
+    status integer DEFAULT 0,
+    appraisal_form_id integer,
+    annual_plan_id integer
 );
 
 
@@ -1615,6 +1633,13 @@ ALTER TABLE ONLY public.training_recieved
 
 ALTER TABLE ONLY public.yearly_details
     ADD CONSTRAINT yearly_details_pkey PRIMARY KEY (yearly_details_id);
+
+
+--
+-- Name: appraisal_form appraisalformid_insert_trigger; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER appraisalformid_insert_trigger AFTER INSERT ON public.appraisal_form FOR EACH ROW EXECUTE FUNCTION public.appraisalformid_insert_trigger_fnc();
 
 
 --

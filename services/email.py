@@ -25,7 +25,7 @@ template = """
 <a href="{url}/{hash}" target="_blank">click this link to fill form</a>
 """
 
-async def background_send(user_hash_list, background_tasks) -> JSONResponse:
+def background_send(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Fastapi-Mail module",

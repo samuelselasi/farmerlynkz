@@ -1,20 +1,13 @@
 from fastapi import FastAPI
-
+from services.email import background_send
 from fastapi.middleware.cors import CORSMiddleware
-
 from database import SessionLocal, engine
-
 from routers.auth_router import models
-
 from routers.staff_router import models
 from routers.phase1_router import models
-
 from routers.appraiser import models
-
 from fastapi.security import OAuth2PasswordBearer
-
 #from services import email
-
 from fastapi import BackgroundTasks
 
 
@@ -56,6 +49,17 @@ def send_email():
 from datetime import datetime, timedelta
 
 scheduler.add_job(send_email, trigger = 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
+
+def send_hash_email(background_tasks:BackgroundTasks):
+    db = SessionLocal()
+    # print(dir(background_tasks))
+    res = db.execute(""" SELECT * FROM public.hash_table """)
+    if res.rowcount:
+        pass
+        # background_send(res.fetchall(), background_tasks)
+    return 'success'
+
+scheduler.add_job(send_hash_email, kwargs={'background_tasks':BackgroundTasks}, trigger='interval', minutes=1)
 
 # Dependency
 def get_db():
@@ -104,9 +108,4 @@ async def shutdown_event():
 
 
 
-# @api.post("/")
-# async def Email(background_tasks:BackgroundTasks):
-#     await email.background_send(email.user_hash_list, background_tasks)
-#     return "email has been sent"
-
-
+# @api.post("/test")
