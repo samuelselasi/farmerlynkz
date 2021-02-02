@@ -28,6 +28,13 @@ async def read_staff(db:Session):
     res = res.fetchall()
     return res
 
+async def update_staff(staff: schemas.update_staff, db: Session):
+    res = db.execute("""UPDATE public.staff
+	SET staff_id=?, fname=?, sname=?, oname=?, email=?, supervisor=?, gender=?, role=?, department=?, "position"=?, grade=?
+	WHERE <condition>;""")
+    db.commit()
+    return res
+
 async def get_users(db: Session, skip: int = 0, limit: int = 100, search:str=None, value:str=None):
     base = db.query(models.User)
     if search and value:
