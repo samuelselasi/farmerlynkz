@@ -11,6 +11,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi import BackgroundTasks
 
 
+
 api = FastAPI(docs_url="/api/docs")
 
 origins = ["http://localhost/*","http://localhost:8080","http://localhost:3000"]
@@ -48,18 +49,19 @@ def send_email():
 
 from datetime import datetime, timedelta
 
-scheduler.add_job(send_email, trigger = 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
+# scheduler.add_job(send_email, trigger = 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
 
-def send_hash_email(background_tasks:BackgroundTasks):
+async def send_hash_email():
+    background_tasks=BackgroundTasks()
     db = SessionLocal()
-    # print(dir(background_tasks))
     res = db.execute(""" SELECT * FROM public.hash_table """)
+    
     if res.rowcount:
-        pass
-        # background_send(res.fetchall(), background_tasks)
-    return 'success'
+        print('sd')
+        await background_send(res.fetchall(), background_tasks)
+    print('success')
 
-scheduler.add_job(send_hash_email, kwargs={'background_tasks':BackgroundTasks}, trigger='interval', minutes=1)
+scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
 
 # Dependency
 def get_db():
@@ -106,6 +108,16 @@ async def startup_event():
 async def shutdown_event():
     scheduler.shutdown()
 
+background_tasks = BackgroundTasks()
 
+@api.post("/test")
+async def a(background_tasks: BackgroundTasks):
+    print('a')
+    print(dir(background_tasks))
+    return await background_send([{'email':'a@a.com','hash':'34242assdd'}], background_tasks)
 
-# @api.post("/test")
+@api.post("/test/test")
+async def b():
+    print('b')
+    print(dir(background_tasks))
+    return await background_send([{'email':'a@a.com','hash':'34242assdd'}], background_tasks)
