@@ -47,13 +47,8 @@ async def delete_annual_plan(db: Session):
     return res
 
 async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session):
-<<<<<<< HEAD
-    res = db.execute("""UPDATE public.annual_plan (SET  (:result_areas, :target, :resources, :annual_plan_id, :status, :form_hash)
-	WHERE annual_plan_id=annual_plan.annual_plan_id;"""), 
-=======
     res = db.execute("""UPDATE public.annual_plan SET(result_areas=:result_areas, target = :target, resources =:resources, annual_plan_id = :annual_plan_id, status = :status, form_hash = :form_hash);
 	WHERE annual_plan_id=annual_plan.annual_plan_id)""", 
->>>>>>> fix/new-branch
     {'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'annual_plan_id':annual_plan.annual_plan_id, 'status':annual_plan.status, 'form_hash':annual_plan.form_hash})
     db.commit()
     return res
