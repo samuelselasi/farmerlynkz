@@ -82,10 +82,6 @@ async def update_annual_appraisal(annual_appraisal: schemas.create_annual_apprai
 	WHERE annual_appraisal_id=annual_appraisal.annual_appraisal_id;""")
     db.commit()
     return res 
-<<<<<<< HEAD
-=======
-    pass
->>>>>>> fix/new-branch
 
 async def read_hash_form(hash_:str, db:Session):
     res = db.execute(""" SELECT public.get_hash_verification(:hash_) """,{'hash_':hash_})
