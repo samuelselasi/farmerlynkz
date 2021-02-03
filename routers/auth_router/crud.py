@@ -30,8 +30,14 @@ async def read_staff(db:Session):
 
 async def update_staff(staff: schemas.update_staff, db: Session):
     res = db.execute("""UPDATE public.staff
+<<<<<<< HEAD
 	SET staff_id=?, fname=?, sname=?, oname=?, email=?, supervisor=?, gender=?, role=?, department=?, "position"=?, grade=?
 	WHERE <condition>;""")
+=======
+    SET(staff_id=:staff_id, fname=:fname, sname=:sname, oname=:oname, email=:email, supervisor=:supervisor, gender=:gender, role=:role, department=:department, position=:position, grade=:grade);
+    WHERE staff_id=staff.staff_id""",
+    {'staff_id':staff.staff_id, 'fname':staff.fname, 'sname':staff.sname, 'oname':staff.oname, 'email':staff.email, 'supervisor':staff.supervisor, 'gender':staff.gender, 'role':staff.role, 'department':staff.department, 'position':staff.position, 'grade':staff.grade})
+>>>>>>> fix/new-branch
     db.commit()
     return res
 

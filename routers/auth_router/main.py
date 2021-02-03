@@ -56,7 +56,11 @@ async def read_staff(db: Session = Depends(get_db)):
 
 @router.put("/update/staff")
 async def update_staff(staff:schemas.update_staff, db:Session = Depends(get_db)):
+<<<<<<< HEAD
     return await crud.update_staff
+=======
+    return crud.update_staff
+>>>>>>> fix/new-branch
 
 @router.get("/")
 async def read_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100, search:str=None, value:str=None):
