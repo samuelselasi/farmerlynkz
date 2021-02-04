@@ -74,6 +74,7 @@ async def update_deadline_table(deadline: schemas.update_deadline_table, db: Ses
     return await crud.update_deadline_table(deadline, db)
 
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @router.delete("/delete/{id}")
 async def delete_user(id: int, db: Session = Depends(get_db)):
     return await crud.delete_user(db, id)

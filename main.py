@@ -1,14 +1,15 @@
-from fastapi import FastAPI
-from services.email import background_send
 from fastapi.middleware.cors import CORSMiddleware
-from database import SessionLocal, engine
-from routers.auth_router import models
-from routers.staff_router import models
-from routers.phase1_router import models
-from routers.appraiser import models
 from fastapi.security import OAuth2PasswordBearer
-#from services import email
+from services.email import background_send
+from database import SessionLocal, engine
+from routers.phase1_router import models
+from routers.staff_router import models
+from routers.auth_router import models
+from routers.appraiser import models
 from fastapi import BackgroundTasks
+#from services import email
+from fastapi import FastAPI
+
 
 api = FastAPI(docs_url="/api/docs")
 
@@ -23,14 +24,10 @@ api.add_middleware(
 )
 
 import pytz
-
-from apscheduler.schedulers.background import BackgroundScheduler
-
-# from apscheduler.jobstores.mongodb import MongoDBJobStore
-
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+# from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.triggers.cron import CronTrigger
 # job schedular
 
@@ -39,6 +36,7 @@ jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
 job_defaults = { 'coalesce': False, 'max_instances': 3}
 scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=pytz.utc, misfire_grace_time=1)
+
 
 def send_email():
     
@@ -74,37 +72,28 @@ def get_db():
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
 
 
+from routers.phase1_router import main as phase1
+from routers.appraiser import main as appraiser
+from routers.staff_router import main as staff
 from routers.auth_router import main as auth
 
-from routers.staff_router import main as staff
-
-from routers.phase1_router import main as phase1
-
-from routers.appraiser import main as appraiser
-
-api.include_router(auth.router,prefix="/api/user",tags=["user"])
-
-api.include_router(phase1.router,prefix="/api/review",tags=["review"])
-
-api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
-
 api.include_router(appraiser.router,prefix="/api/appraiser", tags=["appraiser"])
+api.include_router(phase1.router,prefix="/api/review",tags=["review"])
+api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
+api.include_router(auth.router,prefix="/api/user",tags=["user"])
 
 @api.get("/")
 def welcome():
     return "Reminders started"
 
-
-
 @api.on_event("startup")
 async def startup_event():
     scheduler.start()
 
-
-
 @api.on_event("shutdown")
 async def shutdown_event():
     scheduler.shutdown()
+
 
 background_tasks = BackgroundTasks()
 
