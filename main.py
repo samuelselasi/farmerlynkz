@@ -10,11 +10,9 @@ from fastapi.security import OAuth2PasswordBearer
 #from services import email
 from fastapi import BackgroundTasks
 
-
-
 api = FastAPI(docs_url="/api/docs")
 
-origins = ["http://localhost/*","http://localhost:8080","http://localhost:3000"]
+origins = ["*"]
 
 api.add_middleware(
     CORSMiddleware,
