@@ -24,9 +24,10 @@ async def delete_appraisal_form(db:Session):
 
 async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session):
     res = db.execute("""UPDATE public.appraisal_form
-	SET department=appraisal_form.department, grade=appraisal_form.grade, "position"=appraisal_form.position, appraisal_form_id=appraisal_form.appraisal_form_id, date=appraisal_form.date, staff_id=appraisal_form.staff_id
-	WHERE appraisal_form_id=appraisal_form.appraisal_form_id;""")
-    res = res.fetchall()
+	SET department=:department, grade=:grade, "position"=:position, appraisal_form_id=:appraisal_form_id, date=:date, staff_id=:staff_id
+	WHERE appraisal_form_id=appraisal_form.appraisal_form_id;""",
+    {'department': appraisal_form.department, 'grade': appraisal_form.grade, 'position': appraisal_form.position, 'appraisal_form_id':appraisal_form.appraisal_form_id, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
+    db.commit()
     return res
 
 async def create_annual_plan(annual_plan: schemas.create_annual_plan, db:Session):
@@ -47,9 +48,9 @@ async def delete_annual_plan(db: Session):
     return res
 
 async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session):
-    res = db.execute("""UPDATE public.annual_plan SET(result_areas, target, resources, annual_plan_id, status, form_hash)
-    VALUES(result_areas=:result_areas, target = :target, resources =:resources, annual_plan_id = :annual_plan_id, status = :status, form_hash = :form_hash);
-	WHERE annual_plan_id=annual_plan.annual_plan_id)""", 
+    res = db.execute("""UPDATE public.annual_plan 
+    SET result_areas=:result_areas, target=:target, resources=:resources, annual_plan_id=:annual_plan_id, status=:status, form_hash=:form_hash
+	WHERE annual_plan_id=annual_plan.annual_plan_id;""", 
     {'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'annual_plan_id':annual_plan.annual_plan_id, 'status':annual_plan.status, 'form_hash':annual_plan.form_hash})
     db.commit()
     return res
@@ -74,8 +75,9 @@ async def delete_annual_appraisal(db: Session):
 
 async def update_annual_appraisal(annual_appraisal: schemas.create_annual_appraisal, db: Session):
     res = db.execute("""UPDATE public.annual_appraisal
-	SET grade=annual_appraisal.grade, comment=annual_appraisal.comment, field=annual_appraisal.field, appraisal_form_id=annual_appraisal.appraisal_form_id, status=annual_appraisal.status, annual_appraisal_id=annual_appraisal.annual_appraisal_id
-	WHERE annual_appraisal_id=annual_appraisal.annual_appraisal_id;""")
+	SET grade=:grade, comment=:comment, field=:field, appraisal_form_id=:appraisal_form_id, status=:status, annual_appraisal_id=:annual_appraisal_id
+	WHERE annual_appraisal_id=annual_appraisal.annual_appraisal_id;""",
+    {'grade':annual_appraisal.grade, 'comment':annual_appraisal.comment,'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'status':annual_appraisal.status, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
     db.commit()
     return res 
 

@@ -38,8 +38,8 @@ async def delete_appraisal_form(db: Session = Depends(get_db)):
     return await crud.delete_appraisal_form(db)
 
 @router.put("/appraisal/form")
-async def update_appraisal_form(db: Session = Depends(get_db)):
-    return await crud.update_appraisal_form(db)
+async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session = Depends(get_db)):
+    return await crud.update_appraisal_form(appraisal_form, db)
 
 @router.post("/annual_appraisal")
 async def create_annual_appraisal(create_annual_appraisal:schemas.create_annual_appraisal, db: Session = Depends(get_db)):
@@ -54,8 +54,8 @@ async def delete_annual_appraisal(db: Session = Depends(get_db)):
     return await crud.delete_annual_appraisal(db)
 
 @router.put("/annual/aprpaisal")
-async def update_annual_appraisal(db: Session = Depends(get_db)):
-    return await crud.update_annual_appraisal(db)
+async def update_annual_appraisal(annual_appraisal: schemas.update_annual_appraisal, db: Session = Depends(get_db)):
+    return await crud.update_annual_appraisal(annual_appraisal, db)
 
 # @router.post("/check_email_hash")
 # def check_email_hash(background_tasks:BackgroundTasks):
