@@ -1,11 +1,13 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from fastapi import Body, FastAPI
+from sqlalchemy import DateTime
 from . import models, schemas
 from typing import Optional
-from uuid import UUID
-from sqlalchemy import DateTime
 from datetime import date
+from uuid import UUID
+
+
 
 
 async def create_deadline( deadline: schemas.create_deadline, db:Session):
@@ -16,6 +18,14 @@ async def create_deadline( deadline: schemas.create_deadline, db:Session):
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id FROM public.deadline; """)
     res = res.fetchall()
+    return res
+
+async def update_deadline_table(deadline: schemas.update_deadline_table, db: Session):
+    res = db.execute("""UPDATE public.deadline
+	SET deadline_type=:deadline_type, start_date=:start_date, ending=:ending, deadline_id=:deadline_id
+	WHERE deadline_id=deadline.deadline_id;""",
+    {'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending, 'deadline_id':deadline.deadline_id})
+    db.commit()
     return res
 
 async def create_staff( user: schemas.UserCreate, db:Session):
@@ -36,6 +46,7 @@ async def update_staff(staff: schemas.update_staff, db: Session):
     db.commit()
     return res
 
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async def get_users(db: Session, skip: int = 0, limit: int = 100, search:str=None, value:str=None):
     base = db.query(models.User)
     if search and value:

@@ -104,9 +104,6 @@ async def delete_phase1(db: Session, id: int):
     db.commit()
     return 'staff deleted'
 
-async def generate_email_hash(db: Session, hash:str):
-    pass
-
 async def read_phase_1(db: Session, skip:int, limit:int, search:str, value:str):
     base = db.query(models.phase1)
     if search and value:
@@ -120,9 +117,6 @@ async def read_phase_1_by_id(db: Session, id: int):
     return db.query(models.phase1).filter(models.phase1.id == id).first()
 
 async def update_hash_form(db: Session, hash:str):
-    pass
-
-async def  update_phase_1_by_id(db: Session, id: int):
     pass
     
 # async def update_phase1(db:Session, id:int, phase1:schemas.update_phase1):

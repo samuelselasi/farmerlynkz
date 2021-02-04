@@ -49,7 +49,6 @@ class get_Phase1(BaseModel):
     kra: FormBase
     target: FormBase
     resource_required: FormBase
-
 class approve_phase1(BaseModel):
     # kra: FormBase
     # target: FormBase

@@ -1,3 +1,4 @@
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from datetime import datetime, time, timedelta
 from typing import List, Optional
 from fastapi import Body, FastAPI
@@ -5,7 +6,7 @@ from pydantic import BaseModel
 from typing import Optional
 from uuid import UUID
 import datetime
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+
 # from sqlalchemy import DateTime
 
 class UserBase(BaseModel):
@@ -21,25 +22,20 @@ class UserBase(BaseModel):
     position: str
     grade: int
 class UserCreate(UserBase):
-    pass
-    
+    pass  
 class update_staff(UserBase):
     pass
-
 class User(UserBase):
     id: int
-
-
 class DeadlineTable(BaseModel):
     deadline_type: str
     start_date: Optional[datetime.datetime]
     ending: Optional[datetime.datetime]
     deadline_id: int
-
 class create_deadline(DeadlineTable):
     pass
-
-
+class update_deadline_table(DeadlineTable):
+    pass
 class read_deadline_table(BaseModel):
     deadline_type: DeadlineTable
     start_date: DeadlineTable
