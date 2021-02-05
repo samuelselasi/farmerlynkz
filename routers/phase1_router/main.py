@@ -18,8 +18,8 @@ async def read_annual_plan(db: Session = Depends(get_db)):
     return await crud.read_annual_plan(db)
 
 @router.delete("/annual/plan")
-async def delete_annual_plan(db: Session = Depends(get_db)):
-    return await crud.delete_annual_plan(db)
+async def delete_annual_plan(annual_plan: schemas.delete_annual_plan, db: Session = Depends(get_db)):
+    return await crud.delete_annual_plan(annual_plan, db)
 
 @router.put("/annual/plan")
 async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session = Depends(get_db)):
@@ -34,8 +34,8 @@ async def read_appraisal_form(db: Session = Depends(get_db)):
     return await crud.read_appraisal_form(db)
 
 @router.delete("/appraisal/form")
-async def delete_appraisal_form(db: Session = Depends(get_db)):
-    return await crud.delete_appraisal_form(db)
+async def delete_appraisal_form(appraisal_form:schemas.delete_appraisal_form, db: Session = Depends(get_db)):
+    return await crud.delete_appraisal_form(appraisal_form, db)
 
 @router.put("/appraisal/form")
 async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session = Depends(get_db)):
@@ -57,10 +57,14 @@ async def delete_annual_appraisal(db: Session = Depends(get_db)):
 async def update_annual_appraisal(annual_appraisal: schemas.update_annual_appraisal, db: Session = Depends(get_db)):
     return await crud.update_annual_appraisal(annual_appraisal, db)
 
+@router.delete("/annual/appraisal/")
+async def delete_annual_appraisal(annual_appraisal:schemas.delete_annual_appraisal, db: Session = Depends(get_db)):
+    return await crud.delete_annual_appraisal(annual_appraisal, db)
+
 @router.get("/form/{hash}")
 async def read_hash_form(hash: str, db: Session = Depends(get_db)):
     return await crud.read_hash_form(hash, db)
-
+    
 # @router.post("/check_email_hash")
 # def check_email_hash(background_tasks:BackgroundTasks):
 #     return crud.check_email_hash(background_tasks)

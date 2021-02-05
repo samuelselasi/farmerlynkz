@@ -25,17 +25,29 @@ class AppraisalForm(BaseModel):
     appraisal_form_id:int 
     date: datetime
     staff_id: int
+class DeleteAnnualAppraisal(BaseModel):
+    annual_appraisal_id: int
+class DeleteAnnualPlan(BaseModel):
+    annual_plan_id: int
+class DeleteAppraisalForm(BaseModel):
+    appraisal_form_id: int    
 class create_appraisal_form(AppraisalForm):
     pass
 class update_appraisal_form(AppraisalForm):
+    pass
+class delete_appraisal_form(DeleteAppraisalForm):
     pass
 class create_annual_plan(FormBase):
     pass  
 class update_annual_plan(FormBase):
     pass
+class delete_annual_plan(DeleteAnnualPlan):
+    pass
 class create_annual_appraisal(AnnualAppraisal):
     pass
 class update_annual_appraisal(AnnualAppraisal):
+    pass
+class delete_annual_appraisal(DeleteAnnualAppraisal):
     pass
 class UpdateForm(BaseModel):
     kra: FormBase

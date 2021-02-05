@@ -27,11 +27,19 @@ class update_staff(UserBase):
     pass
 class User(UserBase):
     id: int
+class DeleteStaff(BaseModel):
+    staff_id: int
+class delete_staff(DeleteStaff):
+    pass
 class DeadlineTable(BaseModel):
     deadline_type: str
     start_date: Optional[datetime.datetime]
     ending: Optional[datetime.datetime]
     deadline_id: int
+class DeleteDeadline(BaseModel):
+    deadline_id: int
+class delete_deadline(DeleteDeadline):
+    pass        
 class create_deadline(DeadlineTable):
     pass
 class update_deadline_table(DeadlineTable):

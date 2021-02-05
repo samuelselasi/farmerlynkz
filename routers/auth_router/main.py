@@ -57,9 +57,9 @@ async def read_staff(db: Session = Depends(get_db)):
 async def update_staff(staff:schemas.update_staff, db:Session = Depends(get_db)):
     return await crud.update_staff(staff, db)
 
-@router.get("/")
-async def read_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100, search:str=None, value:str=None):
-    return await crud.get_users(db,skip,limit,search,value)
+@router.delete("/staff/")
+async def delete_staff(staff: schemas.delete_staff, db: Session = Depends(get_db)):
+    return await crud.delete_staff(staff, db)
   
 @router.post("/deadline")
 async def create_deadline(deadline:schemas.create_deadline, db: Session = Depends(get_db) ):
@@ -72,6 +72,10 @@ async def read_deadline_table(db: Session = Depends(get_db)):
 @router.put("/deadline/table")
 async def update_deadline_table(deadline: schemas.update_deadline_table, db: Session = Depends(get_db)):
     return await crud.update_deadline_table(deadline, db)
+
+@router.delete("/deadline/")
+async def delete_deadline(deadline: schemas.delete_deadline, db: Session = Depends(get_db)):
+    return await crud.delete_deadline(deadline, db)    
 
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -86,3 +90,7 @@ async def update_user(id: int, payload: schemas.UserCreate, db: Session = Depend
 @router.get("/{id}")
 async def read_user(id: int, db: Session = Depends(get_db)):
     return await crud.get_user(db, id)
+
+@router.get("/")
+async def read_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100, search:str=None, value:str=None):
+    return await crud.get_users(db,skip,limit,search,value)
