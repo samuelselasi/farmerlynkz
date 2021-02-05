@@ -46,8 +46,24 @@ CREATE FUNCTION public.add_staff(stdfname character varying, stdsname character 
     AS $$
 declare
 begin
-insert into public.staff(fname,sname,oname,gender,supervisor,email,role,department,position,grade)
-values(stdfname,stdsname,stdoname,stdgender,stdsupervisor,stdemail,stdrole,stddepartment,stdposition,stdgrade);
+insert into public.staff(fname,sname,oname,gender,supervisor,email,role,department,position,grade,appointment)
+values(stdfname,stdsname,stdoname,stdgender,stdsupervisor,stdemail,stdrole,stddepartment,stdposition,stdgrade,stdappointment);
+return 'inserted successfully';
+	   end;
+$$;
+
+
+--
+-- Name: add_staff(character varying, character varying, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.add_staff(stdfname character varying, stdsname character varying, stdoname character varying, stdgender character varying, stdsupervisor integer, stdemail character varying, stdrole character varying, stddepartment character varying, stdposition character varying, stdgrade integer, stdappointment date) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+insert into public.staff(fname,sname,oname,gender,supervisor,email,role,department,position,grade,appointment)
+values(stdfname,stdsname,stdoname,stdgender,stdsupervisor,stdemail,stdrole,stddepartment,stdposition,stdgrade,stdappointment);
 return 'inserted successfully';
 	   end;
 $$;
@@ -136,6 +152,45 @@ values(stdcategory,stdweight,stdsub,stdmain ,stdcompetency_id ,stdappraisal_id )
 ;
 
 return 'inserted successfully';
+end;
+$$;
+
+
+--
+-- Name: create_appraisal_form(character varying, character varying, character varying, integer, date, integer, character varying, character varying, character varying, integer, integer, character varying); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.create_appraisal_form(stddeadline character varying, stddepartment character varying, stdposition character varying, stdgrade integer, stddate date, stdstaff_id integer, stdprogress_review character varying, stdremarks character varying, stdassessment character varying, stdscore integer, stdweight integer, stdcomment character varying) RETURNS jsonb
+    LANGUAGE plpgsql
+    AS $$
+declare
+vv jsonb;
+indate date;
+begin 
+
+select start_date from public.deadline where deadline_type='Start' and start_date='2021-02-20';
+insert into public.appraisal_form("appraisal_form_id","department","position","grade","date","staff_id")
+values((SELECT MAX(appraisal_form_id)+1 FROM public.appraisal_form),'Consultancy','Developer',90,'2021-02-20',23);
+
+if stddeadline='Mid'
+then
+select start_date from public.deadline where deadline_type='Mid' and start_date='2021-03-30';
+SELECT exists (SELECT 1 FROM public.appraisal_form WHERE staff_id = 23 LIMIT 1);
+insert into public.midyear_review("midyear_review_id","staff_id","progress_review","remarks","appraisal_form_id","annual_plan_id")
+values((SELECT MAX(midyear_review_id)+1 FROM public.midyear_review),23,'review1','good',
+	   (SELECT appraisal_form_id FROM public.appraisal_form where staff_id=23 limit 1),
+	   (SELECT annual_plan_id FROM public.annual_plan where staff_id=23 limit 1));
+
+elsif stddeadline='End'
+then
+select start_date from public.deadline where deadline_type='End' and start_date='2021-04-02';
+SELECT exists (SELECT 1 FROM public.appraisal_form WHERE staff_id = 23 LIMIT 1);
+insert into public.endofyear_review("endofyear_review_id","assessment","score","comment","weight","appraisal_form_id","annual_plan_id")
+values((SELECT MAX(endofyear_review_id)+1 FROM public.endofyear_review),'good',20,'good',100,
+	   (SELECT appraisal_form_id FROM public.appraisal_form where staff_id=23 limit 1),(SELECT annual_plan_id FROM public.annual_plan where staff_id=18 limit 1));
+
+end if;
+
 end;
 $$;
 
@@ -711,9 +766,27 @@ CREATE FUNCTION public.update_annual_appraisal_status(stdannual_appraisal_id int
 declare
 begin
 update annual_appraisal set Status=1
-where annual_appraisal=stdannual_appraisal_id;
+where annual_appraisal_id=stdannual_appraisal_id;
 return 'Status Changed';
 	   end;
+$$;
+
+
+--
+-- Name: update_annual_plan(character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_annual_plan(result_areas character varying, target character varying, resources character varying) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE  annual_plan
+    SET result_areas = '@usercategoryidf', 
+       target = '@usertypeidf', 
+       resources = '@usertypereferenceidf'
+ 
+    WHERE   status = 1; 
+END;
 $$;
 
 
@@ -730,6 +803,25 @@ update annual_plan set Status=1
 where annual_plan_id=stdannual_plan_id;
 return 'Status Changed';
 	   end;
+$$;
+
+
+--
+-- Name: update_appraisal_form(character varying, integer, character varying, date); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_appraisal_form(stddepartment character varying, stdgrade integer, stdposition character varying, stddate date) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE  annual_plan                                         
+    SET department = 'department', 
+      grade = 'grade', 
+       position = 'position'
+	  
+ 
+    WHERE   status = 1; 
+END;
 $$;
 
 
@@ -759,9 +851,31 @@ CREATE FUNCTION public.update_midyyear_review_status(stdmidyyear_review_id integ
 declare
 begin
 update annual_appraisal set Status=1
-where annual_appraisal=stdmidyyear_review_id;
+where annual_appraisal_id=stdmidyyear_review_id;
 return 'Status Changed';
 	   end;
+$$;
+
+
+--
+-- Name: update_staff(character varying, character varying, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.update_staff(fname character varying, sname character varying, oname character varying, gender character varying, supervisor integer, email character varying, role character varying, department character varying, positions character varying, grade integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE  staff
+    SET fname = '@usercategoryidf',            
+       sname = '@usertypeidf', 
+      gende = '@usertypereferenceidf',
+ 	supervisor= '@usertypereferenceidf',
+	email='@usertypereferenceidf',
+	department='@usertypereferenceidf',
+	position='@usertypereferenceidf',
+	grade= '@usertypereferenceidf'
+    WHERE   status = 1; 
+END;
 $$;
 
 
@@ -830,7 +944,8 @@ CREATE TABLE public.annual_plan (
     appraisal_form_id integer,
     annual_plan_id bigint NOT NULL,
     status integer DEFAULT 0,
-    form_hash character varying
+    form_hash character varying,
+    staff_id integer
 );
 
 
@@ -962,7 +1077,8 @@ CREATE TABLE public.endofyear_review (
     endofyear_review_id bigint NOT NULL,
     annual_plan_id integer,
     weight integer,
-    status integer DEFAULT 0
+    status integer DEFAULT 0,
+    staff_id integer
 );
 
 
@@ -1088,7 +1204,8 @@ CREATE TABLE public.midyear_review (
     remarks character varying,
     status integer DEFAULT 0,
     appraisal_form_id integer,
-    annual_plan_id integer
+    annual_plan_id integer,
+    staff_id integer
 );
 
 
@@ -1125,8 +1242,9 @@ CREATE TABLE public.staff (
     gender character varying NOT NULL,
     role character varying NOT NULL,
     department character varying NOT NULL,
-    "position" character varying NOT NULL,
-    grade integer NOT NULL
+    positions character varying NOT NULL,
+    grade integer NOT NULL,
+    appointment date
 );
 
 
@@ -1147,6 +1265,23 @@ CREATE SEQUENCE public.staff_staff_id_seq
 --
 
 ALTER SEQUENCE public.staff_staff_id_seq OWNED BY public.staff.staff_id;
+
+
+--
+-- Name: supervisor_name; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.supervisor_name AS
+ SELECT staff.supervisor
+   FROM public.staff
+  WHERE (staff.supervisor = 1);
+
+
+--
+-- Name: VIEW supervisor_name; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON VIEW public.supervisor_name IS 'Admin';
 
 
 --
@@ -1315,9 +1450,11 @@ ALTER TABLE ONLY public.yearly_details ALTER COLUMN yearly_details_id SET DEFAUL
 -- Data for Name: annual_plan; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash) VALUES ('Everything', 'Execute', 'Good', 16, 32, 1, '96ba5594d7d04f71150a81c417f53a34');
-INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash) VALUES (NULL, NULL, NULL, NULL, 34, 1, '60e8beba18e9a8550e725038b584df17');
-INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash) VALUES (NULL, NULL, NULL, NULL, 33, 1, '777179eebfcc3fee3648cbfc6fb3ea86');
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES ('Everything', 'Execute', 'Good', 16, 32, 1, '96ba5594d7d04f71150a81c417f53a34', NULL);
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 34, 1, '60e8beba18e9a8550e725038b584df17', NULL);
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 33, 1, '777179eebfcc3fee3648cbfc6fb3ea86', NULL);
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, 17, 35, 0, NULL, NULL);
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, 18, 36, 0, NULL, NULL);
 
 
 --
@@ -1325,6 +1462,8 @@ INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_
 --
 
 INSERT INTO public.appraisal_form (department, grade, "position", appraisal_form_id, date, staff_id) VALUES ('Research', 100, 'Developer', 16, '2021-02-20', 1);
+INSERT INTO public.appraisal_form (department, grade, "position", appraisal_form_id, date, staff_id) VALUES ('Research', 100, 'Developer', 17, '2021-03-30', 1);
+INSERT INTO public.appraisal_form (department, grade, "position", appraisal_form_id, date, staff_id) VALUES ('Consultancy', 90, 'Developer', 18, '2021-02-20', 23);
 
 
 --
@@ -1347,7 +1486,9 @@ INSERT INTO public.deadline (deadline_type, start_date, ending, deadline_id) VAL
 -- Data for Name: endofyear_review; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status) VALUES ('Well Done', 100, 'improve', 16, 1, 32, 200, 1);
+INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status, staff_id) VALUES ('Well Done', 100, 'improve', 16, 1, 32, 200, 1, NULL);
+INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status, staff_id) VALUES ('good', 20, 'good', 18, 2, 36, 100, 0, NULL);
+INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status, staff_id) VALUES ('good', 20, 'good', 18, 3, NULL, 100, 0, NULL);
 
 
 --
@@ -1376,14 +1517,16 @@ INSERT INTO public."logIn" (staff_id, username, email, password, login_id) VALUE
 -- Data for Name: midyear_review; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.midyear_review (midyear_review_id, progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id) VALUES (1, 'hiturhfr', 'fgdfgfdfdd', 0, 17, 32, 1);
+INSERT INTO public.midyear_review (midyear_review_id, progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id) VALUES (2, 'review1', 'good', 0, 18, 36, 23);
 
 
 --
 -- Data for Name: staff; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, "position", grade) VALUES (1, 'PRINCE', 'ADDO', 'ADEJI', 'paddo144@gmail.com', 1, 'male', 'Admin', 'Research', 'Manager', 100);
-INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, "position", grade) VALUES (23, 'SAMMY', 'AKI', 'PAWPAW', 'great@gamil.com', 2, 'male', 'Director', 'Consultancy', 'Developer', 90);
+INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (1, 'PRINCE', 'ADDO', 'ADEJI', 'paddo144@gmail.com', 1, 'male', 'Admin', 'Research', 'Manager', 100, NULL);
+INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (23, 'SAMMY', 'AKI', 'PAWPAW', 'great@gamil.com', 2, 'male', 'Director', 'Consultancy', 'Developer', 90, NULL);
 
 
 --
@@ -1411,7 +1554,7 @@ SELECT pg_catalog.setval('public.annual_appraisal_appraisal_id_seq', 1, false);
 -- Name: annual_plan _annual_plan_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."annual_plan _annual_plan_id_seq"', 34, true);
+SELECT pg_catalog.setval('public."annual_plan _annual_plan_id_seq"', 36, true);
 
 
 --
@@ -1604,6 +1747,30 @@ ALTER TABLE ONLY public.midyear_review
 
 
 --
+-- Name: midyear_review staff_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.midyear_review
+    ADD CONSTRAINT staff_id UNIQUE (staff_id);
+
+
+--
+-- Name: annual_plan staff_id_uq; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annual_plan
+    ADD CONSTRAINT staff_id_uq UNIQUE (staff_id);
+
+
+--
+-- Name: endofyear_review staff_id_uq_1; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.endofyear_review
+    ADD CONSTRAINT staff_id_uq_1 UNIQUE (staff_id);
+
+
+--
 -- Name: staff staff_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1741,6 +1908,38 @@ ALTER TABLE ONLY public.midyear_review
 
 ALTER TABLE ONLY public.midyear_review
     ADD CONSTRAINT mid_fk FOREIGN KEY (annual_plan_id) REFERENCES public.annual_plan(annual_plan_id) NOT VALID;
+
+
+--
+-- Name: annual_plan staff_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annual_plan
+    ADD CONSTRAINT staff_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+
+
+--
+-- Name: endofyear_review staff_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.endofyear_review
+    ADD CONSTRAINT staff_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+
+
+--
+-- Name: midyear_review staff_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.midyear_review
+    ADD CONSTRAINT staff_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+
+
+--
+-- Name: staff sup_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT sup_fk FOREIGN KEY (supervisor) REFERENCES public.staff(staff_id) NOT VALID;
 
 
 --
