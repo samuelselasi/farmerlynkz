@@ -8,8 +8,6 @@ from datetime import date
 from uuid import UUID
 
 
-
-
 async def create_deadline( deadline: schemas.create_deadline, db:Session):
     res = db.execute(""" INSERT INTO public.deadline(deadline_type, start_date, ending) VALUES (:deadline_type, :start_date, :ending); """,{'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
     db.commit()
@@ -75,9 +73,6 @@ async def get_users(db: Session, skip: int = 0, limit: int = 100, search:str=Non
 async def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
-async def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
-
 async def delete_user(db: Session,id: int):
     user = db.query(models.User).filter(models.User.id == id).first()
     if not user:
@@ -85,14 +80,6 @@ async def delete_user(db: Session,id: int):
     db.delete(user)
     db.commit()
     return user + 'deleted'
-
-async def update_user(db: Session, id: int, payload: schemas.UserCreate):
-    user = db.query(models.User).filter(models.User.id == id).first()
-    if not user:
-        return user + 'not found'
-    res = db.query(models.User).filter(models.User.id == id).update(payload)
-    db.commit()
-    return res
 
 
 

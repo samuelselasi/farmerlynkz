@@ -7,9 +7,7 @@ from routers.staff_router import models
 from routers.auth_router import models
 from routers.appraiser import models
 from fastapi import BackgroundTasks
-#from services import email
 from fastapi import FastAPI
-
 
 api = FastAPI(docs_url="/api/docs")
 
@@ -23,20 +21,16 @@ api.add_middleware(
     allow_headers=["*"],
 )
 
-import pytz
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-# from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.triggers.cron import CronTrigger
-# job schedular
-
+import pytz
 
 jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
 job_defaults = { 'coalesce': False, 'max_instances': 3}
 scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=pytz.utc, misfire_grace_time=1)
-
 
 def send_email():
     
@@ -68,9 +62,7 @@ def get_db():
         db.close()
 
 #models.Base.metadata.create_all(bind=engine)
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
-
 
 from routers.phase1_router import main as phase1
 from routers.appraiser import main as appraiser

@@ -99,14 +99,6 @@ async def create_review_start( db: Session, phase1: schemas.create_review_start 
     return 'success'
     '''
 
-async def delete_phase1(db: Session, id: int):
-    phase1 = db.query(models.phase1).filter(models.phase1.id == id).first()
-    if not phase1:
-        return 'staff not found'
-    db.delete(phase1)
-    db.commit()
-    return 'staff deleted'
-
 async def read_phase_1(db: Session, skip:int, limit:int, search:str, value:str):
     base = db.query(models.phase1)
     if search and value:
@@ -116,17 +108,5 @@ async def read_phase_1(db: Session, skip:int, limit:int, search:str, value:str):
             return base.offset(skip).limit(limit).all()
     return base.offset(skip).limit(limit).all()
 
-async def read_phase_1_by_id(db: Session, id: int):
-    return db.query(models.phase1).filter(models.phase1.id == id).first()
-
 async def update_hash_form(db: Session, hash:str):
     pass
-    
-# async def update_phase1(db:Session, id:int, phase1:schemas.update_phase1):
-#     phase1 = await get_phase1_by_id(db, id)
-#     if not phase1:
-#         raise HTTPException(status_code=404)
-#     updated = db.query(models.phase1).filter(models.phase1.id==id).update(phase1.dict(exclude_unset=True))
-#     db.commit()
-#     if updated:
-#         return await get_phase1_by_id(db, id)

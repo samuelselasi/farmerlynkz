@@ -83,10 +83,6 @@ async def delete_deadline(deadline: schemas.delete_deadline, db: Session = Depen
 async def delete_user(id: int, db: Session = Depends(get_db)):
     return await crud.delete_user(db, id)
 
-@router.put("/update/{id}")
-async def update_user(id: int, payload: schemas.UserCreate, db: Session = Depends(get_db)):
-    return await crud.update_user(db,id,payload)    \
-
 @router.get("/{id}")
 async def read_user(id: int, db: Session = Depends(get_db)):
     return await crud.get_user(db, id)
