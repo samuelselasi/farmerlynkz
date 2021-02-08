@@ -38,48 +38,49 @@ CREATE TYPE public.role_type AS ENUM (
 
 
 --
+-- Name: add_login(integer, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.add_login(stdstaff_id integer, stdusername character varying, stdemail character varying, stdpassword character varying) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+declare
+begin
+insert into public.login(staff_id,username,email,password)
+values(stdstaff_id,stdusername,stdemail,stdpassword);
+
+return 'inserted successfully';
+end;
+$$;
+
+
+--
 -- Name: add_staff(character varying, character varying, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.add_staff(stdfname character varying, stdsname character varying, stdoname character varying, stdgender character varying, stdsupervisor integer, stdemail character varying, stdrole character varying, stddepartment character varying, stdposition character varying, stdgrade integer) RETURNS character varying
+CREATE FUNCTION public.add_staff(stdfname character varying, stdsname character varying, stdoname character varying, stdemail character varying, stdsupervisor integer, stdgender character varying, stdrole character varying, stddepartment character varying, stdpositions character varying, stdgrade integer) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
 begin
-insert into public.staff(fname,sname,oname,gender,supervisor,email,role,department,position,grade,appointment)
-values(stdfname,stdsname,stdoname,stdgender,stdsupervisor,stdemail,stdrole,stddepartment,stdposition,stdgrade,stdappointment);
+insert into public.staff(fname,sname,oname,email,supervisor,gender,role,department,positions,grade)
+values(stdfname,stdsname,stdoname,stdemail,stdsupervisor,stdgender,stdrole,stddepartment,stdpositions,stdgrade);
 return 'inserted successfully';
 	   end;
 $$;
 
 
 --
--- Name: add_staff(character varying, character varying, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer, date); Type: FUNCTION; Schema: public; Owner: -
+-- Name: annual_appraisal(integer, character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.add_staff(stdfname character varying, stdsname character varying, stdoname character varying, stdgender character varying, stdsupervisor integer, stdemail character varying, stdrole character varying, stddepartment character varying, stdposition character varying, stdgrade integer, stdappointment date) RETURNS character varying
+CREATE FUNCTION public.annual_appraisal(stdgrade integer, stdcomment character varying, stdfield character varying, stdappraisal_form_id integer) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
 begin
-insert into public.staff(fname,sname,oname,gender,supervisor,email,role,department,position,grade,appointment)
-values(stdfname,stdsname,stdoname,stdgender,stdsupervisor,stdemail,stdrole,stddepartment,stdposition,stdgrade,stdappointment);
-return 'inserted successfully';
-	   end;
-$$;
-
-
---
--- Name: annual_appraisal(integer, character varying, character varying, integer, character varying, bigint); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.annual_appraisal(stdgrade integer, stdcomment character varying, stdfield character varying, stdappraisalid integer, stdstatus character varying, stdannual_appraisal_id bigint) RETURNS character varying
-    LANGUAGE plpgsql
-    AS $$
-declare
-begin
-insert into public.annual_appraisal(grade,comment,field,appraisal_id,status,annual_appraisal_id)
-values(stdGrade ,stdComment ,stdField,stdAppraisalID,stdStatus,stdID,stdDateStart,stdDateEnd);
+insert into public.annual_appraisal("grade","comment","field","appraisal_form_id")
+values(stdgrade ,stdcomment ,stdfield,stdappraisal_form_id);
 return 'inserted successfully';
 	   end;
 $$;
@@ -708,16 +709,16 @@ $$;
 
 
 --
--- Name: login(integer, character varying, character varying, character varying, bigint); Type: FUNCTION; Schema: public; Owner: -
+-- Name: login(integer, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.login(stdstaff_id integer, stdusername character varying, stdemail character varying, stdpassword character varying, stdlogin_id bigint) RETURNS character varying
+CREATE FUNCTION public.login(stdstaff_id integer, stdusername character varying, stdemail character varying, stdpassword character varying) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
 begin
-insert into public.login(staff_id,username,email,password,login_id)
-values(stdstaff_id,stdusername,stdemail,stdpassword,stdlogin_id);
+insert into public.login(staff_id,username,email,password)
+values(stdstaff_id,stdusername,stdemail,stdpassword);
 
 return 'inserted successfully';
 end;
@@ -889,7 +890,7 @@ CREATE FUNCTION public.yearly_details() RETURNS trigger
 BEGIN
 	
 		 INSERT INTO "yearly_details"("department","grade","position","staff_id")
-		 VALUES(new."department",new."grade",new."position",new."staff_id");
+		 VALUES(new."department",new."grade",new."positions",new."staff_id");
 
 	RETURN NEW;
 END;
@@ -909,7 +910,7 @@ CREATE TABLE public.annual_appraisal (
     comment character varying NOT NULL,
     field character varying NOT NULL,
     appraisal_form_id bigint NOT NULL,
-    status character varying NOT NULL,
+    status character varying,
     annual_appraisal_id integer NOT NULL
 );
 
@@ -1163,10 +1164,10 @@ ALTER SEQUENCE public.hash_table_hash_table_id_seq OWNED BY public.hash_table.ha
 
 
 --
--- Name: logIn; Type: TABLE; Schema: public; Owner: -
+-- Name: login; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."logIn" (
+CREATE TABLE public.login (
     staff_id integer NOT NULL,
     username character varying NOT NULL,
     email character varying NOT NULL,
@@ -1191,7 +1192,7 @@ CREATE SEQUENCE public."logIn_login_id_seq"
 -- Name: logIn_login_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public."logIn_login_id_seq" OWNED BY public."logIn".login_id;
+ALTER SEQUENCE public."logIn_login_id_seq" OWNED BY public.login.login_id;
 
 
 --
@@ -1406,10 +1407,10 @@ ALTER TABLE ONLY public.hash_table ALTER COLUMN hash_table_id SET DEFAULT nextva
 
 
 --
--- Name: logIn login_id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: login login_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."logIn" ALTER COLUMN login_id SET DEFAULT nextval('public."logIn_login_id_seq"'::regclass);
+ALTER TABLE ONLY public.login ALTER COLUMN login_id SET DEFAULT nextval('public."logIn_login_id_seq"'::regclass);
 
 
 --
@@ -1455,6 +1456,9 @@ INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 33, 1, '777179eebfcc3fee3648cbfc6fb3ea86', NULL);
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, 17, 35, 0, NULL, NULL);
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, 18, 36, 0, NULL, NULL);
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 38, 0, '697036738e0aad6c86dbc9241ef263bc', NULL);
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 39, 0, 'af0fae483a42222288e132b74f43b33f', NULL);
+INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 40, 0, 'd4031e0525923a1da4bc89eb2cf4fc2a', NULL);
 
 
 --
@@ -1503,14 +1507,18 @@ INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_
 
 INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('96ba5594d7d04f71150a81c417f53a34', 'paddo144@gmail.com', 39);
 INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('777179eebfcc3fee3648cbfc6fb3ea86', 'great@gamil.com', 40);
+INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('697036738e0aad6c86dbc9241ef263bc', 'sdkjbfkjdbg', 43);
+INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('af0fae483a42222288e132b74f43b33f', 'jhewbdwe', 44);
+INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('d4031e0525923a1da4bc89eb2cf4fc2a', 'jhewbdwe', 45);
 
 
 --
--- Data for Name: logIn; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: login; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public."logIn" (staff_id, username, email, password, login_id) VALUES (1, 'iwan', 'paddo144@gmail.com', 'asdd', 1);
-INSERT INTO public."logIn" (staff_id, username, email, password, login_id) VALUES (23, 'sammy', 'sammy@gmail.com', 'dcd', 5);
+INSERT INTO public.login (staff_id, username, email, password, login_id) VALUES (1, 'iwan', 'paddo144@gmail.com', 'asdd', 1);
+INSERT INTO public.login (staff_id, username, email, password, login_id) VALUES (23, 'sammy', 'sammy@gmail.com', 'dcd', 5);
+INSERT INTO public.login (staff_id, username, email, password, login_id) VALUES (1, 'scbsbc', 'jscjc', 'kcnknck', 6);
 
 
 --
@@ -1527,6 +1535,8 @@ INSERT INTO public.midyear_review (midyear_review_id, progress_review, remarks, 
 
 INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (1, 'PRINCE', 'ADDO', 'ADEJI', 'paddo144@gmail.com', 1, 'male', 'Admin', 'Research', 'Manager', 100, NULL);
 INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (23, 'SAMMY', 'AKI', 'PAWPAW', 'great@gamil.com', 2, 'male', 'Director', 'Consultancy', 'Developer', 90, NULL);
+INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (26, 'kjdbjb', 'jafbjkadsbfds', 'ekfewkjfiew', 'sdkjbfkjdbg', 1, 'djfbjdbjd', 'ksdbvkjdvjbh', 'dkvnkjsdnvdsj', 'dkjcbjdsbcds', 5558, NULL);
+INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (27, 'djsbdjs', 'jdbfjew', 'wdejbfeh', 'jhewbdwe', 1, 'dwdw', 'dwede', 'ewfwef', 'wfef', 1000, '2020-10-15');
 
 
 --
@@ -1541,6 +1551,8 @@ INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gend
 
 INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('Research', 100, 'Manager', '2021-01-29', 1, 22);
 INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('Consultancy', 90, 'Developer', '2021-01-29', 23, 23);
+INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('dkvnkjsdnvdsj', 5558, 'dkjcbjdsbcds', '2021-02-05', 26, 24);
+INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('ewfwef', 1000, 'wfef', '2021-02-08', 27, 25);
 
 
 --
@@ -1554,7 +1566,7 @@ SELECT pg_catalog.setval('public.annual_appraisal_appraisal_id_seq', 1, false);
 -- Name: annual_plan _annual_plan_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."annual_plan _annual_plan_id_seq"', 36, true);
+SELECT pg_catalog.setval('public."annual_plan _annual_plan_id_seq"', 40, true);
 
 
 --
@@ -1596,14 +1608,14 @@ SELECT pg_catalog.setval('public.form_completion_form_completion_id_seq', 1, fal
 -- Name: hash_table_hash_table_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.hash_table_hash_table_id_seq', 41, true);
+SELECT pg_catalog.setval('public.hash_table_hash_table_id_seq', 45, true);
 
 
 --
 -- Name: logIn_login_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public."logIn_login_id_seq"', 5, true);
+SELECT pg_catalog.setval('public."logIn_login_id_seq"', 6, true);
 
 
 --
@@ -1617,7 +1629,7 @@ SELECT pg_catalog.setval('public.midyear_review_midyear_review_id_seq', 1, false
 -- Name: staff_staff_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.staff_staff_id_seq', 23, true);
+SELECT pg_catalog.setval('public.staff_staff_id_seq', 27, true);
 
 
 --
@@ -1631,7 +1643,7 @@ SELECT pg_catalog.setval('public.training_recieved_training_recieved_id_seq', 1,
 -- Name: yearly_details_yearly_details_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.yearly_details_yearly_details_id_seq', 23, true);
+SELECT pg_catalog.setval('public.yearly_details_yearly_details_id_seq', 25, true);
 
 
 --
@@ -1731,10 +1743,10 @@ ALTER TABLE ONLY public.hash_table
 
 
 --
--- Name: logIn logIn_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: login logIn_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."logIn"
+ALTER TABLE ONLY public.login
     ADD CONSTRAINT "logIn_pkey" PRIMARY KEY (login_id);
 
 
@@ -1831,67 +1843,67 @@ CREATE TRIGGER yearly_details AFTER INSERT ON public.staff FOR EACH ROW EXECUTE 
 
 
 --
+-- Name: annual_plan ann1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.annual_plan
+    ADD CONSTRAINT ann1_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+
+
+--
 -- Name: annual_appraisal ann_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.annual_appraisal
-    ADD CONSTRAINT ann_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
+    ADD CONSTRAINT ann_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: annual_plan ann_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.annual_plan
-    ADD CONSTRAINT ann_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
-
-
---
--- Name: appraisal_form app_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: appraisal_form app1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.appraisal_form
-    ADD CONSTRAINT app_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+    ADD CONSTRAINT app1_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: endofyear_review end_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.endofyear_review
-    ADD CONSTRAINT end_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
-
-
---
--- Name: endofyear_review end_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: endofyear_review end1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.endofyear_review
-    ADD CONSTRAINT end_fk_2 FOREIGN KEY (annual_plan_id) REFERENCES public.annual_plan(annual_plan_id) NOT VALID;
+    ADD CONSTRAINT end1_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: form_completion form_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: endofyear_review end2_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.endofyear_review
+    ADD CONSTRAINT end2_fk FOREIGN KEY (annual_plan_id) REFERENCES public.annual_plan(annual_plan_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+
+
+--
+-- Name: form_completion form2_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.form_completion
-    ADD CONSTRAINT form_fk FOREIGN KEY (appraisal_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
+    ADD CONSTRAINT form2_fk FOREIGN KEY (appraisal_id) REFERENCES public.appraisal_form(appraisal_form_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: hash_table hash_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: hash_table hash1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.hash_table
-    ADD CONSTRAINT hash_fk FOREIGN KEY (email) REFERENCES public.staff(email) NOT VALID;
+    ADD CONSTRAINT hash1_fk FOREIGN KEY (email) REFERENCES public.staff(email) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: logIn login_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: login login1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."logIn"
-    ADD CONSTRAINT login_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+ALTER TABLE ONLY public.login
+    ADD CONSTRAINT login1_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -1899,31 +1911,31 @@ ALTER TABLE ONLY public."logIn"
 --
 
 ALTER TABLE ONLY public.midyear_review
-    ADD CONSTRAINT mid2_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
+    ADD CONSTRAINT mid2_fk FOREIGN KEY (appraisal_form_id) REFERENCES public.appraisal_form(appraisal_form_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: midyear_review mid_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: midyear_review mid3_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.midyear_review
-    ADD CONSTRAINT mid_fk FOREIGN KEY (annual_plan_id) REFERENCES public.annual_plan(annual_plan_id) NOT VALID;
+    ADD CONSTRAINT mid3_fk FOREIGN KEY (annual_plan_id) REFERENCES public.annual_plan(annual_plan_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: annual_plan staff_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: annual_plan staff1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.annual_plan
-    ADD CONSTRAINT staff_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+    ADD CONSTRAINT staff1_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: endofyear_review staff_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: endofyear_review staff1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.endofyear_review
-    ADD CONSTRAINT staff_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+    ADD CONSTRAINT staff1_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -1931,23 +1943,23 @@ ALTER TABLE ONLY public.endofyear_review
 --
 
 ALTER TABLE ONLY public.midyear_review
-    ADD CONSTRAINT staff_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+    ADD CONSTRAINT staff_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: staff sup_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: staff sup1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.staff
-    ADD CONSTRAINT sup_fk FOREIGN KEY (supervisor) REFERENCES public.staff(staff_id) NOT VALID;
+    ADD CONSTRAINT sup1_fk FOREIGN KEY (supervisor) REFERENCES public.staff(staff_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
--- Name: training_recieved train_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: training_recieved train1_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.training_recieved
-    ADD CONSTRAINT train_fk FOREIGN KEY (appraisal_id) REFERENCES public.appraisal_form(appraisal_form_id) NOT VALID;
+    ADD CONSTRAINT train1_fk FOREIGN KEY (appraisal_id) REFERENCES public.appraisal_form(appraisal_form_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -1955,7 +1967,7 @@ ALTER TABLE ONLY public.training_recieved
 --
 
 ALTER TABLE ONLY public.yearly_details
-    ADD CONSTRAINT year_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) NOT VALID;
+    ADD CONSTRAINT year_fk FOREIGN KEY (staff_id) REFERENCES public.staff(staff_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --

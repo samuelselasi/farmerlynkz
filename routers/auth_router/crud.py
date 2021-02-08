@@ -21,7 +21,7 @@ async def read_deadline_table(db:Session):
 async def update_deadline_table(deadline: schemas.update_deadline_table, db: Session):
     res = db.execute("""UPDATE public.deadline
 	SET deadline_type=:deadline_type, start_date=:start_date, ending=:ending, deadline_id=:deadline_id
-	WHERE deadline_id=deadline.deadline_id;""",
+	WHERE deadline_id=:deadline_id;""",
     {'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending, 'deadline_id':deadline.deadline_id})
     db.commit()
     return res
@@ -34,20 +34,20 @@ async def delete_deadline(deadline: schemas.delete_deadline, db: Session):
     return res    
 
 async def create_staff( user: schemas.UserCreate, db:Session):
-    res = db.execute("""INSERT INTO public.staff(fname, sname, oname, email, supervisor, gender, role, department, position, grade) VALUES (:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :position, :grade);""",{'fname':user.fname, 'sname':user.sname, 'oname':user.oname, 'email':user.email, 'supervisor':user.supervisor, 'gender':user.gender, 'role':user.role, 'department':user.department, 'position':user.position, 'grade':user.grade})
+    res = db.execute("""INSERT INTO public.staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :positions, :grade, :appointment);""",{'fname':user.fname, 'sname':user.sname, 'oname':user.oname, 'email':user.email, 'supervisor':user.supervisor, 'gender':user.gender, 'role':user.role, 'department':user.department, 'positions':user.positions, 'grade':user.grade, 'appointment':user.appointment})
     db.commit()
     return res
 
 async def read_staff(db:Session):
-    res = db.execute(""" SELECT staff_id, fname, sname, oname, email, supervisor, gender, role, department, "position", grade FROM public.staff; """)
+    res = db.execute(""" SELECT staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment FROM public.staff; """)
     res = res.fetchall()
     return res
 
 async def update_staff(staff: schemas.update_staff, db: Session):
     res = db.execute("""UPDATE public.staff
-    SET staff_id=:staff_id, fname=:fname, sname=:sname, oname=:oname, email=:email, supervisor=:supervisor, gender=:gender, role=:role, department=:department, position=:position, grade=:grade
-    WHERE staff_id=staff.staff_id;""",
-    {'staff_id':staff.staff_id, 'fname':staff.fname, 'sname':staff.sname, 'oname':staff.oname, 'email':staff.email, 'supervisor':staff.supervisor, 'gender':staff.gender, 'role':staff.role, 'department':staff.department, 'position':staff.position, 'grade':staff.grade})
+    SET staff_id=:staff_id, fname=:fname, sname=:sname, oname=:oname, email=:email, supervisor=:supervisor, gender=:gender, role=:role, department=:department, positions=:positions, grade=:grade, appointment=:appointment
+    WHERE staff_id=:staff_id;""",
+    {'staff_id':staff.staff_id, 'fname':staff.fname, 'sname':staff.sname, 'oname':staff.oname, 'email':staff.email, 'supervisor':staff.supervisor, 'gender':staff.gender, 'role':staff.role, 'department':staff.department, 'positions':staff.positions, 'grade':staff.grade, 'appointment':staff.appointment})
     db.commit()
     return res
 

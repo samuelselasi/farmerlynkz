@@ -19,8 +19,10 @@ class UserBase(BaseModel):
     gender: str
     role: str
     department: str
-    position: str
+    positions: str
     grade: int
+    appointment: Optional[datetime.datetime]
+
 class UserCreate(UserBase):
     pass  
 class update_staff(UserBase):
