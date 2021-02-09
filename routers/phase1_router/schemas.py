@@ -25,13 +25,28 @@ class AppraisalForm(BaseModel):
     appraisal_form_id:int 
     date: datetime
     staff_id: int
+class CreateAprpaisalForm(BaseModel):
+    deadline: str
+    department: str
+    position: str
+    grade: int
+    date: datetime
+    staff_id: int
+    progress_review: str
+    remarks: str
+    assessment: str
+    score: int
+    weight: int
+    comment: str
 class DeleteAnnualAppraisal(BaseModel):
     annual_appraisal_id: int
 class DeleteAnnualPlan(BaseModel):
     annual_plan_id: int
 class DeleteAppraisalForm(BaseModel):
     appraisal_form_id: int    
-class create_appraisal_form(AppraisalForm):
+class appraisal_form(AppraisalForm):
+    pass
+class create_appraisal_form(CreateAprpaisalForm):
     pass
 class update_appraisal_form(AppraisalForm):
     pass

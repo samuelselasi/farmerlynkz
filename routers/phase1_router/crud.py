@@ -4,10 +4,16 @@ from sqlalchemy.orm import Session
 from . import models, schemas
 
 
-async def create_appraisal_form(appraisal_form: schemas.create_appraisal_form, db:Session):
-    res = db.execute("""INSERT INTO public.appraisal_form(department, grade, position, appraisal_form_id, date, staff_id) 
-    VALUES (:department, :grade, :position, :appraisal_form_id, :date, :staff_id);""",
-    {'department': appraisal_form.department, 'grade': appraisal_form.grade, 'position': appraisal_form.position, 'appraisal_form_id':appraisal_form.appraisal_form_id, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
+ 
+async def create_appraisal_form(create_appraisal_form: schemas.create_appraisal_form, db:Session):
+    res = db.execute("""SELECT public.appraisal_form(:deadline, :department, :position, :grade, :date, :staff_id, :progress_review, :remarks, :assessment, :score, :weight, :comment);""",
+    {'deadline':create_appraisal_form.deadline, 'department':create_appraisal_form.department, 'position':create_appraisal_form.position, 'grade':create_appraisal_form.grade, 'date':create_appraisal_form.date, 'staff_id':create_appraisal_form.staff_id, 'progress_review':create_appraisal_form.progress_review, 'remarks':create_appraisal_form.remarks, 'assessment':create_appraisal_form.assessment, 'score':create_appraisal_form.score, 'weight':create_appraisal_form.weight, 'comment':create_appraisal_form.comment})
+    db.commit()
+    return res
+
+async def appraisal_form(appraisal_form: schemas.appraisal_form, db:Session):
+    res = db.execute("""SELECT public.appraisal_form(:department, :grade, :position, :date, :staff_id);""",
+    {'department': appraisal_form.department, 'grade': appraisal_form.grade, 'position': appraisal_form.position, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
     db.commit()
     return res
 
@@ -32,8 +38,7 @@ async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, d
     return res
 
 async def create_annual_plan(annual_plan: schemas.create_annual_plan, db:Session):
-    res = db.execute("""INSERT INTO public.annual_plan(result_areas, target, resources, annual_plan_id, status, form_hash)
-    VALUES (:result_areas, :target, :resources, :annual_plan_id, :status, :form_hash);""",{'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'annual_plan_id': annual_plan.annual_plan_id,'status':annual_plan.status, 'form_hash':annual_plan.form_hash})
+    res = db.execute("""SELECT public.annual_plan(:result_areas, :target, :resources, :appraisal_id, :form_hash);""",{'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'appraisal_id': annual_plan.appraisal_id, 'form_hash':annual_plan.form_hash})
     db.commit()
     return res
 
@@ -58,9 +63,8 @@ async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Sessio
     return res
 
 async def create_annual_appraisal(annual_appraisal: schemas.create_annual_appraisal, db:Session):
-    res = db.execute("""INSERT INTO public.annual_appraisal(grade, comment, field, appraisal_form_id, status, annual_appraisal_id) 
-    VALUES (:grade, :comment, :field, :appraisal_form_id, :status, :annual_appraisal_id);""",
-    {'grade':annual_appraisal.grade, 'comment':annual_appraisal.comment,'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'status':annual_appraisal.status, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
+    res = db.execute("""SELECT public.annual_appraisal(:grade, :comment, :field, :appraisal_form_id);""",
+    {'grade':annual_appraisal.grade, 'comment':annual_appraisal.comment,'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id})
     db.commit()
     return res
 

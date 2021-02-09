@@ -26,8 +26,12 @@ async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Sessio
     return await crud.update_annual_plan(annual_plan, db)
 
 @router.post("/appraisal/form")
-async def create_appraisal_form(appraisal_form:schemas.create_appraisal_form, db: Session = Depends(get_db)):
-    return await crud.create_appraisal_form(appraisal_form, db)
+async def appraisal_form(appraisal_form:schemas.appraisal_form, db: Session = Depends(get_db)):
+    return await crud.appraisal_form(appraisal_form, db)
+
+@router.post("/create/appraisal/form/")
+async def create_appraisal_form(create_appraisal_form:schemas.create_appraisal_form, db: Session = Depends(get_db)):
+    return await crud.create_appraisal_form(create_appraisal_form, db)
 
 @router.get("/appraisal/form")
 async def read_appraisal_form(db: Session = Depends(get_db)):

@@ -9,7 +9,7 @@ from uuid import UUID
 
 
 async def create_deadline( deadline: schemas.create_deadline, db:Session):
-    res = db.execute(""" INSERT INTO public.deadline(deadline_type, start_date, ending) VALUES (:deadline_type, :start_date, :ending); """,{'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
+    res = db.execute("""SELECT public.deadline(:deadline_type, :start_date, :ending); """,{'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
     db.commit()
     return res
 
