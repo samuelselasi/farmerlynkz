@@ -18,7 +18,7 @@ async def read_appraisal_form(db:Session):
 
 async def delete_appraisal_form(appraisal_form: schemas.delete_appraisal_form, db:Session):
     res = db.execute("""DELETE FROM public.appraisal_form (aprpaisal_form_id=:appraisal_form_id)
-	WHERE appraisal_form_id=appraisal_form.appraisal_form_id;""",
+	WHERE appraisal_form_id=:appraisal_form_id;""",
     {'appraisal_form_id': appraisal_form.appraisal_form_id})
     db.commit()
     return res
@@ -44,7 +44,7 @@ async def read_annual_plan(db:Session):
 
 async def delete_annual_plan(annual_plan: schemas.delete_annual_plan, db: Session):
     res = db.execute("""DELETE FROM public.annual_plan (annual_plan_id=:annual_plan_id)
-	WHERE annual_plan_id=annual_plan.annual_plan_id;""",
+	WHERE annual_plan_id=:annual_plan_id;""",
     {'annual_plan_id': annual_plan.annual_plan_id})
     db.commit()
     return res

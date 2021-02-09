@@ -28,13 +28,13 @@ async def update_deadline_table(deadline: schemas.update_deadline_table, db: Ses
 
 async def delete_deadline(deadline: schemas.delete_deadline, db: Session):
     res = db.execute("""DELETE FROM public.deadline (deadline_id=:deadline_id)
-	WHERE deadline_id=deadline.deadline_id;""",
+	WHERE deadline_id=:deadline_id;""",
     {'deadline_id':deadline.deadline_id})
     db.commit()
     return res    
 
 async def create_staff( user: schemas.UserCreate, db:Session):
-    res = db.execute("""INSERT INTO public.staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :positions, :grade, :appointment);""",{'fname':user.fname, 'sname':user.sname, 'oname':user.oname, 'email':user.email, 'supervisor':user.supervisor, 'gender':user.gender, 'role':user.role, 'department':user.department, 'positions':user.positions, 'grade':user.grade, 'appointment':user.appointment})
+    res = db.execute("""SELECT public.add_staff(:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :positions, :grade, :appointment)""",{'fname':user.fname, 'sname':user.sname, 'oname':user.oname, 'email':user.email, 'supervisor':user.supervisor, 'gender':user.gender, 'role':user.role, 'department':user.department, 'positions':user.positions, 'grade':user.grade, 'appointment':user.appointment})
     db.commit()
     return res
 
@@ -52,8 +52,9 @@ async def update_staff(staff: schemas.update_staff, db: Session):
     return res
 
 async def delete_staff(staff:schemas.delete_staff, db: Session):
-    res = db.execute("""DELETE FROM public.staff (staff_id=:staff_id)
-	WHERE staff_id=staff.staff_id;""",
+    res = db.execute("""DELETE FROM public.staff 
+    (staff_id=:staff_id)
+	WHERE staff_id=:staff_id;""",
     {'staff_id':staff.staff_id})
     db.commit()
     return res
