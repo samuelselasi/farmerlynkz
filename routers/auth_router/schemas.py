@@ -10,7 +10,7 @@ import datetime
 
 
 class UserBase(BaseModel):
-    staff_id:int
+    #staff_id:int
     fname: str
     sname: str
     oname: str
@@ -23,9 +23,23 @@ class UserBase(BaseModel):
     grade: int
     appointment: Optional[datetime.datetime]
 
+class UpdateStaff(BaseModel):
+    staff_id:int
+    fname: str
+    sname: str
+    oname: str
+    email: str
+    supervisor: int
+    gender: str
+    role: str
+    department: str
+    positions: str
+    grade: int
+    appointment: Optional[datetime.datetime]
+    
 class UserCreate(UserBase):
     pass  
-class update_staff(UserBase):
+class update_staff(UpdateStaff):
     pass
 class User(UserBase):
     id: int
@@ -37,7 +51,6 @@ class DeadlineTable(BaseModel):
     deadline_type: str
     start_date: Optional[datetime.datetime]
     ending: Optional[datetime.datetime]
-    deadline_id: int
 class DeleteDeadline(BaseModel):
     deadline_id: int
 class delete_deadline(DeleteDeadline):

@@ -7,8 +7,8 @@ class FormBase(BaseModel):
     result_areas: str
     target: str 
     resources: str 
-    appraisal_form_id: int
-    annual_plan_id: int 
+    appraisal_id: int
+    #annual_plan_id: int 
     status: int
     form_hash: str  
 class AnnualAppraisal(BaseModel):

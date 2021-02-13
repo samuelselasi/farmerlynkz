@@ -55,16 +55,16 @@ $$;
 
 
 --
--- Name: add_staff(character varying, character varying, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
+-- Name: add_staff(character varying, character varying, character varying, character varying, integer, character varying, character varying, character varying, character varying, integer, date); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.add_staff(stdfname character varying, stdsname character varying, stdoname character varying, stdemail character varying, stdsupervisor integer, stdgender character varying, stdrole character varying, stddepartment character varying, stdpositions character varying, stdgrade integer) RETURNS character varying
+CREATE FUNCTION public.add_staff(stdfname character varying, stdsname character varying, stdoname character varying, stdemail character varying, stdsupervisor integer, stdgender character varying, stdrole character varying, stddepartment character varying, stdpositions character varying, stdgrade integer, stdappointment date) RETURNS character varying
     LANGUAGE plpgsql
     AS $$
 declare
 begin
-insert into public.staff(fname,sname,oname,email,supervisor,gender,role,department,positions,grade)
-values(stdfname,stdsname,stdoname,stdemail,stdsupervisor,stdgender,stdrole,stddepartment,stdpositions,stdgrade);
+insert into public.staff(fname,sname,oname,email,supervisor,gender,role,department,positions,grade,appointment)
+values(stdfname,stdsname,stdoname,stdemail,stdsupervisor,stdgender,stdrole,stddepartment,stdpositions,stdgrade,stdappointment);
 return 'inserted successfully';
 	   end;
 $$;
@@ -161,7 +161,7 @@ $$;
 -- Name: create_appraisal_form(character varying, character varying, character varying, integer, date, integer, character varying, character varying, character varying, integer, integer, character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION public.create_appraisal_form(stddeadline character varying, stddepartment character varying, stdposition character varying, stdgrade integer, stddate date, stdstaff_id integer, stdprogress_review character varying, stdremarks character varying, stdassessment character varying, stdscore integer, stdweight integer, stdcomment character varying) RETURNS jsonb
+CREATE FUNCTION public.create_appraisal_form(stddeadline character varying, stddepartment character varying, stdpositions character varying, stdgrade integer, stddate date, stdstaff_id integer, stdprogress_review character varying, stdremarks character varying, stdassessment character varying, stdscore integer, stdweight integer, stdcomment character varying) RETURNS jsonb
     LANGUAGE plpgsql
     AS $$
 declare
@@ -170,7 +170,7 @@ indate date;
 begin 
 
 select start_date from public.deadline where deadline_type='Start' and start_date='2021-02-20';
-insert into public.appraisal_form("appraisal_form_id","department","position","grade","date","staff_id")
+insert into public.appraisal_form("appraisal_form_id","department","positions","grade","date","staff_id")
 values((SELECT MAX(appraisal_form_id)+1 FROM public.appraisal_form),'Consultancy','Developer',90,'2021-02-20',23);
 
 if stddeadline='Mid'
@@ -224,7 +224,7 @@ CREATE FUNCTION public.delete_annual_appraisal(stdannual_appraisal_id bigint) RE
 declare
 begin
 delete from annual_appraisal
-where staff_id=stdannual_appraisal_id;
+where appraisal_form_id=stdannual_appraisal_id;
 return 'Deleted';
 	   end;
 $$;
@@ -1269,6 +1269,39 @@ ALTER SEQUENCE public.staff_staff_id_seq OWNED BY public.staff.staff_id;
 
 
 --
+-- Name: staff_v; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.staff_v AS
+ SELECT e.staff_id,
+    e.fname,
+    e.sname,
+    e.oname,
+    e.email,
+    e.supervisor,
+    e.gender,
+    e.role,
+    e.department,
+    e.positions,
+    e.grade,
+    e.appointment,
+    m.fname AS supervisor_name
+   FROM (public.staff e
+     JOIN public.staff m ON ((m.staff_id = e.supervisor)));
+
+
+--
+-- Name: supervisor; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW public.supervisor AS
+ SELECT e.fname AS employee,
+    m.fname AS supervisor
+   FROM (public.staff e
+     JOIN public.staff m ON ((m.staff_id = e.supervisor)));
+
+
+--
 -- Name: supervisor_name; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1451,10 +1484,8 @@ ALTER TABLE ONLY public.yearly_details ALTER COLUMN yearly_details_id SET DEFAUL
 -- Data for Name: annual_plan; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES ('Everything', 'Execute', 'Good', 16, 32, 1, '96ba5594d7d04f71150a81c417f53a34', NULL);
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 34, 1, '60e8beba18e9a8550e725038b584df17', NULL);
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 33, 1, '777179eebfcc3fee3648cbfc6fb3ea86', NULL);
-INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, 17, 35, 0, NULL, NULL);
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, 18, 36, 0, NULL, NULL);
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 38, 0, '697036738e0aad6c86dbc9241ef263bc', NULL);
 INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash, staff_id) VALUES (NULL, NULL, NULL, NULL, 39, 0, 'af0fae483a42222288e132b74f43b33f', NULL);
@@ -1465,8 +1496,6 @@ INSERT INTO public.annual_plan (result_areas, target, resources, appraisal_form_
 -- Data for Name: appraisal_form; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.appraisal_form (department, grade, "position", appraisal_form_id, date, staff_id) VALUES ('Research', 100, 'Developer', 16, '2021-02-20', 1);
-INSERT INTO public.appraisal_form (department, grade, "position", appraisal_form_id, date, staff_id) VALUES ('Research', 100, 'Developer', 17, '2021-03-30', 1);
 INSERT INTO public.appraisal_form (department, grade, "position", appraisal_form_id, date, staff_id) VALUES ('Consultancy', 90, 'Developer', 18, '2021-02-20', 23);
 
 
@@ -1490,7 +1519,6 @@ INSERT INTO public.deadline (deadline_type, start_date, ending, deadline_id) VAL
 -- Data for Name: endofyear_review; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status, staff_id) VALUES ('Well Done', 100, 'improve', 16, 1, 32, 200, 1, NULL);
 INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status, staff_id) VALUES ('good', 20, 'good', 18, 2, 36, 100, 0, NULL);
 INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight, status, staff_id) VALUES ('good', 20, 'good', 18, 3, NULL, 100, 0, NULL);
 
@@ -1505,27 +1533,20 @@ INSERT INTO public.endofyear_review (assessment, score, comment, appraisal_form_
 -- Data for Name: hash_table; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('96ba5594d7d04f71150a81c417f53a34', 'paddo144@gmail.com', 39);
 INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('777179eebfcc3fee3648cbfc6fb3ea86', 'great@gamil.com', 40);
-INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('697036738e0aad6c86dbc9241ef263bc', 'sdkjbfkjdbg', 43);
-INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('af0fae483a42222288e132b74f43b33f', 'jhewbdwe', 44);
-INSERT INTO public.hash_table (hash, email, hash_table_id) VALUES ('d4031e0525923a1da4bc89eb2cf4fc2a', 'jhewbdwe', 45);
 
 
 --
 -- Data for Name: login; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.login (staff_id, username, email, password, login_id) VALUES (1, 'iwan', 'paddo144@gmail.com', 'asdd', 1);
 INSERT INTO public.login (staff_id, username, email, password, login_id) VALUES (23, 'sammy', 'sammy@gmail.com', 'dcd', 5);
-INSERT INTO public.login (staff_id, username, email, password, login_id) VALUES (1, 'scbsbc', 'jscjc', 'kcnknck', 6);
 
 
 --
 -- Data for Name: midyear_review; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.midyear_review (midyear_review_id, progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id) VALUES (1, 'hiturhfr', 'fgdfgfdfdd', 0, 17, 32, 1);
 INSERT INTO public.midyear_review (midyear_review_id, progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id) VALUES (2, 'review1', 'good', 0, 18, 36, 23);
 
 
@@ -1533,10 +1554,7 @@ INSERT INTO public.midyear_review (midyear_review_id, progress_review, remarks, 
 -- Data for Name: staff; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (1, 'PRINCE', 'ADDO', 'ADEJI', 'paddo144@gmail.com', 1, 'male', 'Admin', 'Research', 'Manager', 100, NULL);
 INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (23, 'SAMMY', 'AKI', 'PAWPAW', 'great@gamil.com', 2, 'male', 'Director', 'Consultancy', 'Developer', 90, NULL);
-INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (26, 'kjdbjb', 'jafbjkadsbfds', 'ekfewkjfiew', 'sdkjbfkjdbg', 1, 'djfbjdbjd', 'ksdbvkjdvjbh', 'dkvnkjsdnvdsj', 'dkjcbjdsbcds', 5558, NULL);
-INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment) VALUES (27, 'djsbdjs', 'jdbfjew', 'wdejbfeh', 'jhewbdwe', 1, 'dwdw', 'dwede', 'ewfwef', 'wfef', 1000, '2020-10-15');
 
 
 --
@@ -1549,10 +1567,7 @@ INSERT INTO public.staff (staff_id, fname, sname, oname, email, supervisor, gend
 -- Data for Name: yearly_details; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('Research', 100, 'Manager', '2021-01-29', 1, 22);
 INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('Consultancy', 90, 'Developer', '2021-01-29', 23, 23);
-INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('dkvnkjsdnvdsj', 5558, 'dkjcbjdsbcds', '2021-02-05', 26, 24);
-INSERT INTO public.yearly_details (department, grade, "position", year, staff_id, yearly_details_id) VALUES ('ewfwef', 1000, 'wfef', '2021-02-08', 27, 25);
 
 
 --

@@ -10,8 +10,8 @@ router = APIRouter()
 
 
 @router.post("/annual_plan")
-async def create_annual_plan(create_annual_plan:schemas.create_annual_plan, db: Session = Depends(get_db)):
-    return await crud.create_annual_plan(create_annual_plan, db)
+async def create_annual_plan(payload:schemas.create_annual_plan, db: Session = Depends(get_db)):
+    return await crud.create_annual_plan(payload.result_areas, payload.target, payload.resources, payload.appraisal_id, payload.status, payload.form_hash, db)
 
 @router.get("/")
 async def read_annual_plan(db: Session = Depends(get_db)):
@@ -22,16 +22,16 @@ async def delete_annual_plan(annual_plan: schemas.delete_annual_plan, db: Sessio
     return await crud.delete_annual_plan(annual_plan, db)
 
 @router.put("/annual/plan")
-async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session = Depends(get_db)):
-    return await crud.update_annual_plan(annual_plan, db)
+async def update_annual_plan(annual_plan_id: int, db: Session = Depends(get_db)):
+    return await crud.update_annual_plan(annual_plan_id, db)
 
 @router.post("/appraisal/form")
-async def appraisal_form(appraisal_form:schemas.appraisal_form, db: Session = Depends(get_db)):
-    return await crud.appraisal_form(appraisal_form, db)
+async def appraisal_form(payload: schemas.appraisal_form, db: Session = Depends(get_db)):
+    return await crud.appraisal_form(payload.department, payload.position, payload.grade, payload.date, payload.staff_id, payload.progress_review, payload.remarks, payload.assessment, payload.score, payload.weight, payload.comment, db)
 
 @router.post("/create/appraisal/form/")
-async def create_appraisal_form(create_appraisal_form:schemas.create_appraisal_form, db: Session = Depends(get_db)):
-    return await crud.create_appraisal_form(create_appraisal_form, db)
+async def create_appraisal_form(payload: schemas.create_appraisal_form, db: Session = Depends(get_db)):
+    return await crud.create_appraisal_form(payload.department, payload.position, payload.grade, payload.date, payload.staff_id, payload.progress_review, payload.remarks, payload.assessment, payload.score, payload.weight, payload.comment, db)
 
 @router.get("/appraisal/form")
 async def read_appraisal_form(db: Session = Depends(get_db)):
@@ -42,12 +42,12 @@ async def delete_appraisal_form(appraisal_form:schemas.delete_appraisal_form, db
     return await crud.delete_appraisal_form(appraisal_form, db)
 
 @router.put("/appraisal/form")
-async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session = Depends(get_db)):
-    return await crud.update_appraisal_form(appraisal_form, db)
+async def update_appraisal_form(appraisal_form_id: int, db: Session = Depends(get_db)):
+    return await crud.update_appraisal_form(appraisal_form_id, db)
 
 @router.post("/annual_appraisal")
-async def create_annual_appraisal(create_annual_appraisal:schemas.create_annual_appraisal, db: Session = Depends(get_db)):
-    return await crud.create_annual_appraisal(create_annual_appraisal, db)
+async def create_annual_appraisal(payload:schemas.create_annual_appraisal, db: Session = Depends(get_db)):
+    return await crud.create_annual_appraisal(payload.grade, payload.comment, payload.field, payload.appraisal_form_id, db)
 
 @router.get("/annual/appraisal")
 async def read_annual_appraisal(db: Session = Depends(get_db)):
@@ -58,8 +58,8 @@ async def delete_annual_appraisal(db: Session = Depends(get_db)):
     return await crud.delete_annual_appraisal(db)
 
 @router.put("/annual/aprpaisal")
-async def update_annual_appraisal(annual_appraisal: schemas.update_annual_appraisal, db: Session = Depends(get_db)):
-    return await crud.update_annual_appraisal(annual_appraisal, db)
+async def update_annual_appraisal(annual_appraisal_id: int, db: Session = Depends(get_db)):
+    return await crud.update_annual_appraisal(annual_appraisal_id, db)
 
 @router.delete("/annual/appraisal/")
 async def delete_annual_appraisal(annual_appraisal:schemas.delete_annual_appraisal, db: Session = Depends(get_db)):
