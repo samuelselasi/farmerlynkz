@@ -29,7 +29,7 @@ async def update_deadline(deadline: schemas.update_deadline, db: Session):
     return res
 
 async def delete_deadline(deadline: schemas.delete_deadline, db: Session):
-    res = db.execute("""DELETE FROM public.deadline (deadline_id=:deadline_id)
+    res = db.execute("""DELETE FROM public.deadline
 	WHERE deadline_id=:deadline_id;""",
     {'deadline_id':deadline.deadline_id})
     db.commit()
@@ -57,8 +57,7 @@ async def update_staff(staff: schemas.update_staff, db:Session):
 
 async def delete_staff(staff:schemas.delete_staff, db: Session):
     res = db.execute("""DELETE FROM public.staff 
-    (staff_id=:staff_id)
-	WHERE staff_id=:staff_id;""",
+	WHERE staff_id = :staff_id;""",
     {'staff_id':staff.staff_id})
     db.commit()
     return res
