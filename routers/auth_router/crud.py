@@ -20,11 +20,11 @@ async def read_deadline_table(db:Session):
     res = res.fetchall()
     return res
 
-async def update_deadline_table(deadline: schemas.update_deadline_table, db: Session):
+async def update_deadline(deadline: schemas.update_deadline, db: Session):
     res = db.execute("""UPDATE public.deadline
-	SET deadline_type=:deadline_type, start_date=:start_date, ending=:ending, deadline_id=:deadline_id
-	WHERE deadline_id=:deadline_id;""",
-    {'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending, 'deadline_id':deadline.deadline_id})
+	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
+	WHERE deadline_id = :deadline_id;""",
+    {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
     db.commit()
     return res
 

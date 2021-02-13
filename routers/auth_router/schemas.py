@@ -36,7 +36,13 @@ class UpdateStaff(BaseModel):
     positions: str
     grade: int
     appointment: Optional[datetime.datetime]
-    
+
+class UpdateDeadline(BaseModel):
+    deadline_id: int
+    deadline_type: str
+    start_date: Optional[datetime.datetime]
+    ending: Optional[datetime.datetime]
+        
 class UserCreate(UserBase):
     pass  
 class update_staff(UpdateStaff):
@@ -57,7 +63,7 @@ class delete_deadline(DeleteDeadline):
     pass        
 class create_deadline(DeadlineTable):
     pass
-class update_deadline_table(DeadlineTable):
+class update_deadline(UpdateDeadline):
     pass
 class read_deadline_table(BaseModel):
     deadline_type: DeadlineTable

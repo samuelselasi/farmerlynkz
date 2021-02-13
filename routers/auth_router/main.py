@@ -53,14 +53,9 @@ async def create_staff(payload: schemas.UserCreate, db: Session = Depends(get_db
 async def read_staff(db: Session = Depends(get_db)):
     return await crud.read_staff(db)
 
-# @router.put("/update/staff")
-# async def update_staff(payload: schemas.update_staff, db: Session = Depends(get_db)):
-#     return await crud.update_staff(payload, db)
-
 @router.put("/update/staff")
 async def update_staff(staff:schemas.update_staff, db:Session = Depends(get_db)):
     return await crud.update_staff(staff, db)
-
 
 @router.delete("/staff/")
 async def delete_staff(staff: schemas.delete_staff, db: Session = Depends(get_db)):
@@ -68,15 +63,15 @@ async def delete_staff(staff: schemas.delete_staff, db: Session = Depends(get_db
   
 @router.post("/deadline")
 async def create_deadline(payload:schemas.create_deadline, db: Session = Depends(get_db) ):
-    return await create_deadline(payload.deadline_type, payload.start_date, payload.ending, db)
+    return await crud.create_deadline(payload.deadline_type, payload.start_date, payload.ending, db)
 
 @router.get("/deadline/list")
 async def read_deadline_table(db: Session = Depends(get_db)):
     return await crud.read_deadline_table(db)
 
 @router.put("/deadline/table")
-async def update_deadline_table(deadline: schemas.update_deadline_table, db: Session = Depends(get_db)):
-    return await crud.update_deadline_table(deadline, db)
+async def update_deadline_table(deadline: schemas.update_deadline, db: Session = Depends(get_db)):
+    return await crud.update_deadline(deadline, db)
 
 @router.delete("/deadline/")
 async def delete_deadline(deadline: schemas.delete_deadline, db: Session = Depends(get_db)):
@@ -84,14 +79,14 @@ async def delete_deadline(deadline: schemas.delete_deadline, db: Session = Depen
 
 #//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@router.delete("/delete/{id}")
-async def delete_user(id: int, db: Session = Depends(get_db)):
-    return await crud.delete_user(db, id)
+# @router.delete("/delete/{id}")
+# async def delete_user(id: int, db: Session = Depends(get_db)):
+#     return await crud.delete_user(db, id)
 
-@router.get("/{id}")
-async def read_user(id: int, db: Session = Depends(get_db)):
-    return await crud.get_user(db, id)
+# @router.get("/{id}")
+# async def read_user(id: int, db: Session = Depends(get_db)):
+#     return await crud.get_user(db, id)
 
-@router.get("/")
-async def read_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100, search:str=None, value:str=None):
-    return await crud.get_users(db,skip,limit,search,value)
+# @router.get("/")
+# async def read_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100, search:str=None, value:str=None):
+#     return await crud.get_users(db,skip,limit,search,value)
