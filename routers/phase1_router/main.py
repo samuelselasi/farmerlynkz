@@ -22,8 +22,8 @@ async def delete_annual_plan(annual_plan: schemas.delete_annual_plan, db: Sessio
     return await crud.delete_annual_plan(annual_plan, db)
 
 @router.put("/annual/plan")
-async def update_annual_plan(annual_plan_id: int, db: Session = Depends(get_db)):
-    return await crud.update_annual_plan(annual_plan_id, db)
+async def update_annual_plan(payload: schemas.update_annual_plan, db: Session = Depends(get_db)):
+    return await crud.update_annual_plan(payload, db)
 
 @router.post("/appraisal/form")
 async def appraisal_form(payload: schemas.appraisal_form, db: Session = Depends(get_db)):

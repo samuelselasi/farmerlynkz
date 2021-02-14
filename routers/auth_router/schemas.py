@@ -22,7 +22,6 @@ class UserBase(BaseModel):
     positions: str
     grade: int
     appointment: Optional[datetime.datetime]
-
 class UpdateStaff(BaseModel):
     staff_id:int
     fname: str
@@ -36,13 +35,11 @@ class UpdateStaff(BaseModel):
     positions: str
     grade: int
     appointment: Optional[datetime.datetime]
-
 class UpdateDeadline(BaseModel):
     deadline_id: int
     deadline_type: str
     start_date: Optional[datetime.datetime]
-    ending: Optional[datetime.datetime]
-        
+    ending: Optional[datetime.datetime] 
 class UserCreate(UserBase):
     pass  
 class update_staff(UpdateStaff):

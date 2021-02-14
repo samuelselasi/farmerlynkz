@@ -11,6 +11,14 @@ class FormBase(BaseModel):
     #annual_plan_id: int 
     status: int
     form_hash: str  
+class UpdateAnnualPlan(BaseModel):
+    result_areas: str
+    target: str 
+    resources: str 
+    appraisal_id: int
+    annual_plan_id: int 
+    status: int
+    form_hash: str      
 class AnnualAppraisal(BaseModel):
     grade: int
     comment: str 
@@ -54,7 +62,7 @@ class delete_appraisal_form(DeleteAppraisalForm):
     pass
 class create_annual_plan(FormBase):
     pass  
-class update_annual_plan(FormBase):
+class update_annual_plan(UpdateAnnualPlan):
     pass
 class delete_annual_plan(DeleteAnnualPlan):
     pass
