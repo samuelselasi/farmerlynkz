@@ -33,16 +33,16 @@ async def delete_appraisal_form(appraisal_form: schemas.delete_appraisal_form, d
 
 async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session):
     res = db.execute("""UPDATE public.appraisal_form
-	SET department = :department, grade = :grade, position = :position, appraisal_form_id = :appraisal_form_id, date = :date, staff_id = :staff_id
+	SET appraisal_form_id = :appraisal_form_id, department = :department, grade = :grade, position = :position, date = :date, staff_id = :staff_id
 	WHERE appraisal_form_id = :appraisal_form_id;""",
-    {'department': appraisal_form.department, 'grade': appraisal_form.grade, 'position': appraisal_form.position, 'appraisal_form_id':appraisal_form.appraisal_form_id, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
+    {'appraisal_form_id':appraisal_form.appraisal_form_id, 'department': appraisal_form.department, 'grade': appraisal_form.grade, 'position': appraisal_form.position, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
     db.commit()
     return res
 
-async def create_annual_plan(result_areas, target, resources, appraisal_id, form_hash, db:Session):
-    res = db.execute("""insert into public.annual_plan(result_areas, target, resources, appraisal_id, status, form_hash)
-    values(:result_areas, :target, :resources, :appraisal_id, :status, :form_hash);""",
-    {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_id':appraisal_id, 'status':status, 'form_hash':form_hash})
+async def create_annual_plan(result_areas, target, resources, appraisal_form_id, form_hash, db:Session):
+    res = db.execute("""insert into public.annual_plan(result_areas, target, resources, appraisal_form_id, form_hash)
+    values(:result_areas, :target, :resources, :appraisal_form_id, :form_hash);""",
+    {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id, 'form_hash':form_hash})
     db.commit()
     return res
 

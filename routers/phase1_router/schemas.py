@@ -7,7 +7,7 @@ class FormBase(BaseModel):
     result_areas: str
     target: str 
     resources: str 
-    appraisal_id: int
+    appraisal_form_id: int
     #annual_plan_id: int 
     status: int
     form_hash: str  
@@ -26,11 +26,19 @@ class AnnualAppraisal(BaseModel):
     appraisal_form_id: int 
     status: int 
     annual_appraisal_id: int
+
+class UpdateAppraisalForm(BaseModel):
+    appraisal_form_id:int 
+    department: str 
+    grade: int 
+    position: str 
+    date: datetime
+    staff_id: int
 class AppraisalForm(BaseModel):
     department: str 
     grade: int 
     position: str 
-    appraisal_form_id:int 
+    #appraisal_form_id:int 
     date: datetime
     staff_id: int
 class CreateAprpaisalForm(BaseModel):
@@ -56,7 +64,7 @@ class appraisal_form(AppraisalForm):
     pass
 class create_appraisal_form(CreateAprpaisalForm):
     pass
-class update_appraisal_form(AppraisalForm):
+class update_appraisal_form(UpdateAppraisalForm):
     pass
 class delete_appraisal_form(DeleteAppraisalForm):
     pass
