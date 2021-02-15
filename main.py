@@ -90,8 +90,8 @@ async def shutdown_event():
 background_tasks = BackgroundTasks()
 
 @api.post("/email")
-async def a(background_tasks: BackgroundTasks):
-    print('a')
+async def send_staff_email(background_tasks: BackgroundTasks):
+    print('send_staff_email')
     print(dir(background_tasks))
     return await background_send([{'email':'a@a.com','hash':'34242assdd'}], background_tasks)
 

@@ -25,7 +25,7 @@ class AnnualAppraisal(BaseModel):
     field: str 
     appraisal_form_id: int 
     status: int 
-    #annual_appraisal_id: int
+    # annual_appraisal_id: int
 
 class UpdateAnnualAppraisal(BaseModel):
     grade: int
