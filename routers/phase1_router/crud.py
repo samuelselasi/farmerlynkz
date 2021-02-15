@@ -5,22 +5,22 @@ from . import models, schemas
 
 
  
-async def create_appraisal_form(deadline, department, position, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
-    res = db.execute("""insert into public.appraisal_form(deadline, department, position, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment)
-    values(:deadline, :department, :position, :grade, :date, :staff_id, :progress_review, :remarks, :assessment, :score, :weight, :comment);""",
-    {'deadline':deadline, 'department':department, 'position':position, 'grade':grade, 'date':date, 'staff_id':staff_id, 'progress_review':progress_review, 'remarks':remarks, 'assessment':assessment, 'score':score, 'weight':weight, 'comment':comment})
+async def create_appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
+    res = db.execute("""insert into public.appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment)
+    values(:deadline, :department, :positions, :grade, :date, :staff_id, :progress_review, :remarks, :assessment, :score, :weight, :comment);""",
+    {'deadline':deadline, 'department':department, 'positions':positions, 'grade':grade, 'date':date, 'staff_id':staff_id, 'progress_review':progress_review, 'remarks':remarks, 'assessment':assessment, 'score':score, 'weight':weight, 'comment':comment})
     db.commit()
     return res
 
-async def appraisal_form(department, grade, position, date, staff_id, db:Session):
-    res = db.execute("""insert into public.appraisal_form(department, grade, position, date, staff_id)
-    values(:department, :grade, :position, :date, :staff_id);""",
-    {'department':department, 'grade':grade, 'position':position, 'date':date, 'staff_id':staff_id})
+async def appraisal_form(department, grade, positions, date, staff_id, db:Session):
+    res = db.execute("""insert into public.appraisal_form(department, grade, positions, date, staff_id)
+    values(:department, :grade, :positions, :date, :staff_id);""",
+    {'department':department, 'grade':grade, 'positions':positions, 'date':date, 'staff_id':staff_id})
     db.commit()
     return res
 
 async def read_appraisal_form(db:Session):
-    res = db.execute("""SELECT department, grade, "position", appraisal_form_id, date, staff_id FROM public.appraisal_form;""")
+    res = db.execute("""SELECT department, grade, positions, appraisal_form_id, date, staff_id FROM public.appraisal_form;""")
     res = res.fetchall()
     return res
 
@@ -33,9 +33,9 @@ async def delete_appraisal_form(appraisal_form: schemas.delete_appraisal_form, d
 
 async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session):
     res = db.execute("""UPDATE public.appraisal_form
-	SET appraisal_form_id = :appraisal_form_id, department = :department, grade = :grade, position = :position, date = :date, staff_id = :staff_id
+	SET appraisal_form_id = :appraisal_form_id, department = :department, grade = :grade, position = :positions, date = :date, staff_id = :staff_id
 	WHERE appraisal_form_id = :appraisal_form_id;""",
-    {'appraisal_form_id':appraisal_form.appraisal_form_id, 'department': appraisal_form.department, 'grade': appraisal_form.grade, 'position': appraisal_form.position, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
+    {'appraisal_form_id':appraisal_form.appraisal_form_id, 'department': appraisal_form.department, 'grade': appraisal_form.grade, 'positions': appraisal_form.positions, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
     db.commit()
     return res
 
@@ -87,9 +87,9 @@ async def delete_annual_appraisal(annual_appraisal: schemas.delete_annual_apprai
 
 async def update_annual_appraisal(annual_appraisal: schemas.create_annual_appraisal, db: Session):
     res = db.execute("""UPDATE public.annual_appraisal
-	SET grade = :grade, comment = :comment, field = :field, appraisal_form_id = :appraisal_form_id, status = :status, annual_appraisal_id = :annual_appraisal_id
+	SET grade = :grade, comment = :comment, field = :field, appraisal_form_id = :appraisal_form_id, annual_appraisal_id = :annual_appraisal_id
 	WHERE annual_appraisal_id = :annual_appraisal_id;""",
-    {'grade':annual_appraisal.grade, 'comment':annual_appraisal.comment, 'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'status':annual_appraisal.status, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
+    {'grade':annual_appraisal.grade, 'comment':annual_appraisal.comment, 'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
     db.commit()
     return res 
 

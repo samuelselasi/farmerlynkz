@@ -89,7 +89,7 @@ async def shutdown_event():
 
 background_tasks = BackgroundTasks()
 
-@api.post("/test")
+@api.post("/email")
 async def a(background_tasks: BackgroundTasks):
     print('a')
     print(dir(background_tasks))

@@ -25,26 +25,34 @@ class AnnualAppraisal(BaseModel):
     field: str 
     appraisal_form_id: int 
     status: int 
-    annual_appraisal_id: int
+    #annual_appraisal_id: int
+
+class UpdateAnnualAppraisal(BaseModel):
+    grade: int
+    comment: str 
+    field: str 
+    appraisal_form_id: int 
+    status: int 
+    annual_appraisal_id: int    
 
 class UpdateAppraisalForm(BaseModel):
     appraisal_form_id:int 
     department: str 
     grade: int 
-    position: str 
+    positions: str 
     date: datetime
     staff_id: int
 class AppraisalForm(BaseModel):
     department: str 
     grade: int 
-    position: str 
+    positions: str 
     #appraisal_form_id:int 
     date: datetime
     staff_id: int
 class CreateAprpaisalForm(BaseModel):
     deadline: str
     department: str
-    position: str
+    positions: str
     grade: int
     date: datetime
     staff_id: int
@@ -76,7 +84,7 @@ class delete_annual_plan(DeleteAnnualPlan):
     pass
 class create_annual_appraisal(AnnualAppraisal):
     pass
-class update_annual_appraisal(AnnualAppraisal):
+class update_annual_appraisal(UpdateAnnualAppraisal):
     pass
 class delete_annual_appraisal(DeleteAnnualAppraisal):
     pass
