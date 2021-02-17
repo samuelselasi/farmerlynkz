@@ -8,6 +8,8 @@ from routers.auth_router import models
 from routers.appraiser import models
 from fastapi import BackgroundTasks
 from fastapi import FastAPI
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from sqlalchemy.orm import Session
 
 api = FastAPI(docs_url="/api/docs")
 
@@ -90,10 +92,12 @@ async def shutdown_event():
 background_tasks = BackgroundTasks()
 
 @api.post("/email")
-async def send_staff_email(background_tasks: BackgroundTasks):
+async def send_staff_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    res = db.execute("""SELECT * FROM public.hash_table""")
+    res = res.fetchall()
     print('send_staff_email')
     print(dir(background_tasks))
-    return await background_send([{'email':'a@a.com','hash':'34242assdd'}], background_tasks)
+    return await background_send(res, background_tasks)
 
 @api.post("/test/test")
 async def b():

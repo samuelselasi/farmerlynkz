@@ -7,6 +7,8 @@ from fastapi import BackgroundTasks
 from pydantic import EmailStr
 from typing import List
 
+
+
 conf = ConnectionConfig(
     MAIL_USERNAME = "a97a6351fa551d",
     MAIL_PASSWORD = "8608ab42c0b55f",
@@ -45,8 +47,8 @@ Performance Planning Form </p>
 
 """
 
-async def background_send(user_hash_list, background_tasks) -> JSONResponse:
-    for item in user_hash_list:
+async def background_send(db, background_tasks) -> JSONResponse:
+    for item in db:
         message = MessageSchema(
             subject="Fastapi-Mail module",
             recipients=[item['email']],
@@ -54,6 +56,7 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
+
 
 # class EmailSchema(BaseModel):
 #     email: List[EmailStr]
