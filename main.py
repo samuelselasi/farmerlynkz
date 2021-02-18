@@ -96,7 +96,7 @@ async def send_staff_email(background_tasks: BackgroundTasks, db: Session = Depe
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     print('send_staff_email')
-    print(dir(background_tasks))
+    print(dir( background_tasks))
     return await background_send(res, background_tasks)
 
 @api.post("/test/test")

@@ -93,10 +93,17 @@ async def update_annual_appraisal(annual_appraisal: schemas.create_annual_apprai
     db.commit()
     return res 
 
-async def read_hash_form(hash_:str, db:Session):
+async def verify_hash_form(hash_:str, db:Session):
     res = db.execute(""" SELECT public.get_hash_verification(:hash_) """,{'hash_':hash_})
     res = res.fetchall()
     return res
+
+async def read_hash_form(db:Session):
+    res = db.execute("""SELECT hash, email, hash_table_id
+	FROM public.hash_table;""")
+    res = res.fetchall()
+    return res
+
 
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////
 '''

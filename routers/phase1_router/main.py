@@ -66,9 +66,14 @@ async def delete_annual_appraisal(annual_appraisal:schemas.delete_annual_apprais
     return await crud.delete_annual_appraisal(annual_appraisal, db)
 
 @router.get("/form/{hash}")
-async def read_hash_form(hash: str, db: Session = Depends(get_db)):
-    return await crud.read_hash_form(hash, db)
-  
+async def verify_hash_form(hash: str, db: Session = Depends(get_db)):
+    return await crud.verify_hash_form(hash, db)
+
+@router.get("/form/hash/")
+async def read_hash_form(db: Session = Depends(get_db)):
+    return await crud.read_hash_form(db)
+
+
 # @router.post("/check_email_hash")
 # def check_email_hash(background_tasks:BackgroundTasks):
 #     return crud.check_email_hash(background_tasks)

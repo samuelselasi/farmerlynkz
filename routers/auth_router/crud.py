@@ -36,11 +36,24 @@ async def delete_deadline(deadline: schemas.delete_deadline, db: Session):
     return res    
 
 async def create_staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment, db:Session):
-    res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment)
-    VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :positions, :grade, :appointment)""",
-    {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'role':role, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
-    db.commit()
+    try:
+        res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment)
+        VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :positions, :grade, :appointment)""",
+        {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'role':role, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
+        db.commit()
+        db.close()
+    except sqlalchemy.exc.IntegrityError:
+        db.rollback()
+        logger.error("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
+        db.close()
+        raise HTTPException(status_code=409, detail="sqlalchemy[Database] error: unique_violation")
+    except:
+        db.rollback()
+        logger.error("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
+        db.close()
+        raise HTTPException(status_code=500, detail="something went wrong {}:{}".format(sys.exc_info()[0], sys.exc_info()[1]))
     return res
+
 
 async def read_staff(db:Session):
     res = db.execute(""" SELECT staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment FROM public.staff; """)
