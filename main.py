@@ -97,7 +97,7 @@ async def send_staff_email(background_tasks: BackgroundTasks, db: Session = Depe
     res = res.fetchall()
     print('send_staff_email')
     print(dir( background_tasks))
-    return await background_send(res, background_tasks)
+    return await background_send(background_tasks, db)
 
 @api.post("/test/test")
 async def b():

@@ -6,6 +6,7 @@ from starlette.requests import Request
 from fastapi import BackgroundTasks
 from pydantic import EmailStr
 from typing import List
+from sqlalchemy.orm import Session
 
 conf = ConnectionConfig(
     MAIL_USERNAME = "a97a6351fa551d",
@@ -45,10 +46,10 @@ Performance Planning Form </p>
 
 """
 
-async def background_send(user_hash_list, background_tasks) -> JSONResponse:
-    for item in user_hash_list:
+async def background_send(background_tasks, db: Session) -> JSONResponse:
+    for item in db:
         message = MessageSchema(
-            subject="Fastapi-Mail module",
+            subject="Fastapsi-Mail module",
             recipients=[item['email']],
             body=template.format(url="https://google.com",hash=item['hash']),
             subtype="html"
