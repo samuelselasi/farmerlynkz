@@ -13,9 +13,9 @@ conf = ConnectionConfig(
     MAIL_FROM = "a@a.com",
     MAIL_PORT = 25,
     MAIL_SERVER = "smtp.mailtrap.io",
-    MAIL_TLS = True,
+    MAIL_TLS = False,
     MAIL_SSL = False,
-    USE_CREDENTIALS = True
+    # USE_CREDENTIALS = True
 )
 
 fm = FastMail(conf)
@@ -46,11 +46,12 @@ Performance Planning Form </p>
 """
 
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
+    # print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
             subject="Fastapi-Mail module",
-            recipients=[item['email']],
-            body=template.format(url="https://google.com",hash=item['hash']),
+            recipients=[item[1]],
+            body=template.format(url="https://google.com",hash=item[0]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
