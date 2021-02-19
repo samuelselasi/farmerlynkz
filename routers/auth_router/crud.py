@@ -68,10 +68,10 @@ async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender,
     db.commit()
     return res
 
-async def delete_staff(staff:schemas.delete_staff, db: Session):
+async def delete_staff(staff_id:int, db: Session):
     res = db.execute("""DELETE FROM public.staff 
 	WHERE staff_id = :staff_id;""",
-    {'staff_id':staff.staff_id})
+    {'staff_id':staff_id})
     db.commit()
     return res
 

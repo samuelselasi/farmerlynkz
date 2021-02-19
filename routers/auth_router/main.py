@@ -57,9 +57,9 @@ async def read_staff(db: Session = Depends(get_db)):
 async def update_staff(payload: schemas.update_staff, db:Session = Depends(get_db)):
     return await crud.update_staff(payload.staff_id, payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.role, payload.department, payload.positions, payload.grade, payload.appointment, db)
 
-@router.delete("/staff/")
-async def delete_staff(staff: schemas.delete_staff, db: Session = Depends(get_db)):
-    return await crud.delete_staff(staff, db)
+@router.delete("/staff/{staff_id}")
+async def delete_staff(staff_id: int, db: Session = Depends(get_db)):
+    return await crud.delete_staff(staff_id, db)
   
 @router.post("/deadline")
 async def create_deadline(payload:schemas.create_deadline, db: Session = Depends(get_db) ):
