@@ -89,14 +89,14 @@ async def shutdown_event():
     scheduler.shutdown()
 
 
-background_tasks = BackgroundTasks()
+# background_tasks = BackgroundTasks()
 
 @api.post("/email")
 async def send_staff_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     print('send_staff_email')
-    print(dir( background_tasks))
+    print(dir(background_tasks))
     return await background_send(background_tasks, db)
 
 @api.post("/test/test")
