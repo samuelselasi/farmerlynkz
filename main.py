@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from services.email import background_send
 from database import SessionLocal, engine
 from routers.phase1_router import models
-from routers.staff_router import models
+# from routers.staff_router import models
 from routers.auth_router import models
 from routers.appraiser import models
 # from fastapi import BackgroundTasks
@@ -68,13 +68,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
 
 from routers.phase1_router import main as phase1
 from routers.appraiser import main as appraiser
-from routers.staff_router import main as staff
+# from routers.staff_router import main as staff
 from routers.auth_router import main as auth
 
-api.include_router(appraiser.router,prefix="/api/appraiser", tags=["appraiser"])
-api.include_router(phase1.router,prefix="/api/review",tags=["review"])
-api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
-api.include_router(auth.router,prefix="/api/user",tags=["user"])
+api.include_router(appraiser.router,prefix="/Appraiser", tags=["Appraiser"])
+api.include_router(phase1.router,prefix="/Review",tags=["Review"])
+# api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
+api.include_router(auth.router,prefix="/Staff",tags=["Staff"])
 
 @api.get("/")
 def welcome():
@@ -91,16 +91,15 @@ async def shutdown_event():
 
 # background_tasks = BackgroundTasks()
 
-@api.post("/email")
+@api.post("/Email/")
 async def send_staff_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-    # print('send_staff_email')
-    # print(dir(background_tasks))
+
     return await background_send(res, background_tasks)
 
-@api.post("/test/test")
-async def b():
-    print('b')
-    print(dir(background_tasks))
-    return await background_send([{'email':'a@a.com','hash':'34242assdd'}], background_tasks)
+# @api.post("/test/test")
+# async def b():
+#     print('b')
+#     print(dir(background_tasks))
+#     return await background_send([{'email':'a@a.com','hash':'34242assdd'}], background_tasks)
