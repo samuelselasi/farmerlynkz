@@ -51,7 +51,7 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="Fastapi-Mail module",
             recipients=[item[1]],
-            body=template.format(url="https://google.com",hash=item[0]),
+            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
