@@ -1,6 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
-from services.email import background_send
+from services.email import background_send, fm, MessageSchema, template
 from database import SessionLocal, engine
 from routers.phase1_router import models
 # from routers.staff_router import models
@@ -41,14 +41,37 @@ def send_email():
 
 from datetime import datetime, timedelta
 
-# scheduler.add_job(send_email, trigger = 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
 
-# async def send_hash_email():
-#     background_tasks=BackgroundTasks()
-#     db = SessionLocal()
-#     res = db.execute(""" SELECT * FROM public.hash_table """)
-    
-#     if res.rowcount:
+def send_hash_email():
+    tasks=BackgroundTasks()
+    db = SessionLocal()
+    res = db.execute("""SELECT * FROM public.hash_table""")
+    res = res.fetchall()
+    for item in res:
+        message = MessageSchema(
+            subject="REVIEW FORMS",
+            recipients=[item[1]],
+            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
+            subtype="html"
+        ) 
+
+        tasks.add_task(fm.send_message, message)   
+    print('success')
+
+scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
+# scheduler.add_job(send_hash_email, 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
+
+# async def background_send(user_hash_list, background_tasks) -> JSONResponse:
+#     # print(user_hash_list)
+#     for item in user_hash_list:
+        # message = MessageSchema(
+        #     subject="Fastapi-Mail module",
+        #     recipients=[item[1]],
+        #     body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
+        #     subtype="html"
+        # )        
+#         background_tasks.add_task(fm.send_message,message)
+
 #         print('sd')
 #         await background_send(res.fetchall(), background_tasks)
 #     print('success')
@@ -71,10 +94,10 @@ from routers.appraiser import main as appraiser
 # from routers.staff_router import main as staff
 from routers.auth_router import main as auth
 
-api.include_router(appraiser.router,prefix="/Appraiser", tags=["Appraiser"])
-api.include_router(phase1.router,prefix="/Review",tags=["Review"])
+api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])
+api.include_router(phase1.router,prefix="/api/review",tags=["Review"])
 # api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
-api.include_router(auth.router,prefix="/Staff",tags=["Staff"])
+api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
 
 @api.get("/")
 def welcome():

@@ -64,3 +64,18 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
 # await fm.send_message(message)
 # x = lambda length: generate_hash(length)
 # user_hash_list = [{"email":"test@mail.com","hash":x(15)}, {"email":"sel@mail.com","hash":x(15)}, {"email":"sam@mail.com","hash":x(15)}, {"email":"unique@mail.com","hash":x(15)}, {"email":"smsel@mail.com","hash":x(15)}, {"email":"asare@mail.com","hash":x(15)}, {"email":"shit@mail.com","hash":x(15)}, {"email":"ea@mail.com","hash":x(15)}, {"email":"tst@mail.com","hash":x(15)}]
+
+
+
+
+def background_send_2(user_hash_list) -> JSONResponse:
+    # print(user_hash_list)
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Fastapi-Mail module",
+            recipients=[item[1]],
+            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
+            subtype="html"
+        )
+        fm.send_message(message)        
+        # background_tasks.add_task(fm.send_message,message)
