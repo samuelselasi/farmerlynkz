@@ -47,6 +47,7 @@ def send_hash_email():
     db = SessionLocal()
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
+    print(res)
     for item in res:
         message = MessageSchema(
             subject="REVIEW FORMS",

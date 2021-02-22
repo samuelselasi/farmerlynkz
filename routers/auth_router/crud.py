@@ -30,22 +30,10 @@ async def create_deadline(deadline_type, start_date, ending, db:Session):
     return res
 
 async def create_staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment, db:Session):
-    try:
-        res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment)
-        VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :positions, :grade, :appointment)""",
-        {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'role':role, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
-        db.commit()
-        db.close()
-    except sqlalchemy.exc.IntegrityError:
-        db.rollback()
-        logger.error("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
-        db.close()
-        raise HTTPException(status_code=409, detail="sqlalchemy[Database] error: unique_violation")
-    except:
-        db.rollback()
-        logger.error("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
-        db.close()
-        raise HTTPException(status_code=500, detail="something went wrong {}:{}".format(sys.exc_info()[0], sys.exc_info()[1]))
+    res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment)
+    VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :role, :department, :positions, :grade, :appointment)""",
+    {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'role':role, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
+    db.commit()
     return res
 
 
