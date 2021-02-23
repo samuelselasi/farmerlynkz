@@ -47,7 +47,7 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     db.commit()
     return res
 
-async def create_annual_plan(result_areas, target, resources, appraisal_form_id, form_hash, db:Session):
+async def create_annual_plan(result_areas, target, resources, appraisal_form_id, form_hash, dfb:Session):
     res = db.execute("""insert into public.annual_plan(result_areas, target, resources, appraisal_form_id, form_hash)
     values(:result_areas, :target, :resources, :appraisal_form_id, :form_hash);""",
     {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id, 'form_hash':form_hash})

@@ -10,7 +10,7 @@ from typing import List
 conf = ConnectionConfig(
     MAIL_USERNAME = "a97a6351fa551d",
     MAIL_PASSWORD = "8608ab42c0b55f",
-    MAIL_FROM = "a@a.com",
+    MAIL_FROM = "admin@aiti.com",
     MAIL_PORT = 25,
     MAIL_SERVER = "smtp.mailtrap.io",
     MAIL_TLS = False,
@@ -49,9 +49,9 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     # print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Fastapi-Mail module",
+            subject="Start Appraisal Form",
             recipients=[item[1]],
-            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
+            body=template.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
