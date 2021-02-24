@@ -73,9 +73,9 @@ async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, d
 
 async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session):
     res = db.execute("""UPDATE public.annual_plan 
-    SET result_areas = :result_areas, target = :target, resources = :resources, annual_plan_id = :annual_plan_id
+    SET result_areas = :result_areas, target = :target, resources = :resources, appraisal_form_id = :appraisal_form_id, annual_plan_id = :annual_plan_id
 	WHERE annual_plan_id = :annual_plan_id;""", 
-    {'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'annual_plan_id':annual_plan.annual_plan_id})
+    {'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'appraisal_form_id':annual_plan.appraisal_form_id, 'annual_plan_id':annual_plan.annual_plan_id})
     db.commit()
     return res
 

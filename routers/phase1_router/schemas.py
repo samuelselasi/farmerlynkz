@@ -15,7 +15,7 @@ class UpdateAnnualPlan(BaseModel):
     result_areas: str
     target: str 
     resources: str 
-    appraisal_id: int
+    appraisal_form_id: int
     annual_plan_id: int 
     # status: int
     # form_hash: str      
