@@ -45,6 +45,31 @@ Performance Planning Form </p>
 
 """
 
+template2 = """
+<font size = "+2">
+<h1> <i> Mid Year Review Form </i> </h1>
+
+<p>Hello Sir/Madam,</p>
+
+<p>As a requirement for the completion
+of your Annual appraisal form, the Mid-Year Review
+form is provided to all staff.</p>
+
+<p>Your Mid-Year Review form for the year has
+been made available to you.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form by
+<strong>the end of this month </strong> <br/>
+
+Thank You. <br/>
+Performance Planning Form </p> 
+</font>
+
+"""
+
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     # print(user_hash_list)
     for item in user_hash_list:
@@ -55,6 +80,18 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
+
+async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
+    # print(user_hash_list)
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Mid-Year Review Form",
+            recipients=[item[1]],
+            body=template2.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
 
 # class EmailSchema(BaseModel):
 #     email: List[EmailStr]
@@ -72,7 +109,7 @@ def background_send_2(user_hash_list) -> JSONResponse:
     # print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Fastapi-Mail module",
+            subject="Start Appraisal Form",
             recipients=[item[1]],
             body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
             subtype="html"

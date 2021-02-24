@@ -1,6 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
-from services.email import background_send, fm, MessageSchema, template
+from services.email import background_send, fm, MessageSchema, template, background_send_2, background_send3
 from database import SessionLocal, engine
 from routers.phase1_router import models
 # from routers.staff_router import models
@@ -52,7 +52,7 @@ def send_hash_email():
         message = MessageSchema(
             subject="REVIEW FORMS",
             recipients=[item[1]],
-            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
+            body=template.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         ) 
 
@@ -94,11 +94,13 @@ from routers.phase1_router import main as phase1
 from routers.appraiser import main as appraiser
 # from routers.staff_router import main as staff
 from routers.auth_router import main as auth
+from routers.phase2_router import main as phase2
 
 api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])
 api.include_router(phase1.router,prefix="/api/review",tags=["Review"])
 # api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
 api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
+api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year Review"])
 
 @api.get("/")
 def welcome():
@@ -115,12 +117,19 @@ async def shutdown_event():
 
 # background_tasks = BackgroundTasks()
 
-@api.post("/Email/")
-async def send_staff_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+@api.post("/startreviewemail/")
+async def send_start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
 
     return await background_send(res, background_tasks)
+
+@api.post("/midyearreviewemail/")
+async def send_midyear_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    res = db.execute("""SELECT * FROM public.hash_table""")
+    res = res.fetchall()
+
+    return await background_send3(res, background_tasks)
 
 # @api.post("/test/test")
 # async def b():
