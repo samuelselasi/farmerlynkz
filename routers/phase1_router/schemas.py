@@ -9,16 +9,16 @@ class FormBase(BaseModel):
     resources: str 
     appraisal_form_id: int
     #annual_plan_id: int 
-    status: int
-    form_hash: str  
+    # status: int
+    # form_hash: str  
 class UpdateAnnualPlan(BaseModel):
     result_areas: str
     target: str 
     resources: str 
     appraisal_id: int
     annual_plan_id: int 
-    status: int
-    form_hash: str      
+    # status: int
+    # form_hash: str      
 class AnnualAppraisal(BaseModel):
     grade: int
     comment: str 

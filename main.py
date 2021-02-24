@@ -97,7 +97,7 @@ from routers.auth_router import main as auth
 from routers.phase2_router import main as phase2
 
 api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])
-api.include_router(phase1.router,prefix="/api/review",tags=["Review"])
+api.include_router(phase1.router,prefix="/api/review",tags=["Start Review"])
 # api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
 api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
 api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year Review"])

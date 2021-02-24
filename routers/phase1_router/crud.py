@@ -11,7 +11,8 @@ async def read_appraisal_form(db:Session):
     return res
 
 async def read_annual_plan(db:Session):
-    res = db.execute("""SELECT result_areas, target, resources, appraisal_form_id, annual_plan_id, status, form_hash FROM public.annual_plan;""")
+    res = db.execute("""SELECT result_areas, target, resources, appraisal_form_id, annual_plan_id, status
+	FROM public.annual_plan;""")
     res = res.fetchall()
     return res
 
@@ -33,13 +34,6 @@ async def read_hash_form(db:Session):
 
 
 
-async def create_appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
-    res = db.execute("""insert into public.appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment)
-    values(:deadline, :department, :positions, :grade, :date, :staff_id, :progress_review, :remarks, :assessment, :score, :weight, :comment);""",
-    {'deadline':deadline, 'department':department, 'positions':positions, 'grade':grade, 'date':date, 'staff_id':staff_id, 'progress_review':progress_review, 'remarks':remarks, 'assessment':assessment, 'score':score, 'weight':weight, 'comment':comment})
-    db.commit()
-    return res
-
 async def appraisal_form(department, grade, positions, date, staff_id, db:Session):
     res = db.execute("""insert into public.appraisal_form(department, grade, positions, date, staff_id)
     values(:department, :grade, :positions, :date, :staff_id);""",
@@ -47,10 +41,10 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     db.commit()
     return res
 
-async def create_annual_plan(result_areas, target, resources, appraisal_form_id, form_hash, dfb:Session):
-    res = db.execute("""insert into public.annual_plan(result_areas, target, resources, appraisal_form_id, form_hash)
-    values(:result_areas, :target, :resources, :appraisal_form_id, :form_hash);""",
-    {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id, 'form_hash':form_hash})
+async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
+    res = db.execute("""insert into public.annual_plan(result_areas, target, resources, appraisal_form_id)
+    values(:result_areas, :target, :resources, :appraisal_form_id);""",
+    {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
     db.commit()
     return res
 
@@ -61,6 +55,12 @@ async def create_annual_appraisal(grade, comment, field, appraisal_form_id, db:S
     db.commit()
     return res
 
+async def create_appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
+    res = db.execute("""insert into public.appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment)
+    values(:deadline, :department, :positions, :grade, :date, :staff_id, :progress_review, :remarks, :assessment, :score, :weight, :comment);""",
+    {'deadline':deadline, 'department':department, 'positions':positions, 'grade':grade, 'date':date, 'staff_id':staff_id, 'progress_review':progress_review, 'remarks':remarks, 'assessment':assessment, 'score':score, 'weight':weight, 'comment':comment})
+    db.commit()
+    return res
 
 
 async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session):
@@ -73,9 +73,9 @@ async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, d
 
 async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session):
     res = db.execute("""UPDATE public.annual_plan 
-    SET result_areas = :result_areas, target = :target, resources = :resources, annual_plan_id = :annual_plan_id, status = :status, form_hash = :form_hash
+    SET result_areas = :result_areas, target = :target, resources = :resources, annual_plan_id = :annual_plan_id
 	WHERE annual_plan_id = :annual_plan_id;""", 
-    {'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'annual_plan_id':annual_plan.annual_plan_id, 'status':annual_plan.status, 'form_hash':annual_plan.form_hash})
+    {'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'annual_plan_id':annual_plan.annual_plan_id})
     db.commit()
     return res
 
