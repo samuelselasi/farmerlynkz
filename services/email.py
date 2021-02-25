@@ -53,7 +53,7 @@ template2 = """
 <font size = "+2">
 <h1> <i> Mid Year Review Form </i> </h1>
 
-<p>Hello Sir/Madam,</p>
+<p>Dear All,</p>
 
 <p>As a requirement for the completion
 of your Annual appraisal form, the Mid-Year Review
@@ -69,7 +69,7 @@ You are expected to access and fill the form by
 <strong>the end of this month </strong> <br/>
 
 Thank You. <br/>
-Performance Planning Form </p> 
+Appraiser-App Admin </p> 
 </font>
 
 """
