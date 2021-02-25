@@ -55,8 +55,8 @@ def send_hash_email():
             body=template.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         ) 
-
-        tasks.add_task(fm.send_message, message)   
+    # background_tasks.add_task(fm.send_message,message)
+    tasks.add_task(fm.send_message, message)   
     print('success')
     print(res)
 scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
