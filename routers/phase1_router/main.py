@@ -40,7 +40,7 @@ async def create_annual_plan(payload:schemas.create_annual_plan, db: Session = D
 
 @router.post("/createappraisalform/")
 async def create_appraisal_form(payload: schemas.create_appraisal_form, db: Session = Depends(get_db)):
-    return await crud.create_appraisal_form(payload.department, payload.positions, payload.grade, payload.date, payload.staff_id, payload.progress_review, payload.remarks, payload.assessment, payload.score, payload.weight, payload.comment, db)
+    return await crud.create_appraisal_form(payload.deadline, payload.department, payload.positions, payload.grade, payload.date, payload.staff_id, payload.progress_review, payload.remarks, payload.assessment, payload.score, payload.weight, payload.comment, db)
 
 @router.post("/annualappraisal/")
 async def create_annual_appraisal(payload:schemas.create_annual_appraisal, db: Session = Depends(get_db)):

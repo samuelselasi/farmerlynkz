@@ -41,13 +41,13 @@ def send_email():
 
 from datetime import datetime, timedelta
 
-
+@api.post("/testemail")
 def send_hash_email():
     tasks=BackgroundTasks()
     db = SessionLocal()
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-    print(res)
+
     for item in res:
         message = MessageSchema(
             subject="REVIEW FORMS",
@@ -58,7 +58,7 @@ def send_hash_email():
 
         tasks.add_task(fm.send_message, message)   
     print('success')
-
+    print(res)
 scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
 # scheduler.add_job(send_hash_email, 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
 

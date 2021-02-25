@@ -7,6 +7,7 @@ from fastapi import BackgroundTasks
 from pydantic import EmailStr
 from typing import List
 
+
 conf = ConnectionConfig(
     MAIL_USERNAME = "a97a6351fa551d",
     MAIL_PASSWORD = "8608ab42c0b55f",
@@ -17,6 +18,9 @@ conf = ConnectionConfig(
     MAIL_SSL = False,
     # USE_CREDENTIALS = True
 )
+
+
+
 
 fm = FastMail(conf)
 

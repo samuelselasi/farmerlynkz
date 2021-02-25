@@ -56,8 +56,7 @@ async def create_annual_appraisal(grade, comment, field, appraisal_form_id, db:S
     return res
 
 async def create_appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
-    res = db.execute("""insert into public.appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment)
-    values(:deadline, :department, :positions, :grade, :date, :staff_id, :progress_review, :remarks, :assessment, :score, :weight, :comment);""",
+    res = db.execute("""SELECT public.create_appraisal_form(deadline:deadline, department:department, positions:positions, grade:grade, date:date, staff_id:staff_id, progress_review:progress_review, remarks:remarks, assessment:assessment, score:score, weight:weight, comment:comment);""",
     {'deadline':deadline, 'department':department, 'positions':positions, 'grade':grade, 'date':date, 'staff_id':staff_id, 'progress_review':progress_review, 'remarks':remarks, 'assessment':assessment, 'score':score, 'weight':weight, 'comment':comment})
     db.commit()
     return res
@@ -87,6 +86,8 @@ async def update_annual_appraisal(annual_appraisal: schemas.create_annual_apprai
     db.commit()
     return res 
 
+# async def update_create_appraisal_form(appraisal_form: schemas.update_create_appraisal_form, db: Session):
+#     res = db.execute("""""")
 
 
 async def delete_appraisal_form(appraisal_form_id: int, db:Session):
