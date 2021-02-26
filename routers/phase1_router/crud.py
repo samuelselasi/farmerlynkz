@@ -45,7 +45,7 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
     res = db.execute("""
     INSERT INTO public.annual_plan(
 	result_areas, target, resources, appraisal_form_id)
-	 values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
+	values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
 	update set 
 	result_areas = EXCLUDED.result_areas,
 	target = EXCLUDED.target,

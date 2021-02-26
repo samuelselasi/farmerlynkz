@@ -20,3 +20,19 @@ async def read_completed_list(user_id:int, deadline:str, db: Session = Depends(g
 @router.get("/incompletelist/{user_id}/{deadline}")
 async def read_incomplete_list(user_id:int, deadline:str, db: Session = Depends(get_db)):
     return await crud.read_incomplete_list(user_id, deadline, db)
+
+@router.get("/deadline/")
+async def read_deadline_table(db: Session = Depends(get_db)):
+    return await crud.read_deadline_table(db)
+
+@router.post("/deadline/")
+async def create_deadline(payload:schemas.create_deadline, db: Session = Depends(get_db) ):
+    return await crud.create_deadline(payload.deadline_type, payload.start_date, payload.ending, db)
+
+@router.put("/Deadline/")
+async def update_deadline_table(deadline: schemas.update_deadline, db: Session = Depends(get_db)):
+    return await crud.update_deadline(deadline, db)
+
+@router.delete("/deadline/{deadline_id}/")
+async def delete_deadline(deadline_id: int, db: Session = Depends(get_db)):
+    return await crud.delete_deadline(deadline_id, db)    

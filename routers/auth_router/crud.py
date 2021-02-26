@@ -10,10 +10,10 @@ from uuid import UUID
 
 
 
-async def read_deadline_table(db:Session):
-    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id FROM public.deadline; """)
-    res = res.fetchall()
-    return res
+# async def read_deadline_table(db:Session):
+#     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id FROM public.deadline; """)
+#     res = res.fetchall()
+#     return res
 
 async def read_staff(db:Session):
     res = db.execute(""" SELECT staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment FROM public.staff; """)
@@ -22,12 +22,12 @@ async def read_staff(db:Session):
 
 
 
-async def create_deadline(deadline_type, start_date, ending, db:Session):
-    res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
-    values(:deadline_type, :start_date, :ending) """,
-    {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending})
-    db.commit()
-    return res
+# async def create_deadline(deadline_type, start_date, ending, db:Session):
+#     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
+#     values(:deadline_type, :start_date, :ending) """,
+#     {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending})
+#     db.commit()
+#     return res
 
 async def create_staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment, db:Session):
     res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment)
@@ -38,13 +38,13 @@ async def create_staff(fname, sname, oname, email, supervisor, gender, role, dep
 
 
 
-async def update_deadline(deadline: schemas.update_deadline, db: Session):
-    res = db.execute("""UPDATE public.deadline
-	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
-	WHERE deadline_id = :deadline_id;""",
-    {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
-    db.commit()
-    return res
+# async def update_deadline(deadline: schemas.update_deadline, db: Session):
+#     res = db.execute("""UPDATE public.deadline
+# 	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
+# 	WHERE deadline_id = :deadline_id;""",
+#     {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
+#     db.commit()
+#     return res
 
 async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, role, department, positions, grade, appointment, db:Session):
     res = db.execute("""UPDATE public.staff
@@ -56,12 +56,12 @@ async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender,
 
 
 
-async def delete_deadline(deadline_id: int, db: Session):
-    res = db.execute("""DELETE FROM public.deadline
-	WHERE deadline_id=:deadline_id;""",
-    {'deadline_id':deadline.deadline_id})
-    db.commit()
-    return res    
+# async def delete_deadline(deadline_id: int, db: Session):
+#     res = db.execute("""DELETE FROM public.deadline
+# 	WHERE deadline_id=:deadline_id;""",
+#     {'deadline_id':deadline.deadline_id})
+#     db.commit()
+#     return res    
 
 async def delete_staff(staff_id:int, db: Session):
     res = db.execute("""DELETE FROM public.staff 
