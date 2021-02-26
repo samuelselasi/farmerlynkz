@@ -42,8 +42,15 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     return res
 
 async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
-    res = db.execute("""insert into public.annual_plan(result_areas, target, resources, appraisal_form_id)
-    values(:result_areas, :target, :resources, :appraisal_form_id);""",
+    res = db.execute("""
+    INSERT INTO public.annual_plan(
+	result_areas, target, resources, appraisal_form_id)
+	 values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
+	update set 
+	result_areas = EXCLUDED.result_areas,
+	target = EXCLUDED.target,
+	resources = EXCLUDED.resources;
+   ;""",
     {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
     db.commit()
     return res
