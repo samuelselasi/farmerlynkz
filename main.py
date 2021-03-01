@@ -95,12 +95,15 @@ from routers.appraiser import main as appraiser
 # from routers.staff_router import main as staff
 from routers.auth_router import main as auth
 from routers.phase2_router import main as phase2
+from routers.phase3_router import main as phase3
 
+
+api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
 api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])
 api.include_router(phase1.router,prefix="/api/review",tags=["Start Review"])
 # api.include_router(staff.router,prefix="/api/staff",tags=["staff"])
-api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
 api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year Review"])
+api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
 
 @api.get("/")
 def welcome():
