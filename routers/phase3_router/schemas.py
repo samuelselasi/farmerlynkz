@@ -2,28 +2,55 @@ from datetime import datetime, time, timedelta
 from typing import List, Optional
 from pydantic import BaseModel
 
-class UpdateMidYearReview(BaseModel):
-    midyear_review_id: int
-    progress_review: str 
-    remarks: str 
-    status: int 
-    appraisal_form_id: int 
-    annual_plan_id: int 
-    staff_id: int
+class EndOfYearReview(BaseModel):
+    assessment: str
+    score: int
+    comment: str
+    appraisal_form_id: int
+    end_of_year_review_id: int
+    annual_plan_id: int
+    weight: int
+    # staff_id: int
 
-class update_mid_year_review(UpdateMidYearReview):
+class UpdateEndOfYearReview(BaseModel):
+    assessment: str
+    score: int
+    comment: str
+    appraisal_form_id: int
+    endofyear_review_id: int
+    annual_plan_id: int
+    weight: int
+    # staff_id: int
+
+class create_end_of_year_review(EndOfYearReview):
     pass
 
-class MidYearReview(BaseModel):
-    progress_review: str 
-    remarks: str 
-    status: int 
-    appraisal_form_id: int 
-    annual_plan_id: int 
-    staff_id: int
-
-class create_mid_year_review(MidYearReview):
+class update_end_of_year_review(UpdateEndOfYearReview):
     pass
+
+class CoreCompetencies(BaseModel):
+    # category: str 
+    # weight: int 
+    # sub: str 
+    # main: str
+    annual_appraisal_id: int
+    grade: int 
+
+class UpdateCoreCompetencies(BaseModel):
+    # category: str 
+    # weight: int 
+    # sub: str 
+    # main: str
+    competency_id: int
+    annual_appraisal_id: int
+    grade: int 
+
+class create_core_competencies(CoreCompetencies):
+    pass
+
+class update_core_competencies(UpdateCoreCompetencies):
+    pass
+
 
 class FormBase(BaseModel):
     result_areas: str
@@ -50,7 +77,7 @@ class AnnualAppraisal(BaseModel):
     # annual_appraisal_id: int
 
 class UpdateAnnualAppraisal(BaseModel):
-    grade: int
+    # grade: int
     comment: str 
     field: str 
     appraisal_form_id: int 
@@ -60,7 +87,7 @@ class UpdateAnnualAppraisal(BaseModel):
 class UpdateAppraisalForm(BaseModel):
     appraisal_form_id:int 
     department: str 
-    grade: int 
+    # grade: int 
     positions: str 
     date: datetime
     staff_id: int

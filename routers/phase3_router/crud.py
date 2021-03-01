@@ -4,18 +4,19 @@ from sqlalchemy.orm import Session
 from . import schemas
 
 async def read_end_of_year_review(db:Session):
-    res = db.execute("""SELECT midyear_review_id, progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id
-	FROM public.midyear_review;""")
+    res = db.execute("""SELECT assessment, score, comment, appraisal_form_id, endofyear_review_id, annual_plan_id, weight
+	FROM public.endofyear_review;""")
     res = res.fetchall()
     return res
  
-async def read_core_competancies(db:Session):
-    res = db.execute("""SELECT department, grade, positions, appraisal_form_id, date, staff_id FROM public.appraisal_form;""")
+async def read_core_competencies(db:Session):
+    res = db.execute("""SELECT category, weight, sub, main, competency_id, annual_appraisal_id, grade
+	FROM public.competency;""")
     res = res.fetchall()
     return res
 
 async def read_annual_appraisal(db:Session):
-    res = db.execute("""SELECT grade, comment, field, appraisal_form_id, status, annual_appraisal_id FROM public.annual_appraisal;""")
+    res = db.execute("""SELECT comment, field, appraisal_form_id, status, annual_appraisal_id FROM public.annual_appraisal;""")
     res = res.fetchall()
     return res
 
@@ -42,24 +43,24 @@ async def read_annual_appraisal(db:Session):
 #     return res
 
 
-async def create_end_of_year_review(progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id, db: Session):
-    res = db.execute("""INSERT INTO public.midyear_review( progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id)
-    values(:progress_review, :remarks, :status, :appraisal_form_id, :annual_plan_id, :staff_id);""",
-    {'progress_review':progress_review, 'remarks':remarks, 'status':status, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id, 'staff_id':staff_id})
+async def create_end_of_year_review(assessment, score, comment, appraisal_form_id, annual_plan_id, weight, staff_id, db: Session):
+    res = db.execute("""INSERT INTO public.endofyear_review(assessment, score, comment, appraisal_form_id, annual_plan_id, weight)
+    values(:assessment, :score, :comment, :appraisal_form_id, :annual_plan_id, :weight, :staff_id);""",
+    {'assessment':assessment, 'score':score, 'comment':comment, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id, 'weight':weight})
     db.commit()
     return res
 
-async def create_core_competencies(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
-    res = db.execute("""insert into public.appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment)
-    values(:deadline, :department, :positions, :grade, :date, :staff_id, :progress_review, :remarks, :assessment, :score, :weight, :comment);""",
-    {'deadline':deadline, 'department':department, 'positions':positions, 'grade':grade, 'date':date, 'staff_id':staff_id, 'progress_review':progress_review, 'remarks':remarks, 'assessment':assessment, 'score':score, 'weight':weight, 'comment':comment})
+async def create_core_competencies(annual_appraisal_id, grade, db:Session):
+    res = db.execute("""INSERT INTO public.competency(annual_appraisal_id, grade)
+    values(:annual_appraisal_id, :grade);""",
+    {'annual_appraisal_id':grade, 'grade':grade})
     db.commit()
     return res
 
-async def create_annual_appraisal(grade, comment, field, appraisal_form_id, db:Session):
-    res = db.execute("""insert into public.annual_appraisal(grade, comment, field, appraisal_form_id)
-    values(:grade, :comment, :field, :appraisal_form_id);""",
-    {'grade':grade, 'comment':comment,'field':field, 'appraisal_form_id':appraisal_form_id})
+async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):
+    res = db.execute("""insert into public.annual_appraisal(comment, field, appraisal_form_id)
+    values(:comment, :field, :appraisal_form_id);""",
+    {'comment':comment,'field':field, 'appraisal_form_id':appraisal_form_id})
     db.commit()
     return res
 
@@ -85,27 +86,27 @@ async def create_annual_appraisal(grade, comment, field, appraisal_form_id, db:S
 #     return res
 
 
-async def update_end_of_year_review(end_of_year_review: schemas.update_mid_year_review, db: Session):
-    res = db.execute("""UPDATE public.midyear_review
-	SET midyear_review_id = :midyear_review_id, progress_review = :progress_review, remarks = :remarks, status = :status, appraisal_form_id = :appraisal_form_id, annual_plan_id = :annual_plan_id, staff_id = :staff_id
-	WHERE midyear_review_id = :midyear_review_id;""",
-    {'midyear_review_id':mid_year_review.midyear_review_id, 'progress_review':mid_year_review.progress_review, 'remarks':mid_year_review.remarks, 'status':mid_year_review.status, 'appraisal_form_id':mid_year_review.appraisal_form_id, 'annual_plan_id':mid_year_review.annual_plan_id, 'staff_id':mid_year_review.staff_id})
+async def update_end_of_year_review(end_of_year_review: schemas.update_end_of_year_review, db: Session):
+    res = db.execute("""UPDATE public.endofyear_review
+	SET assessment = :assessment, score = :score, comment = :comment, appraisal_form_id = :appraisal_form_id, endofyear_review_id = :endofyear_review_id, annual_plan_id = :annual_plan_id, weight = :weight
+	WHERE endofyear_review_id = :endofyear_review_id;""",
+    {'assessment':assessment, 'score':score, 'comment':comment, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id, 'endofyear_review_id':endofyear_review_id, 'weight':weight})
     db.commit()
     return res
 
-async def update_core_competencies(core_competencies: schemas.update_appraisal_form, db: Session):
-    res = db.execute("""UPDATE public.appraisal_form
-	SET appraisal_form_id = :appraisal_form_id, department = :department, grade = :grade, position = :positions, date = :date, staff_id = :staff_id
-	WHERE appraisal_form_id = :appraisal_form_id;""",
-    {'appraisal_form_id':appraisal_form.appraisal_form_id, 'department': appraisal_form.department, 'grade': appraisal_form.grade, 'positions': appraisal_form.positions, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
+async def update_core_competencies(core_competencies: schemas.update_core_competencies, db: Session):
+    res = db.execute("""UPDATE public.competency
+	SET annual_appraisal_id = :annual_appraisal_id, competency_id = :competency_id, grade = :grade
+	WHERE competency_id = :competency_id;""",
+    {'annual_appraisal_id':annual_appraisal_id, 'competency_id':competency_id, 'grade':grade})
     db.commit()
     return res
 
 async def update_annual_appraisal(annual_appraisal: schemas.create_annual_appraisal, db: Session):
     res = db.execute("""UPDATE public.annual_appraisal
-	SET grade = :grade, comment = :comment, field = :field, appraisal_form_id = :appraisal_form_id, annual_appraisal_id = :annual_appraisal_id
+	SET grade = comment = :comment, field = :field, appraisal_form_id = :appraisal_form_id, annual_appraisal_id = :annual_appraisal_id
 	WHERE annual_appraisal_id = :annual_appraisal_id;""",
-    {'grade':annual_appraisal.grade, 'comment':annual_appraisal.comment, 'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
+    {'comment':annual_appraisal.comment, 'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
     db.commit()
     return res 
 
@@ -126,17 +127,17 @@ async def update_annual_appraisal(annual_appraisal: schemas.create_annual_apprai
 #     return res 
 
 
-async def delete_end_of_year_review(end_of_year_review_id: int, db: Session):
-    res = db.execute("""DELETE FROM public.midyear_review
-	WHERE midyear_review_id = :midyear_review_id;""",
-    {'midyear_review_id':midyear_review_id})
+async def delete_end_of_year_review(endofyear_review_id: int, db: Session):
+    res = db.execute("""DELETE FROM public.endofyear_review
+	WHERE endofyear_review_id = :endofyear_review_id;""",
+    {'endofyear_review_id':endofyear_review_id})
     db.commit()
     return res
 
-async def delete_core_competencies(core_competencies_id: int, db:Session):
-    res = db.execute("""DELETE FROM public.appraisal_form
-	WHERE appraisal_form_id = :appraisal_form_id;""",
-    {'appraisal_form_id': appraisal_form.appraisal_form_id})
+async def delete_core_competencies(competency_id: int, db:Session):
+    res = db.execute("""DELETE FROM public.competency
+	WHERE competency_id = :competency_id;""",
+    {'competency_id': competency_id})
     db.commit()
     return res
 

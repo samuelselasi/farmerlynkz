@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from services.email import background_send, fm, MessageSchema, template, background_send_2, background_send3
 from database import SessionLocal, engine
 from routers.phase1_router import models
+# from routers.phase3_router import models
 # from routers.staff_router import models
 from routers.auth_router import models
 from routers.appraiser import models
@@ -89,7 +90,6 @@ def get_db():
 
 #models.Base.metadata.create_all(bind=engine)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
-
 from routers.phase1_router import main as phase1
 from routers.appraiser import main as appraiser
 # from routers.staff_router import main as staff

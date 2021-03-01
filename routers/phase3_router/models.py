@@ -4,8 +4,8 @@ from database import Base
 
 
 
-class phase2(Base):
-    __tablename__ = "phase2"
+class phase3(Base):
+    __tablename__ = "phase3"
 
     id = Column(Integer, primary_key=True, index=True)
     kra = Column(String, index=True)
