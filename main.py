@@ -12,7 +12,86 @@ from routers.appraiser import models
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, FastAPI
 from sqlalchemy.orm import Session
 
+
+
+from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.security import OAuth2PasswordBearer
+import httpx
+from starlette.config import Config
+
+
+# Load environment variables
+config = Config('.env')
+
+
 api = FastAPI(docs_url="/api/docs")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+
+
+def retrieve_token(authorization, issuer, scope='items'):
+    headers = {
+        'accept': 'application/json',
+        'authorization': authorization,
+        'cache-control': 'no-cache',
+        'content-type': 'application/x-www-form-urlencoded'
+    }
+    data = {
+        'grant_type': 'client_credentials',
+        'scope': scope,
+    }
+    url = issuer + '/v1/token'
+
+    response = httpx.post(url, headers=headers, data=data)
+
+    if response.status_code == httpx.codes.OK:
+        return response.json()
+    else:
+        raise HTTPException(status_code=400, detail=response.text)
+
+
+# Get auth token endpoint
+@api.post('/token')
+def login(request: Request):
+    return retrieve_token(
+        request.headers['authorization'],
+        config('OKTA_ISSUER'),
+        'items'
+    )
+
+
+def validate_remotely(token, issuer, clientId, clientSecret):
+    headers = {
+        'accept': 'application/json',
+        'cache-control': 'no-cache',
+        'content-type': 'application/x-www-form-urlencoded',
+    }
+    data = {
+        'client_id': clientId,
+        'client_secret': clientSecret,
+        'token': token,
+    }
+    url = issuer + '/v1/introspect'
+
+    response = httpx.post(url, headers=headers, data=data)
+
+    return response.status_code == httpx.codes.OK and response.json()['active']
+
+
+def validate(token: str = Depends(oauth2_scheme)):
+    res = validate_remotely(
+        token,
+        config('OKTA_ISSUER'),
+        config('OKTA_CLIENT_ID'),
+        config('OKTA_CLIENT_SECRET')
+    )
+
+    if res:
+        return True
+    else:
+        raise HTTPException(status_code=400)
+
+
 
 origins = ["*"]
 
@@ -59,7 +138,7 @@ def send_hash_email():
         # background_tasks.add_task(fm.send_message,message)
         tasks.add_task(fm.send_message, message)   
     print('success')
-    print(res)
+    # print(res)
 scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
 # scheduler.add_job(send_hash_email, 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
 
@@ -106,7 +185,7 @@ api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year R
 api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
 
 @api.get("/")
-def welcome():
+def welcome(valid: bool = Depends(validate)):
     return "Reminders started"
 
 @api.on_event("startup")

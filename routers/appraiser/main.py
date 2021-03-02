@@ -13,12 +13,12 @@ router = APIRouter()
 async def read_appraiser_appraisees(user_id:int, db: Session = Depends(get_db)):
     return await crud.read_appraiser_appraisees(user_id, db)
 
-@router.get("/completedlist/{user_id}/{deadline}")
-async def read_completed_list(user_id:int, deadline:str, db: Session = Depends(get_db)):
-    return await crud.read_completed_list(user_id, deadline, db)
+@router.get("/completedlist/{deadline}")
+async def read_completed_list(deadline:str, user_id = 1, db: Session = Depends(get_db)):
+    return await crud.read_completed_list(deadline, user_id, db)
 
-@router.get("/incompletelist/{user_id}/{deadline}")
-async def read_incomplete_list(user_id:int, deadline:str, db: Session = Depends(get_db)):
+@router.get("/incompletelist/{deadline}")
+async def read_incomplete_list(deadline:str, db: Session = Depends(get_db)):
     return await crud.read_incomplete_list(user_id, deadline, db)
 
 @router.get("/deadline/")
