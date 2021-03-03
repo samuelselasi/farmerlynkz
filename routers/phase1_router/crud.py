@@ -32,6 +32,11 @@ async def read_hash_form(db:Session):
     res = res.fetchall()
     return res
 
+async def read_deadline_table(db:Session):
+    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id FROM public.deadline; """)
+    res = res.fetchall()
+    return res
+    print(res)
 
 
 async def appraisal_form(department, grade, positions, date, staff_id, db:Session):

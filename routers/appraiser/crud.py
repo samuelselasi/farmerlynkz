@@ -11,12 +11,12 @@ async def read_deadline_table(db:Session):
 
 async def read_appraiser_appraisees(user_id, db: Session):
     res = db.execute(""" select get_list_of_appraisee(:user_id) """,{'user_id':user_id})
-    return res.fetchall()
+    return res.fetchall()  
 
-async def read_completed_list(user_id:int, deadline:str, db:Session):
-    res = db.execute("""SELECT public.get_list_of_completed_form(:deadline, user_id:=1)""",{'deadline':deadline})
+async def read_completed_list(deadline:str, user_id:int, db:Session):
+    res = db.execute("""SELECT public.get_list_of_completed_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id})
     res = res.fetchall()
-    return res    
+    return res 
 
 async def read_incomplete_list(user_id:int, deadline:str, db:Session):
     res = db.execute("""SELECT public.get_list_of_incomplete_form(:deadline, :user_id)""",{'user_id':1, 'deadline':deadline})

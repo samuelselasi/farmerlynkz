@@ -28,6 +28,9 @@ async def verify_hash_form(hash: str, db: Session = Depends(get_db)):
 async def read_hash_form(db: Session = Depends(get_db)):
     return await crud.read_hash_form(db)
 
+@router.get("/deadline/")
+async def read_deadline_table(db: Session = Depends(get_db)):
+    return await crud.read_deadline_table(db)
 
 
 @router.post("/appraisalform/")
