@@ -14,82 +14,82 @@ from sqlalchemy.orm import Session
 
 
 
-from fastapi import Depends, FastAPI, HTTPException, Request
-from fastapi.security import OAuth2PasswordBearer
-import httpx
-from starlette.config import Config
+# from fastapi import Depends, FastAPI, HTTPException, Request
+# from fastapi.security import OAuth2PasswordBearer
+# import httpx
+# from starlette.config import Config
 
 
 # Load environment variables
-config = Config('.env')
+# config = Config('.env')
 
 
 api = FastAPI(docs_url="/api/docs")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 
-def retrieve_token(authorization, issuer, scope='items'):
-    headers = {
-        'accept': 'application/json',
-        'authorization': authorization,
-        'cache-control': 'no-cache',
-        'content-type': 'application/x-www-form-urlencoded'
-    }
-    data = {
-        'grant_type': 'client_credentials',
-        'scope': scope,
-    }
-    url = issuer + '/v1/token'
+# def retrieve_token(authorization, issuer, scope='items'):
+#     headers = {
+#         'accept': 'application/json',
+#         'authorization': authorization,
+#         'cache-control': 'no-cache',
+#         'content-type': 'application/x-www-form-urlencoded'
+#     }
+#     data = {
+#         'grant_type': 'client_credentials',
+#         'scope': scope,
+#     }
+#     url = issuer + '/v1/token'
 
-    response = httpx.post(url, headers=headers, data=data)
+#     response = httpx.post(url, headers=headers, data=data)
 
-    if response.status_code == httpx.codes.OK:
-        return response.json()
-    else:
-        raise HTTPException(status_code=400, detail=response.text)
-
-
-# Get auth token endpoint
-@api.post('/token')
-def login(request: Request):
-    return retrieve_token(
-        request.headers['authorization'],
-        config('OKTA_ISSUER'),
-        'items'
-    )
+#     if response.status_code == httpx.codes.OK:
+#         return response.json()
+#     else:
+#         raise HTTPException(status_code=400, detail=response.text)
 
 
-def validate_remotely(token, issuer, clientId, clientSecret):
-    headers = {
-        'accept': 'application/json',
-        'cache-control': 'no-cache',
-        'content-type': 'application/x-www-form-urlencoded',
-    }
-    data = {
-        'client_id': clientId,
-        'client_secret': clientSecret,
-        'token': token,
-    }
-    url = issuer + '/v1/introspect'
-
-    response = httpx.post(url, headers=headers, data=data)
-
-    return response.status_code == httpx.codes.OK and response.json()['active']
+# # Get auth token endpoint
+# @api.post('/token')
+# def login(request: Request):
+#     return retrieve_token(
+#         request.headers['authorization'],
+#         config('OKTA_ISSUER'),
+#         'items'
+#     )
 
 
-def validate(token: str = Depends(oauth2_scheme)):
-    res = validate_remotely(
-        token,
-        config('OKTA_ISSUER'),
-        config('OKTA_CLIENT_ID'),
-        config('OKTA_CLIENT_SECRET')
-    )
+# def validate_remotely(token, issuer, clientId, clientSecret):
+#     headers = {
+#         'accept': 'application/json',
+#         'cache-control': 'no-cache',
+#         'content-type': 'application/x-www-form-urlencoded',
+#     }
+#     data = {
+#         'client_id': clientId,
+#         'client_secret': clientSecret,
+#         'token': token,
+#     }
+#     url = issuer + '/v1/introspect'
 
-    if res:
-        return True
-    else:
-        raise HTTPException(status_code=400)
+#     response = httpx.post(url, headers=headers, data=data)
+
+#     return response.status_code == httpx.codes.OK and response.json()['active']
+
+
+# def validate(token: str = Depends(oauth2_scheme)):
+#     res = validate_remotely(
+#         token,
+#         config('OKTA_ISSUER'),
+#         config('OKTA_CLIENT_ID'),
+#         config('OKTA_CLIENT_SECRET')
+#     )
+
+#     if res:
+#         return True
+#     else:
+#         raise HTTPException(status_code=400)
 
 
 
@@ -185,7 +185,7 @@ api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year R
 api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
 
 @api.get("/")
-def welcome(valid: bool = Depends(validate)):
+def welcome():
     return "Reminders started"
 
 @api.on_event("startup")
