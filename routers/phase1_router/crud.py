@@ -47,29 +47,13 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     return res
 
 async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
-    query = db.execute(""" SELECT public.get_deadline(); """)
-    query = query.fetchall()
-    # WHERE deadline_type = 'Start'
-    # return query
-    for item in query:
-        ending = datetime.datetime[item[0]]
-        # start_date = [item[1]],
-        # deadline_id = [item[2]],
-        # deadline_type = [item[3]]
-    if ending >= datetime.utcnow():
-        res = db.execute("""
-            INSERT INTO public.annual_plan(
-	        result_areas, target, resources, appraisal_form_id)
-	        values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
-	        update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources;""",
-            {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
-        db.commit()
-        return res
-    else:
-        print('deadline passed')    
-
-
-
+    res = db.execute("""
+    INSERT INTO public.annual_plan(result_areas, target, resources, appraisal_form_id)
+	values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
+	update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources;""",
+    {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
+    db.commit()
+    return res   
 
 async def create_annual_appraisal(grade, comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(grade, comment, field, appraisal_form_id)

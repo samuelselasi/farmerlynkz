@@ -18,8 +18,8 @@ async def read_completed_list(deadline:str, user_id = 1,  db: Session = Depends(
     return await crud.read_completed_list( deadline, user_id, db)
 
 @router.get("/incompletelist/{deadline}")
-async def read_incomplete_list(deadline:str, db: Session = Depends(get_db)):
-    return await crud.read_incomplete_list(user_id, deadline, db)
+async def read_incomplete_list(deadline:str, user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.read_incomplete_list( deadline, user_id, db)    
 
 @router.get("/deadline/")
 async def read_deadline_table(db: Session = Depends(get_db)):

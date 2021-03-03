@@ -18,8 +18,8 @@ async def read_completed_list(deadline:str, user_id:int, db:Session):
     res = res.fetchall()
     return res 
 
-async def read_incomplete_list(user_id:int, deadline:str, db:Session):
-    res = db.execute("""SELECT public.get_list_of_incomplete_form(:deadline, :user_id)""",{'user_id':1, 'deadline':deadline})
+async def read_incomplete_list(deadline:str, user_id:int, db:Session):
+    res = db.execute("""SELECT public.get_list_of_incompleted_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id})
     res = res.fetchall()
     return res    
 
