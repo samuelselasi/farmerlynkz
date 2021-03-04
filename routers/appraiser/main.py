@@ -13,13 +13,29 @@ router = APIRouter()
 async def read_appraiser_appraisees(user_id:int, db: Session = Depends(get_db)):
     return await crud.read_appraiser_appraisees(user_id, db)
 
-@router.get("/completedlist/{deadline}")
-async def read_completed_list(deadline:str, user_id = 1,  db: Session = Depends(get_db)):
+@router.get("/completedlist/start/")
+async def read_completed_list(deadline = 'Start', user_id = 1,  db: Session = Depends(get_db)):
     return await crud.read_completed_list( deadline, user_id, db)
 
-@router.get("/incompletelist/{deadline}")
-async def read_incomplete_list(deadline:str, user_id = 1,  db: Session = Depends(get_db)):
-    return await crud.read_incomplete_list( deadline, user_id, db)    
+@router.get("/completedlist/mid/")
+async def read_completed_list(deadline = 'Mid', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.read_completed_list( deadline, user_id, db)
+
+@router.get("/completedlist/end/")
+async def read_completed_list(deadline = 'End', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.read_completed_list( deadline, user_id, db)
+
+@router.get("/incompletedlist/start/")
+async def read_incompleted_list(deadline = 'Start', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.read_incomplete_list( deadline, user_id, db)   
+
+@router.get("/incompletedlist/mid/")
+async def read_incompleted_list(deadline = 'Mid', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.read_incomplete_list( deadline, user_id, db)  
+
+@router.get("/incompletedlist/end/")
+async def read_incompleted_list(deadline = 'End', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.read_incomplete_list( deadline, user_id, db)  
 
 @router.get("/deadline/")
 async def read_deadline_table(db: Session = Depends(get_db)):
