@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, BackgroundTasks
 from services.email import background_send
 from sqlalchemy.orm import Session
 from . import models, schemas
-from datetime import datetime
+from datetime import datetime, date
 
  
 async def read_appraisal_form(db:Session):
@@ -46,43 +46,21 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     db.commit()
     return res
 
-
-
-# async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
-#     query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Start'; """)
-#     query = query.fetchall()
-#     # return query
-#     s = query 
-#     date = " ".join([str(i) for i in s])
-#     print(date)
-#     # str1 = " "    
-#     # def listToString(s):
-        
-#     #     return (",".join([str(i) for i in s]))     
-#     # ending = datetime.strptime (" ".join([str(i) for i in s]), '%Y, %m, %d')
-#     date = datetime.strptime(date, '%Y-%m-%d')
-#     # print(listToString(s))  
-#     # end_date = datetime.strptime(ending, '%Y-%m-%d')
-#     if date >= datetime.utcnow():
-#         res = db.execute("""INSERT INTO public.annual_plan(
-# 	                    result_areas, target, resources, appraisal_form_id)
-# 	                    values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
-# 	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources; """,
-#                         {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
-#         db.commit()
-#         return res
-#     else:
-#         print('deadline passed')    
-
-
 async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
-    res = db.execute("""
-    INSERT INTO public.annual_plan(result_areas, target, resources, appraisal_form_id)
-	values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
-	update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources;""",
-    {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
-    db.commit()
-    return res   
+    query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Start'; """)
+    query = query.first()[0]
+    print(query)
+    if query >= date.today():
+        res = db.execute("""INSERT INTO public.annual_plan(
+	                    result_areas, target, resources, appraisal_form_id)
+	                    values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
+	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources; """,
+                        {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
+        db.commit()
+        return res
+    else:
+        return 'deadline passed'
+        print('deadline passed')    
 
 async def create_annual_appraisal(grade, comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(grade, comment, field, appraisal_form_id)

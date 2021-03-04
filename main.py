@@ -1,6 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
-from services.email import background_send, fm, MessageSchema, template, background_send_2, background_send3
+from services.email import background_send, fm, MessageSchema, template, background_send_2, background_send3, simple_send
 from database import SessionLocal, engine
 from routers.phase1_router import models
 # from routers.phase3_router import models
@@ -121,23 +121,29 @@ def send_email():
 
 from datetime import datetime, timedelta
 
+# async def send_start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+#     res = db.execute("""SELECT * FROM public.hash_table""")
+#     res = res.fetchall()
+
+#     return await background_send(res, background_tasks)
+db = SessionLocal()
+tasks=BackgroundTasks()
 @api.post("/testemail")
 def send_hash_email():
-    tasks=BackgroundTasks()
-    db = SessionLocal()
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
+    return simple_send(res)    
 
-    for item in res:
-        message = MessageSchema(
-            subject="REVIEW FORMS",
-            recipients=[item[1]],
-            body=template.format(url="http://localhost:4200/forms/start",hash=item[0]),
-            subtype="html"
-        ) 
-        # background_tasks.add_task(fm.send_message,message)
-        tasks.add_task(fm.send_message, message)   
-    print('success')
+    # for item in res:
+    #     message = MessageSchema(
+    #         subject="REVIEW FORMS",
+    #         recipients=[item[1]],
+    #         body=template.format(url="http://localhost:4200/forms/start",hash=item[0]),
+    #         subtype="html"
+    #     ) 
+    #     # background_tasks.add_task(fm.send_message,message)
+    #     tasks.add_task(fm.send_message, message)   
+    # print('success')
     # print(res)
 scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
 # scheduler.add_job(send_hash_email, 'cron', month='1-2, 6-7,11-12', day='1st mon, 3rd fri', hour='0-2')
@@ -213,8 +219,9 @@ async def send_midyear_review_email(background_tasks: BackgroundTasks, db: Sessi
 
     return await background_send3(res, background_tasks)
 
-# @api.post("/test/test")
-# async def b():
-#     print('b')
-#     print(dir(background_tasks))
-#     return await background_send([{'email':'a@a.com','hash':'34242assdd'}], background_tasks)
+
+@api.post("/test/test")
+async def b(background:BackgroundTasks):
+    # print('b')
+    # print(dir(background_tasks))
+    return await background_send([('afsd', 'a@test.com')], background)
