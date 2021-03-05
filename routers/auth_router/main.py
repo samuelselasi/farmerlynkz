@@ -22,18 +22,33 @@ router = APIRouter()
 async def read_staff(db: Session = Depends(get_db)):
     return await crud.read_staff(db)
 
+@router.get("/roles/")
+async def read_roles(db: Session = Depends(get_db)):
+    return await crud.read_roles(db)
+
 
 @router.post("/")
 async def create_staff(payload: schemas.UserCreate, db: Session = Depends(get_db)):
     return await crud.create_staff(payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.roles, payload.department, payload.positions, payload.grade, payload.appointment, db)
 
+@router.post("/roles/")
+async def create_roles(payload: schemas.create_roles, db: Session = Depends(get_db)):
+    return await crud.create_roles(payload.role_description, db)
 
 @router.put("/")
 async def update_staff(payload: schemas.update_staff, db:Session = Depends(get_db)):
     return await crud.update_staff(payload.staff_id, payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.roles, payload.department, payload.positions, payload.grade, payload.appointment, db)
 
+@router.put("/roles/")
+async def update_roles(payload: schemas.update_roles, db:Session = Depends(get_db)):
+    return await crud.update_roles(payload.role_id, payload.role_description, db)
+
 
 @router.delete("/{staff_id}/")
 async def delete_staff(staff_id: int, db: Session = Depends(get_db)):
     return await crud.delete_staff(staff_id, db)
+  
+@router.delete("/{role_id}/")
+async def delete_roles(role_id: int, db: Session = Depends(get_db)):
+    return await crud.delete_roles(role_id, db)
   

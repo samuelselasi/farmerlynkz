@@ -65,3 +65,14 @@ class read_deadline_table(BaseModel):
     start_date: DeadlineTable
     ending: DeadlineTable
     deadline_id: DeadlineTable
+
+class CreateRoles(BaseModel):
+    role_description: str
+class create_roles(CreateRoles):
+    pass
+
+class UpdateRoles(BaseModel):
+    role_id: int
+    role_description: str
+class update_roles(UpdateRoles):
+    pass

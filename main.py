@@ -1,15 +1,11 @@
+from services.email import background_send, fm, MessageSchema, template, background_send_2, background_send3, simple_send
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
-from services.email import background_send, fm, MessageSchema, template, background_send_2, background_send3, simple_send
 from database import SessionLocal, engine
 from routers.phase1_router import models
-# from routers.phase3_router import models
-# from routers.staff_router import models
 from routers.auth_router import models
 from routers.appraiser import models
-# from fastapi import BackgroundTasks
-# from fastapi import FastAPI
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, FastAPI
 from sqlalchemy.orm import Session
 
 
