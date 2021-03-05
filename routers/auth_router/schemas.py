@@ -15,7 +15,7 @@ class UserBase(BaseModel):
     email: str
     supervisor: int
     gender: str
-    roles: str
+    roles: int
     department: str
     positions: str
     grade: int
@@ -28,7 +28,7 @@ class UpdateStaff(BaseModel):
     email: str
     supervisor: int
     gender: str
-    roles: str
+    roles: int
     department: str
     positions: str
     grade: int
