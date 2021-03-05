@@ -6,10 +6,10 @@ class UpdateMidYearReview(BaseModel):
     midyear_review_id: int
     progress_review: str 
     remarks: str 
-    status: int 
+    mid_status: int 
     appraisal_form_id: int 
     annual_plan_id: int 
-    staff_id: int
+
 
 class update_mid_year_review(UpdateMidYearReview):
     pass
@@ -17,10 +17,10 @@ class update_mid_year_review(UpdateMidYearReview):
 class MidYearReview(BaseModel):
     progress_review: str 
     remarks: str 
-    status: int 
+    mid_status: int 
     appraisal_form_id: int 
     annual_plan_id: int 
-    staff_id: int
+    
 
 class create_mid_year_review(MidYearReview):
     pass

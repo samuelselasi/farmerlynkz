@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from . import schemas
 
 async def read_mid_year_review(db:Session):
-    res = db.execute("""SELECT midyear_review_id, progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id
+    res = db.execute("""SELECT midyear_review_id, progress_review, remarks, mid_status, appraisal_form_id, annual_plan_id
 	FROM public.midyear_review;""")
     res = res.fetchall()
     return res
@@ -36,10 +36,10 @@ async def read_mid_year_review(db:Session):
 #     return res
 
 
-async def create_mid_year_review(progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id, db: Session):
-    res = db.execute("""INSERT INTO public.midyear_review( progress_review, remarks, status, appraisal_form_id, annual_plan_id, staff_id)
-    values(:progress_review, :remarks, :status, :appraisal_form_id, :annual_plan_id, :staff_id);""",
-    {'progress_review':progress_review, 'remarks':remarks, 'status':status, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id, 'staff_id':staff_id})
+async def create_mid_year_review(progress_review, remarks, mid_status, appraisal_form_id, annual_plan_id, db: Session):
+    res = db.execute("""INSERT INTO public.midyear_review( progress_review, remarks, mid_status, appraisal_form_id, annual_plan_id, staff_id)
+    values(:progress_review, :remarks, :mid_status, :appraisal_form_id, :annual_plan_id, :staff_id);""",
+    {'progress_review':progress_review, 'remarks':remarks, 'mid_status':mid_status, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id})
     db.commit()
     return res
 
@@ -74,9 +74,9 @@ async def create_mid_year_review(progress_review, remarks, status, appraisal_for
 
 async def update_mid_year_review(mid_year_review: schemas.update_mid_year_review, db: Session):
     res = db.execute("""UPDATE public.midyear_review
-	SET midyear_review_id = :midyear_review_id, progress_review = :progress_review, remarks = :remarks, status = :status, appraisal_form_id = :appraisal_form_id, annual_plan_id = :annual_plan_id, staff_id = :staff_id
+	SET midyear_review_id = :midyear_review_id, progress_review = :progress_review, remarks = :remarks, mid_status = :mid_status, appraisal_form_id = :appraisal_form_id, annual_plan_id = :annual_plan_id
 	WHERE midyear_review_id = :midyear_review_id;""",
-    {'midyear_review_id':mid_year_review.midyear_review_id, 'progress_review':mid_year_review.progress_review, 'remarks':mid_year_review.remarks, 'status':mid_year_review.status, 'appraisal_form_id':mid_year_review.appraisal_form_id, 'annual_plan_id':mid_year_review.annual_plan_id, 'staff_id':mid_year_review.staff_id})
+    {'midyear_review_id':mid_year_review.midyear_review_id, 'progress_review':mid_year_review.progress_review, 'remarks':mid_year_review.remarks, 'mid_status':mid_year_review.mid_status, 'appraisal_form_id':mid_year_review.appraisal_form_id, 'annual_plan_id':mid_year_review.annual_plan_id})
     db.commit()
     return res
 

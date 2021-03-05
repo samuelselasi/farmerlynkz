@@ -35,7 +35,7 @@ async def read_mid_year_review(db: Session = Depends(get_db)):
 
 @router.post("/midyearreview/")
 async def create_mid_year_review(payload: schemas.create_mid_year_review, db: Session = Depends(get_db)):
-    return await crud.create_mid_year_review(payload.progress_review, payload.remarks, payload.status, payload.appraisal_form_id, payload.annual_plan_id, payload.staff_id, db)
+    return await crud.create_mid_year_review(payload.progress_review, payload.remarks, payload.mid_status, payload.appraisal_form_id, payload.annual_plan_id, db)
 
 # @router.post("/appraisalform/")
 # async def appraisal_form(payload: schemas.appraisal_form, db: Session = Depends(get_db)):

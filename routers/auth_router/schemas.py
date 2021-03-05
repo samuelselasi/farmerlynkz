@@ -2,7 +2,6 @@ from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from datetime import datetime, time, timedelta
 from typing import List, Optional
 from fastapi import Body, FastAPI
-# from sqlalchemy import DateTime
 from pydantic import BaseModel
 from typing import Optional
 from uuid import UUID
@@ -10,14 +9,13 @@ import datetime
 
 
 class UserBase(BaseModel):
-    #staff_id:int
     fname: str
     sname: str
     oname: str
     email: str
     supervisor: int
     gender: str
-    role: str
+    roles: str
     department: str
     positions: str
     grade: int
@@ -30,7 +28,7 @@ class UpdateStaff(BaseModel):
     email: str
     supervisor: int
     gender: str
-    role: str
+    roles: str
     department: str
     positions: str
     grade: int
