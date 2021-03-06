@@ -23,6 +23,10 @@ async def read_incomplete_list(deadline:str, user_id:int, db:Session):
     res = res.fetchall()
     return res    
 
+async def read_supervisors(db: Session):
+    res = db.execute(""" SELECT public.get_view_supervisors() """)
+    res = res.fetchall()
+    return res
 
 async def create_deadline(deadline_type, start_date, ending, db:Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
