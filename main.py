@@ -103,10 +103,10 @@ from routers.appraiser import main as appraiser
 from routers.auth_router import main as auth
 from routers.phase2_router import main as phase2
 from routers.phase3_router import main as phase3
-from routers.services import main as emails
+from routers.services import main as email
 
 
-api.include_router(services.router, prefix="/email", tags=["E-mails"])
+api.include_router(email.router, prefix="/email", tags=["E-mails"])
 api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
 api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])
 api.include_router(phase1.router,prefix="/api/review",tags=["Start Review"])
@@ -129,23 +129,23 @@ async def shutdown_event():
 
 # background_tasks = BackgroundTasks()
 
-@api.post("/startreviewemail/")
-async def send_start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    res = db.execute("""SELECT * FROM public.hash_table""")
-    res = res.fetchall()
+# @api.post("/startreviewemail/")
+# async def send_start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+#     res = db.execute("""SELECT * FROM public.hash_table""")
+#     res = res.fetchall()
 
-    return await background_send(res, background_tasks)
+#     return await background_send(res, background_tasks)
 
-@api.post("/midyearreviewemail/")
-async def send_midyear_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
-    res = db.execute("""SELECT * FROM public.hash_table""")
-    res = res.fetchall()
+# @api.post("/midyearreviewemail/")
+# async def send_midyear_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+#     res = db.execute("""SELECT * FROM public.hash_table""")
+#     res = res.fetchall()
 
-    return await background_send3(res, background_tasks)
+#     return await background_send3(res, background_tasks)
 
 
-@api.post("/test/test")
-async def b(background:BackgroundTasks):
-    # print('b')
-    # print(dir(background_tasks))
-    return await background_send([('afsd', 'a@test.com')], background)
+# @api.post("/test/test")
+# async def b(background:BackgroundTasks):
+#     # print('b')
+#     # print(dir(background_tasks))
+#     return await background_send([('afsd', 'a@test.com')], background)

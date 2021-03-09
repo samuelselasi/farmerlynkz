@@ -11,6 +11,11 @@ from typing import List
 from main import get_db
 
 
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import UUID4, EmailStr
+from sqlalchemy.orm import Session
+from typing import List, Optional
+
 router = APIRouter()
 
 def get_db():
@@ -88,6 +93,33 @@ Appraiser-App Admin </p>
 
 """
 
+template3 = """
+<font size = "+2">
+<h1> <i> End Of Year Review Form </i> </h1>
+
+<p>Dear All,</p>
+
+<p>As a requirement for the completion
+of your Annual appraisal form, the End of Year Review
+Form is provided to all staff.</p>
+
+<p>Your End of Year Review form for the year has
+been made available to you.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form by
+<strong>the end of this month </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""
+
+
+
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     print(user_hash_list)
     for item in user_hash_list:
@@ -135,6 +167,18 @@ def background_send_2(user_hash_list) -> JSONResponse:
         fm.send_message(message)        
         # background_tasks.add_task(fm.send_message,message)
 
+async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
+    print(user_hash_list)
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="End of Year Review Form",
+            recipients=[item[1]],
+            body=template3.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
+
 def simple_send(user_hash_list):
     for item in user_hash_list:
         message = MessageSchema(
@@ -162,6 +206,12 @@ async def send_midyear_review_email(background_tasks: BackgroundTasks, db: Sessi
 
     return await background_send3(res, background_tasks)
 
+@router.post("/endofyearreviewemail/")
+async def send_end_0f_year_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    res = db.execute("""SELECT * FROM public.hash_table""")
+    res = res.fetchall()
+
+    return await background_send_4(res, background_tasks)
 
 @router.post("/test/test")
 async def b(background:BackgroundTasks):
