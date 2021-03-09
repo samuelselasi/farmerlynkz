@@ -121,7 +121,7 @@ Appraiser-App Admin </p>
 
 
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
-    print(user_hash_list)
+    # print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
             subject="Start Appraisal Form",
