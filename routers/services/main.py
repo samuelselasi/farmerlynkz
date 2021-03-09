@@ -1,11 +1,25 @@
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form
+from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, APIRouter, Depends
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from starlette.responses import JSONResponse
+from database import SessionLocal, engine
 from pydantic import EmailStr, BaseModel
 from starlette.requests import Request
 from fastapi import BackgroundTasks
+from sqlalchemy.orm import Session
 from pydantic import EmailStr
 from typing import List
+from main import get_db
+
+
+router = APIRouter()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 
 conf = ConnectionConfig(
@@ -131,3 +145,26 @@ def simple_send(user_hash_list):
         )
         fm.send_message(message)        
         # background_tasks.add_task(fm.send_message,message)        
+
+
+
+@router.post("/startreviewemail/")
+async def send_start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    res = db.execute("""SELECT * FROM public.hash_table""")
+    res = res.fetchall()
+
+    return await background_send(res, background_tasks)
+
+@router.post("/midyearreviewemail/")
+async def send_midyear_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    res = db.execute("""SELECT * FROM public.hash_table""")
+    res = res.fetchall()
+
+    return await background_send3(res, background_tasks)
+
+
+@router.post("/test/test")
+async def b(background:BackgroundTasks):
+    # print('b')
+    # print(dir(background_tasks))
+    return await background_send([('afsd', 'a@test.com')], background)
