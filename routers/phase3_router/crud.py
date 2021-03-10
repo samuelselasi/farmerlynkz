@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, BackgroundTasks
-from services.email import background_send
+from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 from . import schemas
 
@@ -48,21 +48,21 @@ async def create_end_of_year_review(assessment, score, comment, appraisal_form_i
     values(:assessment, :score, :comment, :appraisal_form_id, :annual_plan_id, :weight, :staff_id);""",
     {'assessment':assessment, 'score':score, 'comment':comment, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id, 'weight':weight})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "end of year review has been created"})
 
 async def create_core_competencies(annual_appraisal_id, grade, db:Session):
     res = db.execute("""INSERT INTO public.competency(annual_appraisal_id, grade)
     values(:annual_appraisal_id, :grade);""",
     {'annual_appraisal_id':grade, 'grade':grade})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "core competency has been created"})
 
 async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(comment, field, appraisal_form_id)
     values(:comment, :field, :appraisal_form_id);""",
     {'comment':comment,'field':field, 'appraisal_form_id':appraisal_form_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "annual appraisal has been created"})
 
 # async def appraisal_form(department, grade, positions, date, staff_id, db:Session):
 #     res = db.execute("""insert into public.appraisal_form(department, grade, positions, date, staff_id)
@@ -92,7 +92,7 @@ async def update_end_of_year_review(end_of_year_review: schemas.update_end_of_ye
 	WHERE endofyear_review_id = :endofyear_review_id;""",
     {'assessment':assessment, 'score':score, 'comment':comment, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id, 'endofyear_review_id':endofyear_review_id, 'weight':weight})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "end of year review has been updated"})
 
 async def update_core_competencies(core_competencies: schemas.update_core_competencies, db: Session):
     res = db.execute("""UPDATE public.competency
@@ -100,7 +100,7 @@ async def update_core_competencies(core_competencies: schemas.update_core_compet
 	WHERE competency_id = :competency_id;""",
     {'annual_appraisal_id':annual_appraisal_id, 'competency_id':competency_id, 'grade':grade})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "core competency has been updated"})
 
 async def update_annual_appraisal(annual_appraisal: schemas.create_annual_appraisal, db: Session):
     res = db.execute("""UPDATE public.annual_appraisal
@@ -108,7 +108,7 @@ async def update_annual_appraisal(annual_appraisal: schemas.create_annual_apprai
 	WHERE annual_appraisal_id = :annual_appraisal_id;""",
     {'comment':annual_appraisal.comment, 'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
     db.commit()
-    return res 
+    return JSONResponse(status_code=200, content={"message": "annual appraisal has been updated"})
 
 # async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session):
 #     res = db.execute("""UPDATE public.annual_plan 
@@ -132,21 +132,21 @@ async def delete_end_of_year_review(endofyear_review_id: int, db: Session):
 	WHERE endofyear_review_id = :endofyear_review_id;""",
     {'endofyear_review_id':endofyear_review_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "end of year review has been deleted"})
 
 async def delete_core_competencies(competency_id: int, db:Session):
     res = db.execute("""DELETE FROM public.competency
 	WHERE competency_id = :competency_id;""",
     {'competency_id': competency_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "core competency has been deleted"})
 
 async def delete_annual_appraisal(annual_appraisal_id: int, db: Session):
     res = db.execute("""DELETE FROM public.annual_appraisal
 	WHERE annual_appraisal_id = :annual_appraisal_id;""",
     {'annual_appraisal_id':annual_appraisal_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "annual appraisal has been deleted"})
 
 # async def delete_annual_plan(annual_plan_id: int, db: Session):
 #     res = db.execute("""DELETE FROM public.annual_plan

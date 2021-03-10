@@ -1,3 +1,4 @@
+from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 from . import models, schemas
 from fastapi import Depends
@@ -38,7 +39,7 @@ async def create_deadline(deadline_type, start_date, ending, db:Session):
     values(:deadline_type, :start_date, :ending) """,
     {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "deadline has been created"})
 
 
 
@@ -48,7 +49,7 @@ async def update_deadline(deadline: schemas.update_deadline, db: Session):
 	WHERE deadline_id = :deadline_id;""",
     {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "deadline has been updated"})
 
 
 
@@ -56,5 +57,5 @@ async def delete_deadline(deadline_id: int, db: Session):
     res = db.execute("""DELETE FROM public.deadline
 	WHERE deadline_id=:deadline_id;""",
     {'deadline_id':deadline.deadline_id})
-    db.commit()
-    return res  
+    db.commit() 
+    return JSONResponse(status_code=200, content={"message": "deadline has been deleted"})

@@ -1,5 +1,5 @@
 from fastapi import Depends, HTTPException, BackgroundTasks
-from services.email import background_send
+from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 from . import schemas
 
@@ -41,7 +41,7 @@ async def create_mid_year_review(progress_review, remarks, mid_status, appraisal
     values(:progress_review, :remarks, :mid_status, :appraisal_form_id, :annual_plan_id, :staff_id);""",
     {'progress_review':progress_review, 'remarks':remarks, 'mid_status':mid_status, 'appraisal_form_id':appraisal_form_id, 'annual_plan_id':annual_plan_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "mid-year review has been created"})
 
 # async def create_appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
 #     res = db.execute("""insert into public.appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment)
@@ -78,7 +78,7 @@ async def update_mid_year_review(mid_year_review: schemas.update_mid_year_review
 	WHERE midyear_review_id = :midyear_review_id;""",
     {'midyear_review_id':mid_year_review.midyear_review_id, 'progress_review':mid_year_review.progress_review, 'remarks':mid_year_review.remarks, 'mid_status':mid_year_review.mid_status, 'appraisal_form_id':mid_year_review.appraisal_form_id, 'annual_plan_id':mid_year_review.annual_plan_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "mid-year review has been updated"})
 
 # async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, db: Session):
 #     res = db.execute("""UPDATE public.appraisal_form
@@ -110,7 +110,7 @@ async def delete_mid_year_review(midyear_review_id: int, db: Session):
 	WHERE midyear_review_id = :midyear_review_id;""",
     {'midyear_review_id':midyear_review_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "mid-year review has been deleted"})
 
 # async def delete_appraisal_form(appraisal_form_id: int, db:Session):
 #     res = db.execute("""DELETE FROM public.appraisal_form

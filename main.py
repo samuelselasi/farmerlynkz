@@ -42,7 +42,6 @@ api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year R
 api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
 
 
-
 @api.get("/")
 def welcome():
     return "Reminders started"

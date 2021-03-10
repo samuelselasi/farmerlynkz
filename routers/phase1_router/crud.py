@@ -1,5 +1,6 @@
+from fastapi import Depends, HTTPException, Response, status, Body, Header
 from fastapi import Depends, HTTPException, BackgroundTasks
-from services.email import background_send
+from starlette.responses import JSONResponse
 from datetime import datetime, date
 from sqlalchemy.orm import Session
 from . import models, schemas
@@ -44,7 +45,7 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     values(:department, :grade, :positions, :date, :staff_id);""",
     {'department':department, 'grade':grade, 'positions':positions, 'date':date, 'staff_id':staff_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "appraisal form has been created"})
 
 async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
     query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Start'; """)
@@ -57,17 +58,17 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
 	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources; """,
                         {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
         db.commit()
-        return res
+        return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
     else:
-        return 'deadline passed'
-        print('deadline passed')    
+        return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
+            
 
 async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(comment, field, appraisal_form_id)
     values(:comment, :field, :appraisal_form_id);""",
     {'comment':comment,'field':field, 'appraisal_form_id':appraisal_form_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "annual appraisal has been created"})
 
 async def create_appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
     res = db.execute("""SELECT public.create_appraisal_form(deadline:deadline, department:department, positions:positions, grade:grade, date:date, staff_id:staff_id, progress_review:progress_review, remarks:remarks, assessment:assessment, score:score, weight:weight, comment:comment);""",
@@ -82,7 +83,7 @@ async def update_appraisal_form(appraisal_form: schemas.update_appraisal_form, d
 	WHERE appraisal_form_id = :appraisal_form_id;""",
     {'appraisal_form_id':appraisal_form.appraisal_form_id, 'department': appraisal_form.department, 'grade': appraisal_form.grade, 'positions': appraisal_form.positions, 'date': appraisal_form.date, 'staff_id': appraisal_form.staff_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "appraisal form has been updated"})
 
 async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Session):
     res = db.execute("""UPDATE public.annual_plan 
@@ -90,7 +91,7 @@ async def update_annual_plan(annual_plan: schemas.update_annual_plan, db: Sessio
 	WHERE annual_plan_id = :annual_plan_id;""", 
     {'result_areas':annual_plan.result_areas, 'target':annual_plan.target,'resources':annual_plan.resources, 'appraisal_form_id':annual_plan.appraisal_form_id, 'annual_plan_id':annual_plan.annual_plan_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "annual plan has been updated"})
 
 async def update_annual_appraisal(annual_appraisal: schemas.create_annual_appraisal, db: Session):
     res = db.execute("""UPDATE public.annual_appraisal
@@ -98,7 +99,7 @@ async def update_annual_appraisal(annual_appraisal: schemas.create_annual_apprai
 	WHERE annual_appraisal_id = :annual_appraisal_id;""",
     {'comment':annual_appraisal.comment, 'field':annual_appraisal.field, 'appraisal_form_id': annual_appraisal.appraisal_form_id, 'annual_appraisal_id':annual_appraisal.annual_appraisal_id})
     db.commit()
-    return res 
+    return JSONResponse(status_code=200, content={"message": "annual appraisal has been updated"})
 
 
 async def delete_appraisal_form(appraisal_form_id: int, db:Session):
@@ -106,19 +107,19 @@ async def delete_appraisal_form(appraisal_form_id: int, db:Session):
 	WHERE appraisal_form_id = :appraisal_form_id;""",
     {'appraisal_form_id': appraisal_form_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "appraisal form has been deleyed"})
 
 async def delete_annual_plan(annual_plan_id: int, db: Session):
     res = db.execute("""DELETE FROM public.annual_plan
 	WHERE annual_plan_id = :annual_plan_id;""",
     {'annual_plan_id': annual_plan_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "annual plan has been deleted"})
 
 async def delete_annual_appraisal(annual_appraisal_id: int, db: Session):
     res = db.execute("""DELETE FROM public.annual_appraisal
 	WHERE annual_appraisal_id = :annual_appraisal_id;""",
     {'annual_appraisal_id':annual_appraisal_id})
     db.commit()
-    return res
+    return JSONResponse(status_code=200, content={"message": "annual appraisal has been deleted"})
 

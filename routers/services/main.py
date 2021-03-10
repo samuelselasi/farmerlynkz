@@ -2,6 +2,7 @@ from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, APIRouter,
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.triggers.cron import CronTrigger
 from pydantic import EmailStr, BaseModel, UUID4
@@ -11,6 +12,7 @@ from datetime import datetime, timedelta, date
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
+import asyncio
 import pytz
 
 
@@ -227,7 +229,6 @@ async def b(background:BackgroundTasks):
 jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
 job_defaults = { 'coalesce': False, 'max_instances': 3}
-scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=pytz.utc, misfire_grace_time=1)
 
 db = SessionLocal()
 
@@ -237,6 +238,8 @@ async def send_hash_email(db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await simple_send(res) 
-scheduler = BackgroundScheduler()    
-scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
-scheduler.start()
+# scheduler = AsyncIOScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=pytz.utc, misfire_grace_time=1)
+
+scheduler = AsyncIOScheduler()  
+scheduler.add_job(func= send_hash_email, trigger='interval', minutes=1)
+scheduler.start() 
