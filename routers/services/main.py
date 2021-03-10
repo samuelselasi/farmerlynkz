@@ -1,20 +1,18 @@
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, APIRouter, Depends
+from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, APIRouter, Depends, APIRouter, HTTPException
+from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.triggers.cron import CronTrigger
+from pydantic import EmailStr, BaseModel, UUID4
 from starlette.responses import JSONResponse
 from database import SessionLocal, engine
-from pydantic import EmailStr, BaseModel
+from datetime import datetime, timedelta, date
 from starlette.requests import Request
-from fastapi import BackgroundTasks
-from sqlalchemy.orm import Session
-from pydantic import EmailStr
-from typing import List
-from main import get_db
-
-
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import UUID4, EmailStr
 from sqlalchemy.orm import Session
 from typing import List, Optional
+import pytz
+
 
 router = APIRouter()
 
@@ -25,25 +23,20 @@ def get_db():
     finally:
         db.close()
 
-
-
 conf = ConnectionConfig(
     MAIL_USERNAME = "a97a6351fa551d",
     MAIL_PASSWORD = "8608ab42c0b55f",
     MAIL_FROM = "admin@aiti.com",
     MAIL_PORT = 2525,
     MAIL_SERVER = "smtp.mailtrap.io",
-    MAIL_TLS = False,
+    MAIL_TLS = True,
     MAIL_SSL = False,
-    # USE_CREDENTIALS = True
+    USE_CREDENTIALS = True
 )
-
-
-
 
 fm = FastMail(conf)
 
-template = """
+template1 = """
 <font size = "+2">
 <h1> <i> Performance Planning Form </i> </h1>
 
@@ -118,21 +111,43 @@ Appraiser-App Admin </p>
 
 """
 
+template4 = """
+<font size = "+2">
+<h1> <i> Appraoisal Form (Reminder) </i> </h1>
 
+<p>Dear All,</p>
+
+<p>As a staff requirement, you are reminded that the yearly
+apparisal forms will be due to start soon.</p>
+
+<p>Your appraisal form details will be provided and made available to you soon. Please
+check your mail for a link on the due date.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form by
+<strong>the end of this month </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""
+background_tasks = BackgroundTasks()
 
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
-    # print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
             subject="Start Appraisal Form",
             recipients=[item[1]],
-            body=template.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            body=template1.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
+        return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
-    # print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
             subject="Mid-Year Review Form",
@@ -141,34 +156,9 @@ async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-
-
-# class EmailSchema(BaseModel):
-#     email: List[EmailStr]
-# @api.post("/send email")
-# from utils import generate_hash
-# return JSONResponse(status_code=200, content={"message": "email has been sent"})    
-# await fm.send_message(message)
-# x = lambda length: generate_hash(length)
-# user_hash_list = [{"email":"test@mail.com","hash":x(15)}, {"email":"sel@mail.com","hash":x(15)}, {"email":"sam@mail.com","hash":x(15)}, {"email":"unique@mail.com","hash":x(15)}, {"email":"smsel@mail.com","hash":x(15)}, {"email":"asare@mail.com","hash":x(15)}, {"email":"shit@mail.com","hash":x(15)}, {"email":"ea@mail.com","hash":x(15)}, {"email":"tst@mail.com","hash":x(15)}]
-
-
-
-
-def background_send_2(user_hash_list) -> JSONResponse:
-    # print(user_hash_list)
-    for item in user_hash_list:
-        message = MessageSchema(
-            subject="Start Appraisal Form",
-            recipients=[item[1]],
-            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
-            subtype="html"
-        )
-        fm.send_message(message)        
-        # background_tasks.add_task(fm.send_message,message)
+        return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
-    print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
             subject="End of Year Review Form",
@@ -177,40 +167,53 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
+        return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-
-def simple_send(user_hash_list):
+def background_send_2(user_hash_list) -> JSONResponse:
+    # print(user_hash_list)
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Start Appraisal Form",
+            subject="Appraisal Form (Reminder)",
             recipients=[item[1]],
-            body=template.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
             subtype="html"
         )
         fm.send_message(message)        
+        # background_tasks.add_task(fm.send_message,message)
+
+
+
+
+async def simple_send(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Reminder)",
+            recipients=[item[1]],
+            body=template4.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+        return JSONResponse(status_code=200, content={"message": "email has been sent"})
         # background_tasks.add_task(fm.send_message,message)        
 
 
 
 @router.post("/startreviewemail/")
-async def send_start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+async def start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-
     return await background_send(res, background_tasks)
 
 @router.post("/midyearreviewemail/")
-async def send_midyear_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+async def midyear_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-
     return await background_send3(res, background_tasks)
 
 @router.post("/endofyearreviewemail/")
-async def send_end_0f_year_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+async def end_0f_year_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-
     return await background_send_4(res, background_tasks)
 
 @router.post("/test/test")
@@ -218,3 +221,22 @@ async def b(background:BackgroundTasks):
     # print('b')
     # print(dir(background_tasks))
     return await background_send([('afsd', 'a@test.com')], background)
+
+
+
+jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
+executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
+job_defaults = { 'coalesce': False, 'max_instances': 3}
+scheduler = BackgroundScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=pytz.utc, misfire_grace_time=1)
+
+db = SessionLocal()
+
+
+@router.post("/testemail")
+async def send_hash_email(db: Session = Depends(get_db)):
+    res = db.execute("""SELECT * FROM public.hash_table""")
+    res = res.fetchall()
+    return await simple_send(res) 
+scheduler = BackgroundScheduler()    
+scheduler.add_job(send_hash_email, trigger='interval', minutes=1)
+scheduler.start()
