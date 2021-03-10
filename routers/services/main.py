@@ -31,9 +31,9 @@ conf = ConnectionConfig(
     MAIL_FROM = "admin@aiti.com",
     MAIL_PORT = 2525,
     MAIL_SERVER = "smtp.mailtrap.io",
-    MAIL_TLS = True,
+    MAIL_TLS = False,
     MAIL_SSL = False,
-    USE_CREDENTIALS = True
+    # USE_CREDENTIALS = True
 )
 
 fm = FastMail(conf)
