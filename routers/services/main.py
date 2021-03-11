@@ -135,6 +135,7 @@ Appraiser-App Admin </p>
 </font>
 
 """
+
 background_tasks = BackgroundTasks()
 
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
@@ -217,21 +218,6 @@ async def end_0f_year_review_email(background_tasks: BackgroundTasks, db: Sessio
     res = res.fetchall()
     return await background_send_4(res, background_tasks)
 
-@router.post("/test/test")
-async def b(background:BackgroundTasks):
-    # print('b')
-    # print(dir(background_tasks))
-    return await background_send([('afsd', 'a@test.com')], background)
-
-
-
-jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
-executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
-job_defaults = { 'coalesce': False, 'max_instances': 3}
-
-db = SessionLocal()
-
-
 @router.post("/emailreminder/")
 async def email_reminder():
     # now = date.today()
@@ -240,20 +226,17 @@ async def email_reminder():
     return await simple_send(res)     
 
 
+jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
+executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
+job_defaults = { 'coalesce': False, 'max_instances': 3}
 
-
-
-# scheduler = AsyncIOScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=pytz.utc, misfire_grace_time=1)
 db = SessionLocal()
 deadline = db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'Start' """)
 deadline = deadline.fetchall()
-
 start_date = deadline[0][1]
 end_date = deadline[0][2]
 send_date = start_date - timedelta(3)
 
-
 scheduler = AsyncIOScheduler()  
 scheduler.add_job(func= email_reminder, trigger='date', run_date = send_date )
-
 scheduler.start() 
