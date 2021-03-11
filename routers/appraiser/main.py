@@ -50,8 +50,8 @@ async def read_yearly_form_deatails(staff_id:int, form_year:int, db: Session = D
     return await crud.read_yearly_form_deatails(staff_id, form_year, db)
 
 @router.get("/approvedforms/{appraisal_form_id}/{type_form}/")
-async def read_approved_forms(appraisal_form_id:int, type_form:str, db: Session = Depends(get_db)):
-    return await crud.read_approved_forms(appraisal_form_id, type_form, db)
+async def approve_form(appraisal_form_id:int, type_form:str, db: Session = Depends(get_db)):
+    return await crud.approve_form(appraisal_form_id, type_form, db)
 
 
 @router.post("/deadline/")

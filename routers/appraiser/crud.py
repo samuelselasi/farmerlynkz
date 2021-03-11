@@ -34,7 +34,7 @@ async def read_yearly_form_deatails(staff_id:int, form_year: int, db:Session):
     res = res.fetchall()
     return res
 
-async def read_approved_forms(appraisal_form_id: int, type_form: str, db: Session):
+async def approve_form(appraisal_form_id: int, type_form: str, db: Session):
     res = db.execute(""" SELECT public.approve_form_details (:appraisal_form_id, :type_form) """, {'appraisal_form_id': appraisal_form_id, 'type_form': type_form})
     res = res.fetchall()
     return res
