@@ -17,6 +17,11 @@ async def read_appraiser_appraisees(user_id:int, db: Session = Depends(get_db)):
 async def read_completed_list(deadline = 'Start', user_id = 1,  db: Session = Depends(get_db)):
     return await crud.read_completed_list( deadline, user_id, db)
 
+@router.get("/approved/start/")
+async def read_approved_forms(deadline = 'Start', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.read_approved_forms( deadline, user_id, db)
+
+
 @router.get("/completedlist/mid/")
 async def read_completed_list(deadline = 'Mid', user_id = 1,  db: Session = Depends(get_db)):
     return await crud.read_completed_list( deadline, user_id, db)

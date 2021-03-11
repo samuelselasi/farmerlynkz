@@ -15,7 +15,12 @@ async def read_appraiser_appraisees(user_id, db: Session):
     return res.fetchall()  
 
 async def read_completed_list(deadline:str, user_id:int, db:Session):
-    res = db.execute("""SELECT public.get_list_of_completed_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id})
+    res = db.execute("""SELECT public.get_list_of_approved_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id})
+    res = res.fetchall()
+    return res 
+
+async def read_approved_forms(deadline:str, user_id:int, db:Session):
+    res = db.execute("""SELECT public.get_list_of_approved_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id})
     res = res.fetchall()
     return res 
 
