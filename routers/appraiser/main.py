@@ -45,10 +45,13 @@ async def read_deadline_table(db: Session = Depends(get_db)):
 async def read_supervisors(db: Session = Depends(get_db)):
     return await crud.read_supervisors(db)
 
-@router.get("/yearlyformdetails/{staff_id}/")
-async def read_yearly_form_deatails(staff_id:int, form_year = 2021, db: Session = Depends(get_db)):
+@router.get("/yearlyformdetails/{staff_id}/{form_year}")
+async def read_yearly_form_deatails(staff_id:int, form_year:int, db: Session = Depends(get_db)):
     return await crud.read_yearly_form_deatails(staff_id, form_year, db)
 
+@router.get("/approvedforms/{appraisal_form_id}/{type_form}/")
+async def read_approved_forms(appraisal_form_id:int, type_form:str, db: Session = Depends(get_db)):
+    return await crud.read_approved_forms(appraisal_form_id, type_form, db)
 
 
 @router.post("/deadline/")

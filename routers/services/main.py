@@ -2,19 +2,18 @@ from fastapi import FastAPI, BackgroundTasks, UploadFile, File, Form, APIRouter,
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from datetime import datetime, timedelta, date
 from pydantic import EmailStr, BaseModel, UUID4
 from starlette.responses import JSONResponse
 from database import SessionLocal, engine
-from datetime import datetime, timedelta, date
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import asyncio
 import pytz
-
 
 router = APIRouter()
 
@@ -26,10 +25,10 @@ def get_db():
         db.close()
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "a97a6351fa551d",
-    MAIL_PASSWORD = "8608ab42c0b55f",
+    MAIL_USERNAME = "a4caa35d5e3fe6",
+    MAIL_PASSWORD = "e77fca8df17a72",
     MAIL_FROM = "admin@aiti.com",
-    MAIL_PORT = 2525,
+    MAIL_PORT = 25 or 465 or 587 or 2525,
     MAIL_SERVER = "smtp.mailtrap.io",
     MAIL_TLS = False,
     MAIL_SSL = False,
@@ -147,7 +146,7 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
@@ -158,7 +157,7 @@ async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
@@ -169,7 +168,7 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 def background_send_2(user_hash_list) -> JSONResponse:
     # print(user_hash_list)
@@ -195,7 +194,7 @@ async def simple_send(user_hash_list) -> JSONResponse:
             subtype="html"
         )       
         await fm.send_message(message)
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
         # background_tasks.add_task(fm.send_message,message)        
 
 
@@ -233,13 +232,28 @@ job_defaults = { 'coalesce': False, 'max_instances': 3}
 db = SessionLocal()
 
 
-@router.post("/testemail")
-async def send_hash_email(db: Session = Depends(get_db)):
+@router.post("/emailreminder/")
+async def email_reminder():
+    # now = date.today()
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-    return await simple_send(res) 
+    return await simple_send(res)     
+
+
+
+
+
 # scheduler = AsyncIOScheduler(jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=pytz.utc, misfire_grace_time=1)
+db = SessionLocal()
+deadline = db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'Start' """)
+deadline = deadline.fetchall()
+
+start_date = deadline[0][1]
+end_date = deadline[0][2]
+send_date = start_date - timedelta(3)
+
 
 scheduler = AsyncIOScheduler()  
-scheduler.add_job(func= send_hash_email, trigger='interval', minutes=1)
+scheduler.add_job(func= email_reminder, trigger='date', run_date = send_date )
+
 scheduler.start() 

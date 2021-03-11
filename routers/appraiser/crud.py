@@ -33,7 +33,13 @@ async def read_yearly_form_deatails(staff_id:int, form_year: int, db:Session):
     res = db.execute(""" SELECT public.get_form_details_yearly(:staff_id, :form_year) """, {'staff_id':staff_id, 'form_year':form_year})
     res = res.fetchall()
     return res
-    
+
+async def read_approved_forms(appraisal_form_id: int, type_form: str, db: Session):
+    res = db.execute(""" SELECT public.approve_form_details (:appraisal_form_id, :type_form) """, {'appraisal_form_id': appraisal_form_id, 'type_form': type_form})
+    res = res.fetchall()
+    return res
+
+
 async def create_deadline(deadline_type, start_date, ending, db:Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
     values(:deadline_type, :start_date, :ending) """,
