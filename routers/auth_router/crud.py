@@ -22,6 +22,13 @@ async def read_roles(db:Session):
     res = res.fetchall()
     return res
 
+async def read_deadline_table(db:Session):
+    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
+	FROM public.deadline; """)
+    res = res.fetchall()
+    return res
+
+
 async def create_staff(fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment, db:Session):
     res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment)
     VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :roles, :department, :positions, :grade, :appointment)""",
@@ -33,6 +40,14 @@ async def create_roles(role_description, db:Session):
     res = db.execute(""" INSERT INTO public.roles(role_description) VALUES(:role_description) """, {'role_description': role_description})
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been created"})
+
+async def create_deadline(deadline_type, start_date, ending, db:Session):
+    res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
+    values(:deadline_type, :start_date, :ending) """,
+    {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending})
+    db.commit()
+    return JSONResponse(status_code=200, content={"message": "deadline has been created"})
+
 
 async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment, db:Session):
     res = db.execute("""UPDATE public.staff
@@ -48,6 +63,15 @@ async def update_roles(role_id, role_description, db:Session):
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been updated"})
 
+async def update_deadline(deadline: schemas.update_deadline, db: Session):
+    res = db.execute("""UPDATE public.deadline
+	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
+	WHERE deadline_id = :deadline_id;""",
+    {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
+    db.commit()
+    return JSONResponse(status_code=200, content={"message": "deadline has been updated"})
+
+
 async def delete_staff(staff_id:int, db: Session):
     res = db.execute("""DELETE FROM public.staff 
 	WHERE staff_id = :staff_id;""",
@@ -60,7 +84,12 @@ async def delete_roles(role_id:int, db: Session):
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been deleted"})
 
-
+async def delete_deadline(deadline_id: int, db: Session):
+    res = db.execute("""DELETE FROM public.deadline
+	WHERE deadline_id=:deadline_id;""",
+    {'deadline_id':deadline.deadline_id})
+    db.commit() 
+    return JSONResponse(status_code=200, content={"message": "deadline has been deleted"})
 
     
 

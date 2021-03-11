@@ -28,10 +28,10 @@ def get_db():
 
 
 from routers.phase1_router import main as phase1
-from routers.appraiser import main as appraiser
-from routers.auth_router import main as auth
 from routers.phase2_router import main as phase2
 from routers.phase3_router import main as phase3
+from routers.appraiser import main as appraiser
+from routers.auth_router import main as auth
 from routers.services import main as email
 
 api.include_router(email.router, prefix="/email", tags=["E-mails"])

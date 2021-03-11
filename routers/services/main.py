@@ -12,8 +12,11 @@ from database import SessionLocal, engine
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
+from . import models
 import asyncio
 import pytz
+
+
 
 router = APIRouter()
 
@@ -28,7 +31,7 @@ conf = ConnectionConfig(
     MAIL_USERNAME = "a4caa35d5e3fe6",
     MAIL_PASSWORD = "e77fca8df17a72",
     MAIL_FROM = "admin@aiti.com",
-    MAIL_PORT = 25 or 465 or 587 or 2525,
+    MAIL_PORT = 2525,
     MAIL_SERVER = "smtp.mailtrap.io",
     MAIL_TLS = False,
     MAIL_SSL = False,
@@ -37,113 +40,15 @@ conf = ConnectionConfig(
 
 fm = FastMail(conf)
 
-template1 = """
-<font size = "+2">
-<h1> <i> Performance Planning Form </i> </h1>
-
-<p>Hello Sir/Madam,</p>
-
-<p>As a requirement for the completion
-of your Annual appraisal form, the performance planning
-form is provided to all staff.</p>
-
-<p>Your performance planning form for the year has
-been made available to you.</p>
-
-<strong><p>Please fill the form by opening the link provided.</strong></br>
-<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
-
-You are expected to access and fill the form by
-<strong>the end of this month </strong> <br/>
-
-Thank You. <br/>
-Performance Planning Form </p> 
-</font>
-
-"""
-
-template2 = """
-<font size = "+2">
-<h1> <i> Mid Year Review Form </i> </h1>
-
-<p>Dear All,</p>
-
-<p>As a requirement for the completion
-of your Annual appraisal form, the Mid-Year Review
-form is provided to all staff.</p>
-
-<p>Your Mid-Year Review form for the year has
-been made available to you.</p>
-
-<strong><p>Please fill the form by opening the link provided.</strong></br>
-<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
-
-You are expected to access and fill the form by
-<strong>the end of this month </strong> <br/>
-
-Thank You. <br/>
-Appraiser-App Admin </p> 
-</font>
-
-"""
-
-template3 = """
-<font size = "+2">
-<h1> <i> End Of Year Review Form </i> </h1>
-
-<p>Dear All,</p>
-
-<p>As a requirement for the completion
-of your Annual appraisal form, the End of Year Review
-Form is provided to all staff.</p>
-
-<p>Your End of Year Review form for the year has
-been made available to you.</p>
-
-<strong><p>Please fill the form by opening the link provided.</strong></br>
-<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
-
-You are expected to access and fill the form by
-<strong>the end of this month </strong> <br/>
-
-Thank You. <br/>
-Appraiser-App Admin </p> 
-</font>
-
-"""
-
-template4 = """
-<font size = "+2">
-<h1> <i> Appraoisal Form (Reminder) </i> </h1>
-
-<p>Dear All,</p>
-
-<p>As a staff requirement, you are reminded that the yearly
-apparisal forms will be due to start in three days time.</p>
-
-<p>Your appraisal form details will be provided and made available to you soon. Please
-check your mail for a link on the due date.</p>
-
-<strong><p>Please fill the form by opening the link provided.</strong></br>
-<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
-
-You are expected to access and fill the form provided in
-<strong>three days time  </strong> <br/>
-
-Thank You. <br/>
-Appraiser-App Admin </p> 
-</font>
-
-"""
-
 background_tasks = BackgroundTasks()
+
 
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Start Appraisal Form",
             recipients=[item[1]],
-            body=template1.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            body=models.template1.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -154,7 +59,7 @@ async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review Form",
             recipients=[item[1]],
-            body=template2.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            body=models.template2.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -165,7 +70,7 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="End of Year Review Form",
             recipients=[item[1]],
-            body=template3.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            body=models.template3.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -177,7 +82,7 @@ def background_send_2(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Reminder)",
             recipients=[item[1]],
-            body=template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
+            body=models.template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
             subtype="html"
         )
         fm.send_message(message)        
@@ -191,7 +96,7 @@ async def simple_send(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Reminder)",
             recipients=[item[1]],
-            body=template4.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            body=models.template4.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         )       
         await fm.send_message(message)
@@ -220,7 +125,6 @@ async def end_0f_year_review_email(background_tasks: BackgroundTasks, db: Sessio
 
 @router.post("/emailreminder/")
 async def email_reminder():
-    # now = date.today()
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await simple_send(res)     
