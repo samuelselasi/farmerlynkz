@@ -119,7 +119,7 @@ template4 = """
 <p>Dear All,</p>
 
 <p>As a staff requirement, you are reminded that the yearly
-apparisal forms will be due to start soon.</p>
+apparisal forms will be due to start in three days time.</p>
 
 <p>Your appraisal form details will be provided and made available to you soon. Please
 check your mail for a link on the due date.</p>
@@ -127,8 +127,8 @@ check your mail for a link on the due date.</p>
 <strong><p>Please fill the form by opening the link provided.</strong></br>
 <a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
 
-You are expected to access and fill the form by
-<strong>the end of this month </strong> <br/>
+You are expected to access and fill the form provided in
+<strong>three days time  </strong> <br/>
 
 Thank You. <br/>
 Appraiser-App Admin </p> 
