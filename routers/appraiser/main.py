@@ -25,6 +25,18 @@ async def read_completed_list(deadline = 'Mid', user_id = 1,  db: Session = Depe
 async def read_completed_list(deadline = 'End', user_id = 1,  db: Session = Depends(get_db)):
     return await crud.read_completed_list( deadline, user_id, db)
 
+@router.get("/waitingapproval/start/")
+async def waiting_approval_list(deadline = 'Start', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.waiting_approval_list( deadline, user_id, db)
+
+@router.get("/waitingapproval/mid/")
+async def waiting_approval_list(deadline = 'Mid', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.waiting_approval_list( deadline, user_id, db)
+
+@router.get("/waitingapproval/end/")
+async def waiting_approval_list(deadline = 'End', user_id = 1,  db: Session = Depends(get_db)):
+    return await crud.waiting_approval_list( deadline, user_id, db)
+
 @router.get("/incompletedlist/start/")
 async def read_incompleted_list(deadline = 'Start', user_id = 1,  db: Session = Depends(get_db)):
     return await crud.read_incomplete_list( deadline, user_id, db)   

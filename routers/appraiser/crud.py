@@ -19,6 +19,11 @@ async def read_completed_list(deadline:str, user_id:int, db:Session):
     res = res.fetchall()
     return res 
 
+async def waiting_approval_list(deadline:str, user_id:int, db:Session):
+    res = db.execute("""SELECT public.get_list_of_waiting_approval(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id})
+    res = res.fetchall()
+    return res 
+
 async def read_incomplete_list(deadline:str, user_id:int, db:Session):
     res = db.execute("""SELECT public.get_list_of_incompleted_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id})
     res = res.fetchall()
