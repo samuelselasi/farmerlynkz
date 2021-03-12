@@ -166,3 +166,54 @@ Appraiser-App Admin </p>
 </font>
 
 """
+
+template6 = """
+<font size = "+2">
+<h1> <i> Approve Appraisee Form(Reminder) </i> </h1>
+
+<p>Dear Supervisor,</p>
+
+<p>Please review and approve forms of appraisee under you
+for the start of the yearly appraisal form details.</p>
+
+<p>The appraisal form details will be provided and made available to 
+you  below.</p>
+
+<strong><p>Kindly review the form details.</strong></br>
+            
+            email = {email}</br>
+            roles = {roles}</br>
+            score = {score}</br>
+            gender = {gender}</br>
+            target = {target}</br>
+            weight = {weight}</br>
+            comment = {comment}</br>
+            remarks = {remarks}</br>
+            last name = {lastname}</br>
+            staff id = {staff_id}</br>
+            first name ={firstname}</br>
+            position = {positions}</br>
+            resources = {resources}</br>
+            assessment = {assessment}</br>
+            department = {department}</br>
+            end status = {end_status}</br>
+            mid status = {mid_status}</br>
+            middle name = {middlename}</br>
+            supervisor = {supervisor}</br>
+            result areas = {result_areas}</br>
+            start status ={start_status}</br>
+            appraisal year = {appraisal_year}</br>
+            progress review ={progress_review}</br>
+            supervisor name = {supervisor_name}</br>
+            role = {role_description}</br>
+            supervisor email = {supervisor_email}</br>
+            appraisal form id = {appraisal_form_id} </p></br>
+
+You are expected to review and approve the form details
+<strong>before the start of Mid-Year Review  </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""

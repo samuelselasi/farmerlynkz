@@ -81,7 +81,47 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form Details",
             recipients=[item["email"]],
-            body=models.template5.format( email= [item["email"]],
+            body=models.template5.format( 
+            email= [item["email"]],
+            grade= [item["grade"]],
+            roles= [item["roles"]],
+            score= [item["score"]],
+            gender= [item["gender"]],
+            target= [item["target"]],
+            weight= [item["weight"]],
+            comment= [item["comment"]],
+            remarks= [item["remarks"]],
+            lastname= [item["lastname"]],
+            staff_id= [item["staff_id"]],
+            firstname= [item["firstname"]],
+            positions= [item["positions"]],
+            resources= [item["resources"]],
+            assessment= [item["assessment"]],
+            department= [item["department"]],
+            end_status= [item["end_status"]],
+            mid_status= [item["mid_status"]],
+            middlename= [item["middlename"]],
+            supervisor= [item["supervisor"]],
+            result_areas= [item["result_areas"]],
+            start_status= [item["start_status"]],
+            appraisal_year= [item["appraisal_year"]],
+            progress_review= [item["progress_review"]],
+            supervisor_name= [item["supervisor_name"]],
+            role_description= [item["role_description"]],
+            supervisor_email= [item["supervisor_email"]],
+            appraisal_form_id= [item["appraisal_form_id"]]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+
+async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Approve Appraisee Forms",
+            recipients=[item["supervisor_email"]],
+            body=models.template6.format( 
+            email= [item["email"]],
             grade= [item["grade"]],
             roles= [item["roles"]],
             score= [item["score"]],
@@ -157,6 +197,12 @@ async def email_reminder():
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await simple_send(res)     
+
+@router.post("/approvestartreview/")
+async def approve_start_review(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
+    res = res.first()[0]
+    return await background_send_5(res, background_tasks)
 
 
 jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
