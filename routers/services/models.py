@@ -12,7 +12,7 @@ from database import SessionLocal, engine
 from starlette.requests import Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from . import models
+from . import main
 import asyncio
 import pytz
 
@@ -110,6 +110,56 @@ check your mail for a link on the due date.</p>
 
 You are expected to access and fill the form provided in
 <strong>three days time  </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""
+
+template5 = """
+<font size = "+2">
+<h1> <i> Appraoisal Form Details </i> </h1>
+
+<p>Dear Sir/Madam,</p>
+
+<p>Your start of year review forms have been inspected
+approved by your supervisor.</p>
+
+<p>Your appraisal form details will be provided and made available to you for future 
+reference in completing the mid-year and end of year review forms.</p>
+
+<strong><p>View your form details to keep track of your progress.</strong></br>
+            grade = {grade}</br>
+            roles = {roles}</br>
+            score = {score}</br>
+            gender = {gender}</br>
+            target = {target}</br>
+            weight = {weight}</br>
+            comment = {comment}</br>
+            remarks = {remarks}</br>
+            last name = {lastname}</br>
+            staff id = {staff_id}</br>
+            first name ={firstname}</br>
+            position = {positions}</br>
+            resources = {resources}</br>
+            assessment = {assessment}</br>
+            department = {department}</br>
+            end status = {end_status}</br>
+            mid status = {mid_status}</br>
+            middle name = {middlename}</br>
+            supervisor = {supervisor}</br>
+            result areas = {result_areas}</br>
+            start status ={start_status}</br>
+            appraisal year = {appraisal_year}</br>
+            progress review ={progress_review}</br>
+            supervisor name = {supervisor_name}</br>
+            role = {role_description}</br>
+            supervisor email = {supervisor_email}</br>
+            appraisal form id = {appraisal_form_id} </p></br>
+
+The forms will be avilable untill the start of the
+<strong>Mid-Year Review process  </strong> <br/>
 
 Thank You. <br/>
 Appraiser-App Admin </p> 

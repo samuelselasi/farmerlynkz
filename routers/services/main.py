@@ -54,7 +54,7 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
         background_tasks.add_task(fm.send_message,message)
         # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
+async def background_send_2(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Mid-Year Review Form",
@@ -65,7 +65,7 @@ async def background_send3(user_hash_list, background_tasks) -> JSONResponse:
         background_tasks.add_task(fm.send_message,message)
         # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
+async def background_send_3(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="End of Year Review Form",
@@ -76,20 +76,43 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
         background_tasks.add_task(fm.send_message,message)
         # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-def background_send_2(user_hash_list) -> JSONResponse:
-    # print(user_hash_list)
+async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Appraisal Form (Reminder)",
-            recipients=[item[1]],
-            body=models.template.format(url="http://localhost:4200/forms/start/harsh",hash=item[0]),
+            subject="Appraisal Form Details",
+            recipients=[item["email"]],
+            body=models.template5.format( email= [item["email"]],
+            grade= [item["grade"]],
+            roles= [item["roles"]],
+            score= [item["score"]],
+            gender= [item["gender"]],
+            target= [item["target"]],
+            weight= [item["weight"]],
+            comment= [item["comment"]],
+            remarks= [item["remarks"]],
+            lastname= [item["lastname"]],
+            staff_id= [item["staff_id"]],
+            firstname= [item["firstname"]],
+            positions= [item["positions"]],
+            resources= [item["resources"]],
+            assessment= [item["assessment"]],
+            department= [item["department"]],
+            end_status= [item["end_status"]],
+            mid_status= [item["mid_status"]],
+            middlename= [item["middlename"]],
+            supervisor= [item["supervisor"]],
+            result_areas= [item["result_areas"]],
+            start_status= [item["start_status"]],
+            appraisal_year= [item["appraisal_year"]],
+            progress_review= [item["progress_review"]],
+            supervisor_name= [item["supervisor_name"]],
+            role_description= [item["role_description"]],
+            supervisor_email= [item["supervisor_email"]],
+            appraisal_form_id= [item["appraisal_form_id"]]),
             subtype="html"
-        )
-        fm.send_message(message)        
-        # background_tasks.add_task(fm.send_message,message)
-
-
-
+        )        
+        background_tasks.add_task(fm.send_message,message)
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def simple_send(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -115,12 +138,18 @@ async def start_review_email(background_tasks: BackgroundTasks, db: Session = De
 async def midyear_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-    return await background_send3(res, background_tasks)
+    return await background_send_2(res, background_tasks)
 
 @router.post("/endofyearreviewemail/")
 async def end_0f_year_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
+    return await background_send_3(res, background_tasks)
+
+@router.post("/startformdetails/")
+async def start_form_details(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+    res = db.execute("""SELECT public.get_list_of_approved_form('Start', 1)""")
+    res = res.first()[0]
     return await background_send_4(res, background_tasks)
 
 @router.post("/emailreminder/")
