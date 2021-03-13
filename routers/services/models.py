@@ -217,3 +217,123 @@ Appraiser-App Admin </p>
 </font>
 
 """
+
+template7 = """
+<font size = "+2">
+<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
+<p>Dear Sir/Madam,</p>
+
+<p>As a staff requirement, you are reminded that the yearly
+apparisal form will end in 5 days time.</p>
+
+<p>Your appraisal form details have been provided and made available to you in this mail. Please
+follow the link to complete your form.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form provided in
+<strong>five days time  </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""
+
+template8 = """
+<font size = "+2">
+<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
+<p>Dear Sir/Madam,</p>
+
+<p>As a staff requirement, you are reminded that the yearly
+apparisal form will end in 4 days time.</p>
+
+<p>Your appraisal form details have been provided and made available to you in this mail. Please
+follow the link to complete your form.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form provided in
+<strong>four days time  </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""
+
+template9 = """
+<font size = "+2">
+<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
+<p>Dear Sir/Madam,</p>
+
+<p>As a staff requirement, you are reminded that the yearly
+apparisal form will end in 3 days time.</p>
+
+<p>Your appraisal form details have been provided and made available to you in this mail. Please
+follow the link to complete your form.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form provided in
+<strong>three days time  </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""
+
+template10 = """
+<font size = "+2">
+<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
+<p>Dear Sir/Madam,</p>
+
+<p>As a staff requirement, you are reminded that the yearly
+apparisal form will end in 2 days time.</p>
+
+<p>Your appraisal form details have been provided and made available to you in this mail. Please
+follow the link to complete your form.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form provided in
+<strong>two days time  </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""
+
+template11 = """
+<font size = "+2">
+<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
+<p>Dear Sir/Madam,</p>
+
+<p>As a staff requirement, you are reminded that the yearly
+apparisal form will end today.</p>
+
+<p>Your appraisal form details have been provided and made available to you in this mail. Please
+follow the link to complete your form.</p>
+
+<strong><p>Please fill the form by opening the link provided.</strong></br>
+<a href="{url}" target="_blank">click this link to fill form</a> </p>
+
+You are expected to access and fill the form provided
+<strong>by the end of today  </strong> <br/>
+
+Thank You. <br/>
+Appraiser-App Admin </p> 
+</font>
+
+"""

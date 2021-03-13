@@ -154,10 +154,10 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
         background_tasks.add_task(fm.send_message,message)
         # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-async def simple_send(user_hash_list) -> JSONResponse:
+async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Appraisal Form (Reminder)",
+            subject="Appraisal Form (Three Days To Start Reminder)",
             recipients=[item[1]],
             body=models.template4.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
@@ -166,7 +166,65 @@ async def simple_send(user_hash_list) -> JSONResponse:
         # return JSONResponse(status_code=200, content={"message": "email has been sent"})
         # background_tasks.add_task(fm.send_message,message)        
 
+async def background_send_7(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Five Days Reminder)",
+            recipients=[item["email"]],
+            body=models.template7.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # background_tasks.add_task(fm.send_message,message) 
 
+async def background_send_8(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Four Days Reminder)",
+            recipients=[item["email"]],
+            body=models.template8.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # background_tasks.add_task(fm.send_message,message) 
+
+async def background_send_9(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Three Days Reminder)",
+            recipients=[item["email"]],
+            body=models.template9.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # background_tasks.add_task(fm.send_message,message) 
+
+async def background_send_10(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Two Days Reminder)",
+            recipients=[item["email"]],
+            body=models.template10.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # background_tasks.add_task(fm.send_message,message) 
+
+async def background_send_11(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Day Reminder)",
+            recipients=[item["email"]],
+            body=models.template11.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        # background_tasks.add_task(fm.send_message,message) 
 
 @router.post("/startreviewemail/")
 async def start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
@@ -192,11 +250,11 @@ async def start_form_details(background_tasks: BackgroundTasks, db: Session = De
     res = res.first()[0]
     return await background_send_4(res, background_tasks)
 
-@router.post("/emailreminder/")
-async def email_reminder():
+@router.post("/threedaysreminder/")
+async def three_days_to_start_reminder():
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
-    return await simple_send(res)     
+    return await background_send_6(res)     
 
 @router.post("/approvestartreview/")
 async def approve_start_review(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
@@ -204,6 +262,35 @@ async def approve_start_review(background_tasks: BackgroundTasks, db: Session = 
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
 
+@router.post("/lastfivedaysreminder/")
+async def last_five_days_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = res.first()[0]
+    return await background_send_7(res)
+
+@router.post("/lastfourdaysreminder/")
+async def last_four_days_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = res.first()[0]
+    return await background_send_8(res)
+
+@router.post("/lastthreedaysreminder/")
+async def last_three_days_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = res.first()[0]
+    return await background_send_9(res)
+
+@router.post("/lasttwodaysreminder/")
+async def last_two_days_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = res.first()[0]
+    return await background_send_10(res)
+
+@router.post("/lastdayreminder/")
+async def last_day_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = res.first()[0]
+    return await background_send_11(res)    
 
 jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
@@ -215,7 +302,17 @@ deadline = deadline.fetchall()
 start_date = deadline[0][1]
 end_date = deadline[0][2]
 send_date = start_date - timedelta(3)
+send_date_2 = end_date - timedelta(5)
+send_date_3 = end_date - timedelta(4)
+send_date_4 = end_date - timedelta(3)
+send_date_5 = end_date - timedelta(2)
+send_date_6 = end_date 
 
 scheduler = AsyncIOScheduler()  
-scheduler.add_job(func= email_reminder, trigger='date', run_date = send_date )
+scheduler.add_job(func= three_days_to_start_reminder, trigger='date', run_date = send_date )
+scheduler.add_job(func= last_five_days_reminder, trigger='date', run_date = send_date_2 )
+scheduler.add_job(func= last_four_days_reminder, trigger='date', run_date = send_date_3 )
+scheduler.add_job(func= last_three_days_reminder, trigger='date', run_date = send_date_4 )
+scheduler.add_job(func= last_two_days_reminder, trigger='date', run_date = send_date_5 )
+scheduler.add_job(func= last_day_reminder, trigger='date', run_date = send_date_6 )
 scheduler.start() 
