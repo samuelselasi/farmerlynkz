@@ -17,31 +17,83 @@ import asyncio
 import pytz
 
 
-
 template1 = """
-<font size = "+2">
-<h1> <i> Performance Planning Form </i> </h1>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body >
 
-<p>Hello Sir/Madam,</p>
+    <div id = "wrapper">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+               
+            </header>
+        <div class="content">
+            <font size = "+2">
+                <h1> <i> Performance Planning Form </i> </h1>
+                
+                <p>Hello Sir/Madam,</p>
+                
+                <p>As a requirement for the completion
+                of your Annual appraisal form, the performance planning
+                form is provided to all staff.</p>
+                
+                <p>Your performance planning form for the year has
+                been made available to you.</p>
+                
+                <strong><p>Please fill the form by opening the link provided.</strong></br>
+                <a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
+                
+                You are expected to access and fill the form by
+                <strong>the end of this month </strong> <br/>
+                
+                Thank You. <br/>
+                Performance Planning Form </p> 
+                </font>
+                
+         
+        </div>
+       
+    </div>
+</body>
 
-<p>As a requirement for the completion
-of your Annual appraisal form, the performance planning
-form is provided to all staff.</p>
 
-<p>Your performance planning form for the year has
-been made available to you.</p>
 
-<strong><p>Please fill the form by opening the link provided.</strong></br>
-<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
-
-You are expected to access and fill the form by
-<strong>the end of this month </strong> <br/>
-
-Thank You. <br/>
-Performance Planning Form </p> 
-</font>
-
+</html>
 """
+
+# template1 = """
+# <font size = "+2">
+# <h1> <i> Performance Planning Form </i> </h1>
+
+# <p>Hello Sir/Madam,</p>
+
+# <p>As a requirement for the completion
+# of your Annual appraisal form, the performance planning
+# form is provided to all staff.</p>
+
+# <p>Your performance planning form for the year has
+# been made available to you.</p>
+
+# <strong><p>Please fill the form by opening the link provided.</strong></br>
+# <a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
+
+# You are expected to access and fill the form by
+# <strong>the end of this month </strong> <br/>
+
+# Thank You. <br/>
+# Performance Planning Form </p> 
+# </font>
+
+# """
 
 template2 = """
 <font size = "+2">
