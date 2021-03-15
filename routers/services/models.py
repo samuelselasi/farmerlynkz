@@ -16,7 +16,6 @@ from . import main
 import asyncio
 import pytz
 
-
 template1 = """
     <!DOCTYPE html>
 <html lang="en">
