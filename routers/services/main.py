@@ -52,7 +52,6 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_2(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
@@ -63,7 +62,6 @@ async def background_send_2(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_3(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
@@ -74,7 +72,6 @@ async def background_send_3(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
@@ -113,7 +110,6 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
@@ -152,18 +148,8 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-async def background_send_12(user_hash_list) -> JSONResponse:
-    for item in user_hash_list:
-        message = MessageSchema(
-            subject="Start Appraisal Form",
-            recipients=[item[1]],
-            body=models.template1.format(url="http://localhost:4200/forms/start",hash=item[0]),
-            subtype="html"
-        )        
-        background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
+
 
 async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -173,9 +159,7 @@ async def background_send_6(user_hash_list) -> JSONResponse:
             body=models.template4.format(url="http://localhost:4200/forms/start",hash=item[0]),
             subtype="html"
         )       
-        await fm.send_message(message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
-        # background_tasks.add_task(fm.send_message,message)        
+        await fm.send_message(message)      
 
 async def background_send_7(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -188,6 +172,56 @@ async def background_send_7(user_hash_list) -> JSONResponse:
         await fm.send_message(message)
         # return JSONResponse(status_code=200, content={"message": "email has been sent"})
         # background_tasks.add_task(fm.send_message,message) 
+
+async def background_send_8(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Four Days Reminder)",
+            recipients=[item["email"]],
+            body=models.template8.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+
+async def background_send_9(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Three Days Reminder)",
+            recipients=[item["email"]],
+            body=models.template9.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+
+async def background_send_10(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Two Days Reminder)",
+            recipients=[item["email"]],
+            body=models.template10.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+
+async def background_send_11(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form (Last Day Reminder)",
+            recipients=[item["email"]],
+            body=models.template11.format(url="http://localhost:4200/forms/start"),
+            subtype="html"
+        )       
+        await fm.send_message(message)
+
+async def background_send_12(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Start Appraisal Form",
+            recipients=[item[1]],
+            body=models.template1.format(url="http://localhost:4200/forms/start",hash=item[0]),
+            subtype="html"
+        )        
+        await fm.send_message(message)
 
 async def background_send_13(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -226,7 +260,6 @@ async def background_send_13(user_hash_list) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_14(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -265,7 +298,6 @@ async def background_send_14(user_hash_list) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_15(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -304,7 +336,6 @@ async def background_send_15(user_hash_list) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_16(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -343,7 +374,6 @@ async def background_send_16(user_hash_list) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
 async def background_send_17(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -382,55 +412,46 @@ async def background_send_17(user_hash_list) -> JSONResponse:
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
-async def background_send_8(user_hash_list) -> JSONResponse:
+async def background_send_18(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Appraisal Form (Last Four Days Reminder)",
-            recipients=[item["email"]],
-            body=models.template8.format(url="http://localhost:4200/forms/start"),
+            subject="Approve Appraisee Forms (Alert)",
+            recipients=[item["supervisor_email"]],
+            body=models.template17.format( 
+            email= [item["email"]],
+            grade= [item["grade"]],
+            roles= [item["roles"]],
+            score= [item["score"]],
+            gender= [item["gender"]],
+            target= [item["target"]],
+            weight= [item["weight"]],
+            comment= [item["comment"]],
+            remarks= [item["remarks"]],
+            lastname= [item["lastname"]],
+            staff_id= [item["staff_id"]],
+            firstname= [item["firstname"]],
+            positions= [item["positions"]],
+            resources= [item["resources"]],
+            assessment= [item["assessment"]],
+            department= [item["department"]],
+            end_status= [item["end_status"]],
+            mid_status= [item["mid_status"]],
+            middlename= [item["middlename"]],
+            supervisor= [item["supervisor"]],
+            result_areas= [item["result_areas"]],
+            start_status= [item["start_status"]],
+            appraisal_year= [item["appraisal_year"]],
+            progress_review= [item["progress_review"]],
+            supervisor_name= [item["supervisor_name"]],
+            role_description= [item["role_description"]],
+            supervisor_email= [item["supervisor_email"]],
+            appraisal_form_id= [item["appraisal_form_id"]]),
             subtype="html"
-        )       
+        )        
         await fm.send_message(message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
-        # background_tasks.add_task(fm.send_message,message) 
 
-async def background_send_9(user_hash_list) -> JSONResponse:
-    for item in user_hash_list:
-        message = MessageSchema(
-            subject="Appraisal Form (Last Three Days Reminder)",
-            recipients=[item["email"]],
-            body=models.template9.format(url="http://localhost:4200/forms/start"),
-            subtype="html"
-        )       
-        await fm.send_message(message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
-        # background_tasks.add_task(fm.send_message,message) 
 
-async def background_send_10(user_hash_list) -> JSONResponse:
-    for item in user_hash_list:
-        message = MessageSchema(
-            subject="Appraisal Form (Last Two Days Reminder)",
-            recipients=[item["email"]],
-            body=models.template10.format(url="http://localhost:4200/forms/start"),
-            subtype="html"
-        )       
-        await fm.send_message(message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
-        # background_tasks.add_task(fm.send_message,message) 
-
-async def background_send_11(user_hash_list) -> JSONResponse:
-    for item in user_hash_list:
-        message = MessageSchema(
-            subject="Appraisal Form (Last Day Reminder)",
-            recipients=[item["email"]],
-            body=models.template11.format(url="http://localhost:4200/forms/start"),
-            subtype="html"
-        )       
-        await fm.send_message(message)
-        # return JSONResponse(status_code=200, content={"message": "email has been sent"})
-        # background_tasks.add_task(fm.send_message,message) 
 
 @router.post("/startreviewemail/")
 async def start_review_email(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
@@ -450,17 +471,23 @@ async def end_0f_year_review_email(background_tasks: BackgroundTasks, db: Sessio
     res = res.fetchall()
     return await background_send_3(res, background_tasks)
 
+
+
 @router.post("/startformdetails/")
 async def start_form_details(background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     res = db.execute("""SELECT public.get_list_of_approved_form('Start', 1)""")
     res = res.first()[0]
     return await background_send_4(res, background_tasks)
 
+
+
 @router.post("/threedaysreminder/")
 async def three_days_to_start_reminder():
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await background_send_6(res)     
+
+
 
 @router.post("/startday/")
 async def start_annual_plan():
@@ -473,6 +500,8 @@ async def approve_start_review(background_tasks: BackgroundTasks, db: Session = 
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
+
+
 
 @router.post("/lastfivedaysreminder/")
 async def last_five_days_reminder():
@@ -504,6 +533,8 @@ async def last_day_reminder():
     res = res.first()[0]
     return await background_send_11(res)    
 
+
+
 @router.post("/lastfivedaystoapprovereminder/")
 async def last_five_days_to_approve_reminder():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
@@ -533,6 +564,16 @@ async def last_day_to_approve_reminder():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
     res = res.first()[0]
     return await background_send_17(res)
+
+
+
+@router.post("/approveannualplan/")
+async def approve_annual_plan():
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
+    res = res.first()[0]
+    return await background_send_18(res)
+
+
 
 jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}

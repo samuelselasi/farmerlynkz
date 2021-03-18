@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 from datetime import datetime, date
 from sqlalchemy.orm import Session
 from . import models, schemas
-
+from .. import services
 
  
 async def read_appraisal_form(db:Session):
@@ -50,7 +50,6 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
 async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
     query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Start'; """)
     query = query.first()[0]
-    print(query)
     if query >= date.today():
         res = db.execute("""INSERT INTO public.annual_plan(
 	                    result_areas, target, resources, appraisal_form_id)
@@ -58,11 +57,12 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
 	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources; """,
                         {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
         db.commit()
-        return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
-    else:
-        return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
+        await services.main.approve_annual_plan()
+        
+    #     return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
+    # else:
+    #     return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
             
-
 async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(comment, field, appraisal_form_id)
     values(:comment, :field, :appraisal_form_id);""",
