@@ -33,6 +33,7 @@ from routers.phase3_router import main as phase3
 from routers.appraiser import main as appraiser
 from routers.auth_router import main as auth
 from routers.services import main as email
+from routers.login_router import main as login
 
 api.include_router(email.router, prefix="/email", tags=["E-mails"])
 api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
@@ -40,7 +41,7 @@ api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])
 api.include_router(phase1.router,prefix="/api/review",tags=["Start Review"])
 api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year Review"])
 api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
-
+api.include_router(login.router, prefix="/login", tags=["Login"])
 
 @api.get("/")
 def welcome():

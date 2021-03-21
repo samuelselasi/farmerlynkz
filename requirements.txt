@@ -52,3 +52,8 @@ urllib3==1.25.8
 uvicorn==0.13.3 
 # webencodings==0.5.1
 fastapi-login==1.5.2
+python-jose==3.2.0 
+# python-jose==2.0.0 
+jose==1.0.0
+passlib==1.7.4 
+bcrypt==3.2.0 

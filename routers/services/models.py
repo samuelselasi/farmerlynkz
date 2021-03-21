@@ -17,27 +17,40 @@ import asyncio
 import pytz
 
 template1 = """
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
 </head>
-<body >
-
-    <div id = "wrapper">
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
             <header>
                 <div id="logo">           
                     <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
                 </div>
-               
+        
             </header>
         <div class="content">
             <font size = "+2">
-                <h1> <i> Performance Planning Form </i> </h1>
+            
                 
                 <p>Hello Sir/Madam,</p>
                 
@@ -69,34 +82,42 @@ template1 = """
 </html>
 """
 
-# template1 = """
-# <font size = "+2">
-# <h1> <i> Performance Planning Form </i> </h1>
 
-# <p>Hello Sir/Madam,</p>
-
-# <p>As a requirement for the completion
-# of your Annual appraisal form, the performance planning
-# form is provided to all staff.</p>
-
-# <p>Your performance planning form for the year has
-# been made available to you.</p>
-
-# <strong><p>Please fill the form by opening the link provided.</strong></br>
-# <a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
-
-# You are expected to access and fill the form by
-# <strong>the end of this month </strong> <br/>
-
-# Thank You. <br/>
-# Performance Planning Form </p> 
-# </font>
-
-# """
-
-template2 = """
+template2 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Mid Year Review Form </i> </h1>
+
 
 <p>Dear All,</p>
 
@@ -119,9 +140,41 @@ Appraiser-App Admin </p>
 
 """
 
-template3 = """
+template3 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> End Of Year Review Form </i> </h1>
+
 
 <p>Dear All,</p>
 
@@ -144,9 +197,41 @@ Appraiser-App Admin </p>
 
 """
 
-template4 = """
+template4 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
 
 <p>Dear All,</p>
 
@@ -168,9 +253,41 @@ Appraiser-App Admin </p>
 
 """
 
-template5 = """
+template5 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Appraoisal Form Details </i> </h1>
+<h1> <i> Appraisal Form Details </i> </h1>
 
 <p>Dear Sir/Madam,</p>
 
@@ -218,9 +335,40 @@ Appraiser-App Admin </p>
 
 """
 
-template6 = """
+template6 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Approve Appraisee Form(Reminder) </i> </h1>
 
 <p>Dear Supervisor,</p>
 
@@ -269,9 +417,40 @@ Appraiser-App Admin </p>
 
 """
 
-template7 = """
+template7 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Appraoisal Form (Reminder) </i> </h1>
 
 <p>Dear Sir/Madam,</p>
 
@@ -293,9 +472,41 @@ Appraiser-App Admin </p>
 
 """
 
-template8 = """
+template8 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
 
 <p>Dear Sir/Madam,</p>
 
@@ -317,9 +528,41 @@ Appraiser-App Admin </p>
 
 """
 
-template9 = """
+template9 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
 
 <p>Dear Sir/Madam,</p>
 
@@ -341,9 +584,41 @@ Appraiser-App Admin </p>
 
 """
 
-template10 = """
+template10 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Appraoisal Form (Reminder) </i> </h1>
+
 
 <p>Dear Sir/Madam,</p>
 
@@ -365,9 +640,41 @@ Appraiser-App Admin </p>
 
 """
 
-template11 = """
+template11 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Appraisal Form (Reminder) </i> </h1>
+
 
 <p>Dear Sir/Madam,</p>
 
@@ -390,8 +697,33 @@ Appraiser-App Admin </p>
 """
 
 template12 = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
 <font size = "+2">
-<h1> <i> Approve Appraisee Form(Last 5 Days Reminder) </i> </h1>
+
 
 <p>Dear Supervisor,</p>
 
@@ -440,9 +772,41 @@ Appraiser-App Admin </p>
 
 """
 
-template13 = """
+template13 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Approve Appraisee Form(Last 4 Days Reminder) </i> </h1>
+
 
 <p>Dear Supervisor,</p>
 
@@ -492,6 +856,31 @@ Appraiser-App Admin </p>
 """
 
 template14 = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
 <font size = "+2">
 <h1> <i> Approve Appraisee Form(Last 3 Days Reminder) </i> </h1>
 
@@ -542,9 +931,41 @@ Appraiser-App Admin </p>
 
 """
 
-template15 = """
+template15 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
-<h1> <i> Approve Appraisee Form(Last 2 Days Reminder) </i> </h1>
+
 
 <p>Dear Supervisor,</p>
 
@@ -590,10 +1011,42 @@ You are expected to review and approve the form details
 Thank You. <br/>
 Appraiser-App Admin </p> 
 </font>
-
+</div>
 """
 
-template16 = """
+template16 =  """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
 <h1> <i> Approve Appraisee Form(Last Day Reminder) </i> </h1>
 
@@ -641,10 +1094,42 @@ You are expected to review and approve the form details
 Thank You. <br/>
 Appraiser-App Admin </p> 
 </font>
-
+</div>
 """
 
 template17 = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style=" width: 80%;
+        display: flex;
+        align-self:center
+        margin:auto;
+        border: 15px solid blue;    
+        width: 500px;
+        padding: 50px;
+        # height: 500px;
+        # background-position: center;
+        margin: 200px;
+        background:url('https://www.litmus.com/wp-content/uploads/2020/04/ultimate-guide-to-background-images-in-email.png'
+    );
+        color: black;
+        display:block;
+        overflow: hidden;
+        align-self:center;">
+            <header>
+                <div id="logo">           
+                    <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
+                </div>
+        
+            </header>
+        <div class="content">
 <font size = "+2">
 <h1> <i> Approve Appraisee Form(Alert) </i> </h1>
 
@@ -692,5 +1177,7 @@ You are expected to review and approve the form details
 Thank You. <br/>
 Appraiser-App Admin </p> 
 </font>
+</div>
 
 """
+

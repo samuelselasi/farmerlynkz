@@ -28,8 +28,8 @@ def get_db():
         db.close()
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "a4caa35d5e3fe6",
-    MAIL_PASSWORD = "e77fca8df17a72",
+    MAIL_USERNAME = "e6f2db2fe49c4b",
+    MAIL_PASSWORD = "e473a8cfd277a7",
     MAIL_FROM = "admin@aiti.com",
     MAIL_PORT = 2525,
     MAIL_SERVER = "smtp.mailtrap.io",
