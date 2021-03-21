@@ -1,7 +1,7 @@
 from sqlalchemy import String
 from sqlalchemy.sql.expression import true
 from sqlalchemy.sql.schema import Column
-from .db import Base
+from .login_db import Base
 
 
 class User_list(Base):
