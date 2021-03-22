@@ -59,9 +59,9 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
         db.commit()
         await services.main.approve_annual_plan()
         
-    #     return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
-    # else:
-    #     return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
+        return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
+    else:
+        return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
             
 async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(comment, field, appraisal_form_id)

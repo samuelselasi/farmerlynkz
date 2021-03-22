@@ -1,96 +1,125 @@
-from fastapi import Depends, HTTPException, Response, status, Body, Header
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from starlette.responses import JSONResponse
+from exceptions import NotFoundError, UnAuthorised, UnAcceptableError, ExpectationFailure
+from services.email import send_in_background, Mail
+from static.email_templates.reset_password import reset_password_template
+from ..user_router.crud import read_user_by_id
+from fastapi import Depends, HTTPException
+from datetime import datetime, timedelta
+from main import scheduler, settings
 from sqlalchemy.orm import Session
-from fastapi import Body, FastAPI
-from sqlalchemy import DateTime
+from database import SessionLocal
 from . import models, schemas
-from typing import Optional
-from datetime import date
-from uuid import UUID
+import sys, utils, jwt
 
+async def authenticate(payload: schemas.Auth, db: Session):
+    try:
+        user = db.query(models.User).filter(models.User.email==payload.email).first()
+        if not user:
+            raise NotFoundError('user not found')
+        if models.User.verify_hash(payload.password, user.password):
+            access_token = utils.create_token(data = {'email':payload.email,'id':user.id}, expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_DURATION_IN_MINUTES))
+            refresh_token = utils.create_token(data = {'email':payload.email,'id':user.id}, expires_delta=timedelta(minutes=settings.REFRESH_TOKEN_DURATION_IN_MINUTES))
+            return {"access_token": access_token.decode("utf-8"), "refresh_token": refresh_token.decode("utf-8"), "user": user}
+        else:
+            raise UnAuthorised('invalid password')
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]))
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail="{}".format(sys.exc_info()[1]))
+    except:
+        print("{}".format(sys.exc_info()))
+        raise HTTPException(status_code=500)
 
+async def revoke_token(payload: schemas.Token, db: Session):
+    try:
+        db.add_all([models.RevokedToken(jti=token) for token in list({v for (k,v) in payload.dict().items()}) if token is not None])
+        db.commit()
+        db.close() 
+        return True
+    except:
+        db.rollback()
+        db.close()
+        print("{}".format(sys.exc_info()))
+        raise HTTPException(status_code=500)
 
+async def refresh_token(payload: schemas.Token, db: Session):
+    try:
+        if not payload.refresh_token:
+            raise UnAcceptableError('refresh token needed')
+        if await is_token_blacklisted(payload.refresh_token, db):
+            raise UnAuthorised('refresh token blacklisted')
+        if await revoke_token(payload, db):
+            data = utils.decode_token(data=payload.refresh_token) 
+            access_token = utils.create_token(data = {'email':data.get('email'),'id':data.get('id')}, expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_DURATION_IN_MINUTES))
+            refresh_token = utils.create_token(data = {'email':data.get('email'),'id':data.get('id')}, expires_delta=timedelta(minutes=settings.REFRESH_TOKEN_DURATION_IN_MINUTES))
+            return {'access_token': access_token.decode("utf-8"), 'refresh_token': refresh_token.decode("utf-8")}
+        else:
+            raise ExpectationFailure()
+    except UnAcceptableError:
+        raise HTTPException(status_code=422, detail="{}".format(sys.exc_info()[1]))
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]))
+    except ExpectationFailure:
+        raise HTTPException(status_code=417, detail="{}".format(sys.exc_info()[1]))
+    except jwt.exceptions.DecodeError:
+        raise HTTPException(status_code=500, detail="{}".format(sys.exc_info()[1]))
+    except:
+        print("{}".format(sys.exc_info()[1]))
+        raise HTTPException(status_code=500)
+  
+async def is_token_blacklisted(token: str, db: Session):
+    res = db.query(models.RevokedToken).filter(models.RevokedToken.jti == token).first()
+    if res is None:
+        return False
+    return True
 
-async def read_staff(db:Session):
-    res = db.execute(""" SELECT public.get_staff(); """)
-    res = res.fetchall()
-    return res
+async def request_password_reset(payload: schemas.UserBase, db: Session, background_tasks):
+    try:
+        user = db.query(models.User).filter(models.User.email==payload.email).first()
+        if not user:
+            raise NotFoundError('user not found')
+        while True:
+            new_code = models.ResetPasswordCodes(user_id=user.id, code=models.ResetPasswordCodes.generate_code())
+            code = db.query(models.ResetPasswordCodes).filter(models.ResetPasswordCodes.user_id==user.id).first()
+            if code:
+                db.delete(code)
+                db.flush()
+            break
+        db.add(new_code)
+        db.commit()
+        db.refresh(new_code)
+        scheduler.add_job(delete_password_reset_code, trigger='date', kwargs={'id': new_code.id}, id='ID{}'.format(new_code.id), replace_existing=True, run_date=datetime.utcnow()+timedelta(minutes=settings.RESET_PASSWORD_SESSION_DURATION_IN_MINUTES))
+        await send_in_background(background_tasks, Mail(email=['{}'.format(payload.email)], content={'code':new_code.code}), reset_password_template)
+        return True
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail="{}".format(sys.exc_info()[1]))
+    except ExpectationFailure:
+        raise HTTPException(status_code=404, detail="{}".format(sys.exc_info()[1]))
+    except:
+        db.rollback()
+        print("{}".format(sys.exc_info()[1]))
+        raise HTTPException(status_code=500)
 
-async def read_roles(db:Session):
-    res = db.execute(""" SELECT role_id, role_description FROM public.roles; """)
-    res = res.fetchall()
-    return res
+async def get_current_user(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_user_by_id(token_data['id'], db)
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
-async def read_deadline_table(db:Session):
-    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
-	FROM public.deadline; """)
-    res = res.fetchall()
-    return res
-
-
-async def create_staff(fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment, db:Session):
-    res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment)
-    VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :roles, :department, :positions, :grade, :appointment)""",
-    {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'roles':roles, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "staff has been created"})
-
-async def create_roles(role_description, db:Session):
-    res = db.execute(""" INSERT INTO public.roles(role_description) VALUES(:role_description) """, {'role_description': role_description})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "role has been created"})
-
-async def create_deadline(deadline_type, start_date, ending, db:Session):
-    res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
-    values(:deadline_type, :start_date, :ending) """,
-    {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "deadline has been created"})
-
-
-async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment, db:Session):
-    res = db.execute("""UPDATE public.staff
-    SET staff_id = :staff_id, fname = :fname, sname = :sname, oname = :oname, email = :email, supervisor = :supervisor, gender = :gender, roles = :roles, department = :department, positions = :positions, grade = :grade, appointment = :appointment
-    WHERE staff_id = :staff_id;""",
-    {'staff_id':staff_id, 'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'roles':roles, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "staff has been updated"})
-
-async def update_roles(role_id, role_description, db:Session):
-    res = db.execute(""" UPDATE public.roles SET role_id = :role_id, role_description = :role_description WHERE role_id = :role_id; """,
-    {'role_id':role_id, 'role_description': role_description})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "role has been updated"})
-
-async def update_deadline(deadline: schemas.update_deadline, db: Session):
-    res = db.execute("""UPDATE public.deadline
-	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
-	WHERE deadline_id = :deadline_id;""",
-    {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "deadline has been updated"})
-
-
-async def delete_staff(staff_id:int, db: Session):
-    res = db.execute("""DELETE FROM public.staff 
-	WHERE staff_id = :staff_id;""",
-    {'staff_id':staff_id})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "staff has been deleted"})
-
-async def delete_roles(role_id:int, db: Session):
-    res = db.execute(""" DELETE FROM public.roles WHERE role_id = :role_id; """, {'role_id':role_id})
-    db.commit()
-    return JSONResponse(status_code=200, content={"message": "role has been deleted"})
-
-async def delete_deadline(deadline_id: int, db: Session):
-    res = db.execute("""DELETE FROM public.deadline
-	WHERE deadline_id=:deadline_id;""",
-    {'deadline_id':deadline.deadline_id})
-    db.commit() 
-    return JSONResponse(status_code=200, content={"message": "deadline has been deleted"})
-
-    
-
-
+def delete_password_reset_code(id: int, db: Session = SessionLocal()):
+    try:
+        code = db.query(models.ResetPasswordCodes).filter(models.ResetPasswordCodes.id==id).first()
+        if code:
+            db.delete(code)
+        db.commit()
+        return True
+    except:
+        print("{}".format(sys.exc_info()))
+        raise HTTPException(status_code=500)

@@ -1,12 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, FastAPI
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, FastAPI, WebSocket, WebSocketDisconnect
+from database import SessionLocal, engine, SQLALCHEMY_DATABASE_URL, metadata
 from fastapi.middleware.cors import CORSMiddleware
-from database import SessionLocal, engine
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import HTMLResponse
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-import pytz
+# from sockets import manager
+import pytz, os
+
 
 
 api = FastAPI(docs_url="/api/docs")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
+
+
 
 origins = ["*"]
 api.add_middleware(
@@ -27,21 +35,30 @@ def get_db():
         db.close()
 
 
+from routers.auth_router import models
+from routers.user_router import models
+models.Base.metadata.create_all(bind=engine)
+
+
 from routers.phase1_router import main as phase1
 from routers.phase2_router import main as phase2
 from routers.phase3_router import main as phase3
 from routers.appraiser import main as appraiser
-from routers.auth_router import main as auth
+from routers.staff_router import main as staff
 from routers.services import main as email
-from routers.login_router import main as login
+# from routers.auth_router import main as auth
+from routers.user_router import main as user
+
+ 
 
 api.include_router(email.router, prefix="/email", tags=["E-mails"])
-api.include_router(auth.router,prefix="/api/staff",tags=["Staff"])
+api.include_router(staff.router,prefix="/api/staff",tags=["Staff"])
 api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])
 api.include_router(phase1.router,prefix="/api/review",tags=["Start Review"])
 api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year Review"])
 api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
-api.include_router(login.router, prefix="/login", tags=["Login"])
+# api.include_router(auth.router, prefix="/auth", tags=["Login"])
+api.include_router(user.router, prefix="/user", tags=["User Login"])
 
 @api.get("/")
 def welcome():

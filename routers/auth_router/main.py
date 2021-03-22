@@ -1,70 +1,30 @@
-from fastapi_login.exceptions import InvalidCredentialsException
-from fastapi.security import OAuth2PasswordRequestForm
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
-from datetime import datetime, time, timedelta
-from fastapi_login import LoginManager
-from pydantic import UUID4, EmailStr
+from fastapi import APIRouter, Depends, BackgroundTasks
+from main import get_db, oauth2_scheme
+from . import crud, schemas, models
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from fastapi import Body, FastAPI
-from fastapi import Depends
-from typing import Optional
-from . import crud, schemas
-from main import get_db
-from uuid import UUID
-
+# from typing import List
+# import utils, jwt
+# , HTTPException, status, BackgroundTasks
+# from ..users_router.crud import read_user_by_id
 
 router = APIRouter()
 
+@router.post("/", description="authenticate user details", response_model=schemas.AuthResponse)
+async def authenticate(payload: schemas.Auth, db: Session = Depends(get_db)):
+    return await crud.authenticate(payload, db)
 
-@router.get("/")
-async def read_staff(db: Session = Depends(get_db)):
-    return await crud.read_staff(db)
+@router.post("/logout", description="revoke token")
+async def logout(payload: schemas.Token, db: Session = Depends(get_db)):
+    return await crud.revoke_token(payload, db)
 
-@router.get("/roles/")
-async def read_roles(db: Session = Depends(get_db)):
-    return await crud.read_roles(db)
+@router.post("/refresh", description="refresh user access/refresh tokens", response_model=schemas.Token)
+async def refresh_token(payload: schemas.Token, db: Session=Depends(get_db)):
+    return await crud.refresh_token(payload, db)
 
-@router.get("/deadline/")
-async def read_deadline_table(db: Session = Depends(get_db)):
-    return await crud.read_deadline_table(db)
+@router.post("/request", description="authenticate user details")
+async def request_password_reset(payload:schemas.UserBase, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+    return await crud.request_password_reset(payload, db, background_tasks)
 
-
-@router.post("/")
-async def create_staff(payload: schemas.UserCreate, db: Session = Depends(get_db)):
-    return await crud.create_staff(payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.roles, payload.department, payload.positions, payload.grade, payload.appointment, db)
-
-@router.post("/roles/")
-async def create_roles(payload: schemas.create_roles, db: Session = Depends(get_db)):
-    return await crud.create_roles(payload.role_description, db)
-
-@router.post("/deadline/")
-async def create_deadline(payload:schemas.create_deadline, db: Session = Depends(get_db) ):
-    return await crud.create_deadline(payload.deadline_type, payload.start_date, payload.ending, db)
-
-
-@router.put("/")
-async def update_staff(payload: schemas.update_staff, db:Session = Depends(get_db)):
-    return await crud.update_staff(payload.staff_id, payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.roles, payload.department, payload.positions, payload.grade, payload.appointment, db)
-
-@router.put("/roles/")
-async def update_roles(payload: schemas.update_roles, db:Session = Depends(get_db)):
-    return await crud.update_roles(payload.role_id, payload.role_description, db)
-
-@router.put("/Deadline/")
-async def update_deadline_table(deadline: schemas.update_deadline, db: Session = Depends(get_db)):
-    return await crud.update_deadline(deadline, db)
-
-
-@router.delete("/{staff_id}/")
-async def delete_staff(staff_id: int, db: Session = Depends(get_db)):
-    return await crud.delete_staff(staff_id, db)
-  
-@router.delete("/{role_id}/")
-async def delete_roles(role_id: int, db: Session = Depends(get_db)):
-    return await crud.delete_roles(role_id, db)
-  
-@router.delete("/deadline/{deadline_id}/")
-async def delete_deadline(deadline_id: int, db: Session = Depends(get_db)):
-    return await crud.delete_deadline(deadline_id, db)    
+@router.get("/", response_model=schemas.User)
+async def get_current_user(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+    return await crud.get_current_user(token, db)
