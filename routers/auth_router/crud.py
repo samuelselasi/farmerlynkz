@@ -4,7 +4,7 @@ from exceptions import NotFoundError, UnAuthorised, UnAcceptableError, Expectati
 from ..user_router.crud import read_user_by_id
 from fastapi import Depends, HTTPException
 from datetime import datetime, timedelta
-from main import scheduler, settings
+from main import settings
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from . import models, schemas
@@ -16,8 +16,8 @@ async def authenticate(payload: schemas.Auth, db: Session):
         if not user:
             raise NotFoundError('user not found')
         if models.User.verify_hash(payload.password, user.password):
-            access_token = utils.create_token(data = {'email':payload.email,'id':user.id}, expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_DURATION_IN_MINUTES))
-            refresh_token = utils.create_token(data = {'email':payload.email,'id':user.id}, expires_delta=timedelta(minutes=settings.REFRESH_TOKEN_DURATION_IN_MINUTES))
+            access_token = utils.create_token(data = {'email':payload.email,'id':user.id})
+            refresh_token = utils.create_token(data = {'email':payload.email,'id':user.id})
             return {"access_token": access_token.decode("utf-8"), "refresh_token": refresh_token.decode("utf-8"), "user": user}
         else:
             raise UnAuthorised('invalid password')
@@ -87,7 +87,7 @@ async def request_password_reset(payload: schemas.UserBase, db: Session, backgro
         db.add(new_code)
         db.commit()
         db.refresh(new_code)
-        scheduler.add_job(delete_password_reset_code, trigger='date', kwargs={'id': new_code.id}, id='ID{}'.format(new_code.id), replace_existing=True, run_date=datetime.utcnow()+timedelta(minutes=settings.RESET_PASSWORD_SESSION_DURATION_IN_MINUTES))
+        # scheduler.add_job(delete_password_reset_code, trigger='date', kwargs={'id': new_code.id}, id='ID{}'.format(new_code.id), replace_existing=True, run_date=datetime.utcnow()+timedelta(minutes=settings.RESET_PASSWORD_SESSION_DURATION_IN_MINUTES))
         # await send_in_background(background_tasks, Mail(email=['{}'.format(payload.email)], content={'code':new_code.code}), reset_password_template)
         return True
     except NotFoundError:
