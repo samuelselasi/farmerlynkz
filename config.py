@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = os.environ.get('ALGORITHM') or "HS256"
     MAIL_USERNAME : str = os.environ.get('MAIL_USERNAME') or "e6f2db2fe49c4b"
     MAIL_PASSWORD : str = os.environ.get('MAIL_PASSWORD') or "e473a8cfd277a7"
-    MAIL_FROM : str = os.environ.get('MAIL_FROM') or "elisegb-49cabc@inbox.mailtrap.io"
+    MAIL_FROM : str = os.environ.get('MAIL_FROM') or "admin@aiti.com"
     MAIL_PORT : int = os.environ.get('MAIL_PORT') or 2525
     MAIL_SERVER : str = os.environ.get('MAIL_SERVER') or "smtp.mailtrap.io"
     MAIL_TLS : bool = os.environ.get('MAIL_TLS') or False
@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     STATIC_DIR:str = os.environ.get('STATIC_DIR') or None
     API_BASE_URL:str = os.environ.get('API_BASE_URL') or 'http://0.0.0.0:8000'
     COMPANY_URL:str = os.environ.get('COMPANY_URL') or 'https://www.aiti-kace.com.gh'
+    START_URL: str = os.environ.get('START_URL') or 'http://localhost:4200/forms/start'
 
     class Config:
         title = 'Base Settings'

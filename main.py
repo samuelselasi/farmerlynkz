@@ -47,13 +47,13 @@ from routers.phase3_router import main as phase3
 from routers.appraiser import main as appraiser
 from routers.staff_router import main as staff
 from routers.services import main as email
-from routers.auth_router import main as auth
-from routers.user_router import main as user
+# from routers.auth_router import main as auth
+# from routers.user_router import main as user
 
 
 
-api.include_router(auth.router, prefix="/auth", tags=["User Login"])
-api.include_router(user.router, prefix="/user", tags=["User"])
+# api.include_router(auth.router, prefix="/auth", tags=["User Login"])
+# api.include_router(user.router, prefix="/user", tags=["User"])
 api.include_router(email.router, prefix="/email", tags=["E-mails"])
 api.include_router(staff.router,prefix="/api/staff",tags=["Staff"])
 api.include_router(appraiser.router,prefix="/api/appraiser", tags=["Appraiser"])

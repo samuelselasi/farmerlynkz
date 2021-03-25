@@ -34,7 +34,7 @@ class UserInfo(Base):
     first_name = Column(String, nullable=True)
     middle_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
-    phone = Column(String, nullable=True)
+    # phone = Column(String, nullable=True)
     # image_url = Column(String, nullable=True)
     # is_verified = Column(Boolean,nullable=False)
 

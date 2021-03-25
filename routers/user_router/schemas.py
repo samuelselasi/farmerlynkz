@@ -10,7 +10,7 @@ class UserCreate(UserBase):
     first_name: str
     middle_name: Optional[str]
     last_name: str
-    phone: Optional[str]
+    # phone: Optional[str]
     user_type_id: int
     status: Optional[bool]
 
@@ -18,7 +18,7 @@ class UserUpdate(BaseModel):
     first_name: Optional[str]
     middle_name: Optional[str]
     last_name: Optional[str]
-    phone: Optional[str]
+    # phone: Optional[str]
 
 class ResetPassword(BaseModel):
     password: str
@@ -29,7 +29,7 @@ class UserInfo(BaseModel):
     first_name: Optional[str]
     middle_name: Optional[str]
     last_name: Optional[str]
-    phone: Optional[str]
+    # phone: Optional[str]
     date_created: datetime.datetime
     date_modified: datetime.datetime
 

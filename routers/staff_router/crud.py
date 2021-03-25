@@ -43,7 +43,8 @@ async def create_roles(role_description, db:Session):
 
 async def create_deadline(deadline_type, start_date, ending, db:Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
-    values(:deadline_type, :start_date, :ending) """,
+    values(:deadline_type, :start_date, :ending) on conflict (deadline_type) do 
+	update set deadline_type = EXCLUDED.deadline_type, start_date = EXCLUDED.start_date, ending = EXCLUDED.ending;""",
     {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending})
     db.commit()
     return JSONResponse(status_code=200, content={"message": "deadline has been created"})
