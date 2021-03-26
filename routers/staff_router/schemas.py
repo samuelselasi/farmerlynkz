@@ -15,11 +15,11 @@ class UserBase(BaseModel):
     email: str
     supervisor: int
     gender: str
-    roles: int
     department: str
     positions: str
     grade: int
     appointment: Optional[datetime.datetime]
+    roles: int
 class UpdateStaff(BaseModel):
     staff_id:int
     fname: str
@@ -28,11 +28,11 @@ class UpdateStaff(BaseModel):
     email: str
     supervisor: int
     gender: str
-    roles: int
     department: str
     positions: str
     grade: int
     appointment: Optional[datetime.datetime]
+    roles: int
 class UpdateDeadline(BaseModel):
     deadline_id: int
     deadline_type: str

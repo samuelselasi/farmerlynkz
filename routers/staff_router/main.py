@@ -33,7 +33,7 @@ async def read_deadline_table(db: Session = Depends(get_db)):
 
 @router.post("/")
 async def create_staff(payload: schemas.UserCreate, db: Session = Depends(get_db)):
-    return await crud.create_staff(payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.roles, payload.department, payload.positions, payload.grade, payload.appointment, db)
+    return await crud.create_staff(payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.department, payload.positions, payload.grade, payload.appointment, payload.roles, db)
 
 @router.post("/roles/")
 async def create_roles(payload: schemas.create_roles, db: Session = Depends(get_db)):

@@ -29,10 +29,10 @@ async def read_deadline_table(db:Session):
     return res
 
 
-async def create_staff(fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment, db:Session):
-    res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment)
-    VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :roles, :department, :positions, :grade, :appointment)""",
-    {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'roles':roles, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
+async def create_staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, db:Session):
+    res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles)
+    VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :department, :positions, :grade, :appointment, :roles)""",
+    {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment, 'roles':roles})
     db.commit()
     return JSONResponse(status_code=200, content={"message": "staff has been created"})
 
@@ -50,11 +50,11 @@ async def create_deadline(deadline_type, start_date, ending, db:Session):
     return JSONResponse(status_code=200, content={"message": "deadline has been created"})
 
 
-async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, roles, department, positions, grade, appointment, db:Session):
+async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles,  db:Session):
     res = db.execute("""UPDATE public.staff
-    SET staff_id = :staff_id, fname = :fname, sname = :sname, oname = :oname, email = :email, supervisor = :supervisor, gender = :gender, roles = :roles, department = :department, positions = :positions, grade = :grade, appointment = :appointment
+    SET staff_id = :staff_id, fname = :fname, sname = :sname, oname = :oname, email = :email, supervisor = :supervisor, gender = :gender, department = :department, positions = :positions, grade = :grade, appointment = :appointment, roles = :roles
     WHERE staff_id = :staff_id;""",
-    {'staff_id':staff_id, 'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'roles':roles, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment})
+    {'staff_id':staff_id, 'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment, 'roles':roles})
     db.commit()
     return JSONResponse(status_code=200, content={"message": "staff has been updated"})
 
