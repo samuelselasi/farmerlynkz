@@ -65,6 +65,18 @@ async def read_incompleted_list(deadline = 'End', user_id = 1,  db: Session = De
 async def read_deadline_table(db: Session = Depends(get_db)):
     return await crud.read_deadline_table(db)
 
+@router.get("/deadline/start/")
+async def read_start_deadline_table(db: Session = Depends(get_db)):
+    return await crud.read_start_deadline_table(db)
+
+@router.get("/deadline/mid/")
+async def read_mid_deadline_table(db: Session = Depends(get_db)):
+    return await crud.read_mid_deadline_table(db)
+
+@router.get("/deadline/end/")
+async def read_end_deadline_table(db: Session = Depends(get_db)):
+    return await crud.read_end_deadline_table(db)
+
 @router.get("/supervisors/")
 async def read_supervisors(db: Session = Depends(get_db)):
     return await crud.read_supervisors(db)

@@ -10,6 +10,24 @@ async def read_deadline_table(db:Session):
     res = res.fetchall()
     return res
 
+async def read_start_deadline_table(db:Session):
+    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
+	FROM public.deadline where deadline_type='Start'; """)
+    res = res.fetchall()
+    return res
+
+async def read_mid_deadline_table(db:Session):
+    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
+	FROM public.deadline where deadline_type='Mid'; """)
+    res = res.fetchall()
+    return res
+
+async def read_end_deadline_table(db:Session):
+    res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
+	FROM public.deadline where deadline_type='End'; """)
+    res = res.fetchall()
+    return res
+
 async def read_appraiser_appraisees(user_id, db: Session):
     res = db.execute(""" SELECT public.get_list_of_appraisee(:user_id) """,{'user_id':user_id})
     return res.fetchall()  
