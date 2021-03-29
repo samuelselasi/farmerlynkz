@@ -58,7 +58,7 @@ async def create_deadline(payload:schemas.create_deadline, db: Session = Depends
 
 @router.put("/")
 async def update_staff(payload: schemas.update_staff, db:Session = Depends(get_db)):
-    return await crud.update_staff(payload.staff_id, payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.roles, payload.department, payload.positions, payload.grade, payload.appointment, db)
+    return await crud.update_staff(payload.staff_id, payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.department, payload.positions, payload.grade, payload.appointment, payload.roles,  db)
 
 @router.put("/roles/")
 async def update_roles(payload: schemas.update_roles, db:Session = Depends(get_db)):
