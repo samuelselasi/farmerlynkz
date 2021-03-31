@@ -17,8 +17,13 @@ async def read_staff(db:Session):
     res = res.fetchall()
     return res
 
+async def read_supervisors(db:Session):
+    res = db.execute(""" SELECT fname, sname, oname FROM public.staff where roles=1; """)
+    res = res.fetchall()
+    return res
+
 async def read_staff_by_name(name: str, db:Session):
-    res = db.execute(""" SELECT staff_id, fname, sname, oname, email FROM public.staff where fname like :name or sname like :name; """, {'name':name,})
+    res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where fname ilike 'name%' or sname ilike 'name%'; """, {'name':name})
     res = res.fetchall()
     return res
 
