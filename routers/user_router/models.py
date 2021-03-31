@@ -71,5 +71,5 @@ class UserType(Base):
 @event.listens_for(UserType.__table__, 'after_create')
 def insert_initial_values(*args, **kwargs):
     db = SessionLocal()
-    db.add_all([ UserType(title='System Admin'), UserType(title='Supervisor'), UserType(title='HR') ])
+    db.add_all([ UserType(title='System Admin'), UserType(title='Appraiser'), UserType(title='HR Manager') ])
     db.commit()
