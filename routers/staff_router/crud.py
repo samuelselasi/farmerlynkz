@@ -27,6 +27,13 @@ async def read_staff_by_name(name: str, db:Session):
     res = res.fetchall()
     return res
 
+async def deactivate_staff(staff_id: int, db: Session):
+    res = db.execute(""" SELECT public.deactivate_staff (:staff_id) """, {'staff_id': staff_id})
+    res = res.fetchall()
+    db.commit()
+    return res
+
+
 async def read_roles(db:Session):
     res = db.execute(""" SELECT role_id, role_description FROM public.roles; """)
     res = res.fetchall()

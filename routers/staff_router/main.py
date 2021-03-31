@@ -30,6 +30,9 @@ async def read_supervisors(db: Session = Depends(get_db)):
 async def read_staff_by_name(name: str, db: Session = Depends(get_db)):
     return await crud.read_staff_by_name(name, db)
 
+@router.get("/deactivatestaff/{staff_id}/")
+async def deactivate_staff(staff_id:int, db: Session = Depends(get_db)):
+    return await crud.deactivate_staff(staff_id, db)
 
 @router.get("/roles/")
 async def read_roles(db: Session = Depends(get_db)):
