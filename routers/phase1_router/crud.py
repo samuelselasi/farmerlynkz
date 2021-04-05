@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 from datetime import datetime, date
 from sqlalchemy.orm import Session
 from . import models, schemas
-from .. import services
+from .. import email
 
  
 async def read_appraisal_form(db:Session):
@@ -57,7 +57,7 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
 	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources; """,
                         {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id})
         db.commit()
-        # await services.main.approve_annual_plan()
+        # await email.main.approve_annual_plan()
         
     #     return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
     # else:

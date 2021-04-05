@@ -3,7 +3,7 @@ from pydantic import UUID4, EmailStr
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from . import crud, schemas
-from main import get_db
+from main import get_db, oauth2_scheme
 
 
 router = APIRouter()
@@ -62,6 +62,10 @@ async def read_incompleted_list(deadline = 'End', user_id = 1,  db: Session = De
     return await crud.read_incomplete_list( deadline, user_id, db)  
 
 @router.get("/deadline/")
+async def read_deadline_table(token: str=Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    return await crud.read_deadline_table_admin(token, db)
+
+@router.get("/deadlines/")
 async def read_deadline_table(db: Session = Depends(get_db)):
     return await crud.read_deadline_table(db)
 

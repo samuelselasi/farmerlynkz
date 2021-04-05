@@ -1,3 +1,4 @@
+from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
 from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 from . import models, schemas
@@ -9,6 +10,20 @@ async def read_deadline_table(db:Session):
 	FROM public.deadline; """)
     res = res.fetchall()
     return res
+
+async def read_deadline_table_admin(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_deadline_table(db)
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 async def read_start_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id

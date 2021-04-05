@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import HTMLResponse
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
+from schedulers import scheduler
 from sockets import manager
 import pytz, os, config
 
@@ -46,7 +47,7 @@ from routers.phase2_router import main as phase2
 from routers.phase3_router import main as phase3
 from routers.appraiser import main as appraiser
 from routers.staff_router import main as staff
-from routers.services import main as email
+from routers.email import main as email
 from routers.auth_router import main as auth
 from routers.user_router import main as user
 
