@@ -1,4 +1,5 @@
 from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
+from ..user_router.crud import read_user_by_id
 from starlette.responses import JSONResponse
 from sqlalchemy.orm import Session
 from . import models, schemas
@@ -82,6 +83,21 @@ async def approve_form(appraisal_form_id: int, type_form: str, db: Session):
     res = res.fetchall()
     db.commit()
     return res
+
+async def approve_form_details(appraisal_form_id:int, type_form:str, token: str, db: Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await approve_form_details(appraisal_form_id, token, type_form, db)
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
 
 
 async def create_deadline(deadline_type, start_date, ending, db:Session):

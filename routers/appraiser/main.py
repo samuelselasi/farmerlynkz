@@ -93,6 +93,9 @@ async def read_yearly_form_deatails(staff_id:int, form_year:int, db: Session = D
 async def approve_form(appraisal_form_id:int, type_form='Start', db: Session = Depends(get_db)):
     return await crud.approve_form(appraisal_form_id, type_form, db)
 
+@router.get("/approveformdetails/{appraisal_form_id}/")
+async def approve_form_details(appraisal_form_id:int, type_form='Start', token: str=Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    return await crud.approve_form_details(appraisal_form_id, type_form, token, db)
 
 @router.post("/deadline/")
 async def create_deadline(payload:schemas.create_deadline, db: Session = Depends(get_db) ):
