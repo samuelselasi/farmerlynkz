@@ -3,14 +3,14 @@ homepage = '''
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Asset Management Api</title>
+    <title>Appraisal Management Api</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <style type="text/css">
     a[x-apple-data-detectors] 
     </style>
 </head>
 <body style="margin: 0px; padding: 20px; background-color:#f1f2f6">
-    <h1 style="font-size: 12px;">Welcome to Asset Management Link</h1>
+    <h1 style="font-size: 12px;">Welcome to Appraisal Management Link</h1>
     <a href="{docs_url}">
         <h1 style="font-size: 12px;">click this link to view api docs</h1>
     </a>

@@ -4,8 +4,8 @@ import os
 class Settings(BaseSettings):
     SECRET_KEY : str = os.environ.get('SECRET_KEY') or "fsdfsdfsdfsdflhiugysadf87w940e-=r0werpolwe$16$5*dfsdfsdf&&#$rrr$$)7a9563OO93f7099f6f0f4caa6cf63b88e8d3e7"
     ALGORITHM: str = os.environ.get('ALGORITHM') or "HS256"
-    MAIL_USERNAME : str = os.environ.get('MAIL_USERNAME') or "e6f2db2fe49c4b"
-    MAIL_PASSWORD : str = os.environ.get('MAIL_PASSWORD') or "e473a8cfd277a7"
+    MAIL_USERNAME : str = os.environ.get('MAIL_USERNAME') or "bf671d2f7e9b71"
+    MAIL_PASSWORD : str = os.environ.get('MAIL_PASSWORD') or "1f5a6578df3ba2"
     MAIL_FROM : str = os.environ.get('MAIL_FROM') or "admin@aiti.com"
     MAIL_PORT : int = os.environ.get('MAIL_PORT') or 2525
     MAIL_SERVER : str = os.environ.get('MAIL_SERVER') or "smtp.mailtrap.io"
