@@ -1,28 +1,29 @@
 from fastapi import APIRouter, Depends, HTTPException
+from main import get_db, oauth2_scheme
 from pydantic import UUID4, EmailStr
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from . import crud, schemas
-from main import get_db, oauth2_scheme
+
 
 
 router = APIRouter()
 
 
 @router.get("/Appraisees/{user_id}/")
-async def read_appraiser_appraisees(user_id:int, db: Session = Depends(get_db)):
+async def read_appraiser_appraisees(user_id:int, db:Session = Depends(get_db)):
     return await crud.read_appraiser_appraisees(user_id, db)
 
 @router.get("/Appraiseesauth/{user_id}/")
-async def read_appraiser_appraisees_auth(user_id: int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+async def read_appraiser_appraisees_auth(user_id:int, token:str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
     return await crud.read_appraiser_appraisees_auth(user_id, token, db)
 
 @router.get("/completedlist/start/")
-async def read_completed_list(deadline = 'Start', user_id = 1,  db: Session = Depends(get_db)):
+async def read_completed_list(deadline='Start', user_id =1,  db:Session=Depends(get_db)):
     return await crud.read_completed_list( deadline, user_id, db)
 
 @router.get("/completedlistauth/start/")
-async def read_completed_list_auth(deadline = 'Start', user_id = 1, token: str = Depends(oauth2_scheme),  db: Session = Depends(get_db)):
+async def read_completed_list_auth(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_completed_list_auth( deadline, user_id, token, db)
 
 @router.get("/approved/start/")

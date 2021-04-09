@@ -1,6 +1,10 @@
+from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
 from fastapi import Depends, HTTPException, Response, status, Body, Header
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from ..user_router.crud import read_user_by_id
 from starlette.responses import JSONResponse
+from pydantic import BaseModel, EmailStr
+from ..user_router.models import User
 from sqlalchemy.orm import Session
 from fastapi import Body, FastAPI
 from sqlalchemy import DateTime
@@ -8,7 +12,7 @@ from . import models, schemas
 from typing import Optional
 from datetime import date
 from uuid import UUID
-
+import datetime
 
 
 
@@ -17,27 +21,84 @@ async def read_staff(db:Session):
     res = res.fetchall()
     return res
 
+async def read_staff_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_staff(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
+
 async def read_supervisors(db:Session):
     res = db.execute(""" SELECT fname, sname, oname FROM public.staff where roles=1; """)
     res = res.fetchall()
     return res
 
-async def read_staff_by_name(name: str, db:Session):
+async def read_supervisors_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_supervisors(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
+
+async def read_staff_by_name(name:str, db:Session):
     res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where fname ilike :name or sname ilike :name; """, {'name':'%'+name+'%'})
     res = res.fetchall()
     return res
 
-async def deactivate_staff(staff_id: int, db: Session):
-    res = db.execute(""" SELECT public.deactivate_staff (:staff_id) """, {'staff_id': staff_id})
-    res = res.fetchall()
-    db.commit()
-    return res
-
+async def read_staff_by_name_auth(name:str, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_staff_by_name(name, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 async def read_roles(db:Session):
     res = db.execute(""" SELECT role_id, role_description FROM public.roles; """)
     res = res.fetchall()
     return res
+
+async def read_roles_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_roles(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})         
 
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
@@ -45,11 +106,48 @@ async def read_deadline_table(db:Session):
     res = res.fetchall()
     return res
 
+async def read_deadline_table_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        print(data)
+        if data==1:
+            return await read_deadline_table(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
 async def read_start_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline where deadline_type='Start'; """)
     res = res.fetchall()
     return res
+
+async def read_start_deadline_table_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        if data==1:
+            return await read_start_deadline_table(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 async def read_mid_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
@@ -64,6 +162,29 @@ async def read_end_deadline_table(db:Session):
     return res
 
 
+async def deactivate_staff(staff_id:int, db:Session):
+    res = db.execute(""" SELECT public.deactivate_staff (:staff_id) """, {'staff_id': staff_id})
+    res = res.fetchall()
+    db.commit()
+    return res
+
+async def deactivate_staff_auth(staff_id:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await read_start_deadline_table(staff_id, db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
+
+
 async def create_staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, db:Session):
     res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles)
     VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :department, :positions, :grade, :appointment, :roles)""",
@@ -71,10 +192,43 @@ async def create_staff(fname, sname, oname, email, supervisor, gender, departmen
     db.commit()
     return JSONResponse(status_code=200, content={"message": "staff has been created"})
 
-async def create_roles(role_description, db:Session):
+async def create_staff_auth(fname:str, sname:str, oname:str, email:EmailStr, supervisor:int, gender:str, department:str, positions:str, grade:int, appointment:Optional[datetime.datetime], roles:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await create_staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
+
+
+async def create_roles(role_description:str, db:Session):
     res = db.execute(""" INSERT INTO public.roles(role_description) VALUES(:role_description) """, {'role_description': role_description})
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been created"})
+
+async def create_roles_auth(role_description:str, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await create_roles(role_description ,db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})         
 
 async def create_deadline(deadline_type, start_date, ending, db:Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
@@ -84,6 +238,24 @@ async def create_deadline(deadline_type, start_date, ending, db:Session):
     db.commit()
     return JSONResponse(status_code=200, content={"message": "deadline has been created"})
 
+async def create_deadline_auth(deadline_type:str, start_date:str, ending:str, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        print(data)
+        if data==1:
+            return await create_deadline(deadline_type, start_date, ending, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles,  db:Session):
     res = db.execute("""UPDATE public.staff
@@ -93,13 +265,45 @@ async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender,
     db.commit()
     return JSONResponse(status_code=200, content={"message": "staff has been updated"})
 
+async def update_staff_auth(staff_id:int, fname:str, sname:str, oname:str, email:EmailStr, supervisor:int, gender:str, department:str, positions:str, grade:int, appointment:Optional[datetime.datetime], roles:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await update_staff(staff_id, fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 async def update_roles(role_id, role_description, db:Session):
     res = db.execute(""" UPDATE public.roles SET role_id = :role_id, role_description = :role_description WHERE role_id = :role_id; """,
     {'role_id':role_id, 'role_description': role_description})
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been updated"})
 
-async def update_deadline(deadline: schemas.update_deadline, db: Session):
+async def update_roles_auth(role_id:int, role_description:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await create_roles(role_id, role_description ,db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
+async def update_deadline(deadline:schemas.update_deadline, db:Session):
     res = db.execute("""UPDATE public.deadline
 	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
 	WHERE deadline_id = :deadline_id;""",
@@ -107,6 +311,24 @@ async def update_deadline(deadline: schemas.update_deadline, db: Session):
     db.commit()
     return JSONResponse(status_code=200, content={"message": "deadline has been updated"})
 
+async def update_deadline_auth(deadline:schemas.update_deadline, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        print(data)
+        if data==1:
+            return await update_deadline(deadline, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 async def delete_staff(staff_id:int, db: Session):
     res = db.execute("""DELETE FROM public.staff 
@@ -115,10 +337,42 @@ async def delete_staff(staff_id:int, db: Session):
     db.commit()
     return JSONResponse(status_code=200, content={"message": "staff has been deleted"})
 
+async def delete_staff_auth(staff_id:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await delete_staff(staff_id, db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 async def delete_roles(role_id:int, db: Session):
     res = db.execute(""" DELETE FROM public.roles WHERE role_id = :role_id; """, {'role_id':role_id})
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been deleted"})
+
+async def delete_roles_auth(role_id:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await delete_roles(role_id ,db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 async def delete_deadline(deadline_id: int, db: Session):
     res = db.execute("""DELETE FROM public.deadline
@@ -127,6 +381,24 @@ async def delete_deadline(deadline_id: int, db: Session):
     db.commit() 
     return JSONResponse(status_code=200, content={"message": "deadline has been deleted"})
 
+async def delete_deadline_auth(deadline_id:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        print(data)
+        if data==1:
+            return await delete_deadline(deadline_id, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
     
 
 

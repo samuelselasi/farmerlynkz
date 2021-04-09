@@ -1,7 +1,7 @@
 from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
 from ..user_router.crud import read_user_by_id
-from ..user_router.models import User
 from starlette.responses import JSONResponse
+from ..user_router.models import User
 from sqlalchemy.orm import Session
 from . import models, schemas
 from fastapi import Depends
@@ -94,7 +94,7 @@ async def read_completed_list(deadline:str, user_id:int, db:Session):
     res = res.fetchall()
     return res 
 
-async def read_completed_list_auth(deadline: str, user_id:int, token:str, db:Session):
+async def read_completed_list_auth(deadline:str, user_id:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -116,7 +116,7 @@ async def read_approved_forms(deadline:str, user_id:int, db:Session):
     res = res.fetchall()
     return res 
 
-async def read_approved_forms_auth(deadline:str, user_id: int, token:str, db:Session):
+async def read_approved_forms_auth(deadline:str, user_id:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -138,7 +138,7 @@ async def waiting_approval_list(deadline:str, user_id:int, db:Session):
     res = res.fetchall()
     return res 
 
-async def waiting_approval_list_auth(deadline:str, user_id: int, token:str, db:Session):
+async def waiting_approval_list_auth(deadline:str, user_id:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -180,7 +180,7 @@ async def read_supervisors(db: Session):
     res = res.fetchall()
     return res
 
-async def read_supervisors_auth(token:str, db: Session):
+async def read_supervisors_auth(token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -197,12 +197,12 @@ async def read_supervisors_auth(token:str, db: Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
-async def read_yearly_form_deatails(staff_id:int, form_year: int, db:Session):
+async def read_yearly_form_deatails(staff_id:int, form_year:int, db:Session):
     res = db.execute(""" SELECT public.get_form_details_yearly(:staff_id, :form_year) """, {'staff_id':staff_id, 'form_year':form_year})
     res = res.fetchall()
     return res
 
-async def read_yearly_form_deatails_auth(staff_id: int, form_year:int, token:str, db:Session):
+async def read_yearly_form_deatails_auth(staff_id:int, form_year:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -219,13 +219,13 @@ async def read_yearly_form_deatails_auth(staff_id: int, form_year:int, token:str
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 
-async def approve_form(appraisal_form_id: int, type_form: str, db: Session):
+async def approve_form(appraisal_form_id:int, type_form:str, db:Session):
     res = db.execute(""" SELECT public.approve_form_details (:appraisal_form_id, :type_form) """, {'appraisal_form_id': appraisal_form_id, 'type_form': type_form})
     res = res.fetchall()
     db.commit()
     return res
 
-async def approve_form_details_auth(appraisal_form_id:int, type_form: str, token: str, db: Session):
+async def approve_form_details_auth(appraisal_form_id:int, type_form:str, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -271,7 +271,7 @@ async def create_deadline_auth(deadline_type:str, start_date:str, ending:str, to
 
 
 
-async def update_deadline(deadline: schemas.update_deadline, db: Session):
+async def update_deadline(deadline:schemas.update_deadline, db:Session):
     res = db.execute("""UPDATE public.deadline
 	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
 	WHERE deadline_id = :deadline_id;""",
@@ -279,7 +279,7 @@ async def update_deadline(deadline: schemas.update_deadline, db: Session):
     db.commit()
     return JSONResponse(status_code=200, content={"message": "deadline has been updated"})
 
-async def update_deadline_auth(deadline: schemas.update_deadline, token:str, db: Session):
+async def update_deadline_auth(deadline:schemas.update_deadline, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -299,14 +299,14 @@ async def update_deadline_auth(deadline: schemas.update_deadline, token:str, db:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
-async def delete_deadline(deadline_id: int, db: Session):
+async def delete_deadline(deadline_id:int, db:Session):
     res = db.execute("""DELETE FROM public.deadline
 	WHERE deadline_id=:deadline_id;""",
     {'deadline_id':deadline.deadline_id})
     db.commit() 
     return JSONResponse(status_code=200, content={"message": "deadline has been deleted"})
 
-async def delete_deadline_auth(deadline_id:int, token: str, db: Session):
+async def delete_deadline_auth(deadline_id:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
