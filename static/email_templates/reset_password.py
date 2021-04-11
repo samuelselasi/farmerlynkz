@@ -3,7 +3,7 @@ reset_password_template = """
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Demystifying Email Design</title>
+    <title>Reset Password</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <style type="text/css">
     a[x-apple-data-detectors] 
@@ -60,7 +60,7 @@ reset_password_template = """
                     </tr>
                     <tr>
                         <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 25px 0 0 0;">
-                        <p style="margin: 0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.</p>
+                        <p style="margin: 0;">You have been provided with a temporal code to reset your password. Please note that the code will expire in less than 30 minutes. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.</p>
                         </td>
                     </tr>
                     </table>

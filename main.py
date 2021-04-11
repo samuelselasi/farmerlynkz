@@ -1,3 +1,4 @@
+# IMPORT DEPENDENCIES
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, FastAPI, WebSocket, WebSocketDisconnect
 from database import SessionLocal, engine, SQLALCHEMY_DATABASE_URL, metadata
 from fastapi.middleware.cors import CORSMiddleware
@@ -35,7 +36,7 @@ def get_db():
     finally:
         db.close()
 
-
+# IMPORT MODELS
 from routers.auth_router import models
 from routers.user_router import models
 models.Base.metadata.create_all(bind=engine)
@@ -60,7 +61,7 @@ api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year R
 api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
 api.include_router(email.router, prefix="/email", tags=["E-mails"])
 
-
+# DEFAULT ENDPOINT
 @api.get("/")
 def welcome():
-    return "Reminders started"
+    return "BACKEND OF APPRAISAL MANAGEMENT APP"
