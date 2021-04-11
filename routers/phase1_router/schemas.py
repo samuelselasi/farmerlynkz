@@ -8,31 +8,23 @@ class FormBase(BaseModel):
     target: str 
     resources: str 
     appraisal_form_id: int
-    #annual_plan_id: int 
-    # status: int
-    # form_hash: str  
 class UpdateAnnualPlan(BaseModel):
     result_areas: str
     target: str 
     resources: str 
     appraisal_form_id: int
     annual_plan_id: int 
-    # status: int
-    # form_hash: str      
 class AnnualAppraisal(BaseModel):
     comment: str 
     field: str 
     appraisal_form_id: int 
     status: int 
-    # annual_appraisal_id: int
-
 class UpdateAnnualAppraisal(BaseModel):
     comment: str 
     field: str 
     appraisal_form_id: int 
     status: int 
     annual_appraisal_id: int    
-
 class UpdateAppraisalForm(BaseModel):
     appraisal_form_id:int 
     department: str 
@@ -44,7 +36,6 @@ class AppraisalForm(BaseModel):
     department: str 
     grade: int 
     positions: str 
-    #appraisal_form_id:int 
     date: datetime
     staff_id: int
 class CreateAprpaisalForm(BaseModel):

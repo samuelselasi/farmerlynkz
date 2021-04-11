@@ -4,7 +4,6 @@ from typing import Optional
 
 class Auth(UserBase):
     password: str
-
 class AuthResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -12,7 +11,6 @@ class AuthResponse(BaseModel):
 
     class Config:
         orm_mode = True
-
 class Token(BaseModel):
     access_token: Optional[str]
     refresh_token: Optional[str]

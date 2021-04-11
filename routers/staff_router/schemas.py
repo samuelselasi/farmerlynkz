@@ -1,8 +1,8 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from datetime import datetime, time, timedelta
+from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from fastapi import Body, FastAPI
-from pydantic import BaseModel, EmailStr
 from typing import Optional
 from uuid import UUID
 import datetime
@@ -65,12 +65,10 @@ class read_deadline_table(BaseModel):
     start_date: DeadlineTable
     ending: DeadlineTable
     deadline_id: DeadlineTable
-
 class CreateRoles(BaseModel):
     role_description: str
 class create_roles(CreateRoles):
     pass
-
 class UpdateRoles(BaseModel):
     role_id: int
     role_description: str

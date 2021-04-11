@@ -4,7 +4,6 @@ import datetime
 
 class UserBase(BaseModel):
     email: EmailStr
-    
 class UserCreate(UserBase):
     password: Optional[str]
     first_name: str
@@ -13,17 +12,14 @@ class UserCreate(UserBase):
     # phone: Optional[str]
     user_type_id: int
     status: Optional[bool]
-
 class UserUpdate(BaseModel):
     first_name: Optional[str]
     middle_name: Optional[str]
     last_name: Optional[str]
     # phone: Optional[str]
-
 class ResetPassword(BaseModel):
     password: str
     code: Optional[str]
-
 class UserInfo(BaseModel):
     id: int
     first_name: Optional[str]
@@ -35,7 +31,6 @@ class UserInfo(BaseModel):
 
     class Config:
         orm_mode = True
-
 class User(UserBase):
     id: int
     user_type_id: int

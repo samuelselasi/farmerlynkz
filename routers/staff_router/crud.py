@@ -15,9 +15,9 @@ from uuid import UUID
 import datetime
 
 
-
+# GET STAFF DETAILS
 async def read_staff(db:Session):
-    res = db.execute(""" SELECT public.get_staff(); """)
+    res = db.execute(""" SELECT public.get_staff(); """) # READ STAFF USING DB FUNCTION
     res = res.fetchall()
     return res
 
@@ -38,7 +38,7 @@ async def read_staff_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 async def read_supervisors(db:Session):
-    res = db.execute(""" SELECT fname, sname, oname FROM public.staff where roles=1; """)
+    res = db.execute(""" SELECT fname, sname, oname FROM public.staff where roles=1; """) # READ SUPERVISOR FROM TABLE
     res = res.fetchall()
     return res
 
@@ -59,7 +59,7 @@ async def read_supervisors_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 async def read_staff_by_name(name:str, db:Session):
-    res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where fname ilike :name or sname ilike :name; """, {'name':'%'+name+'%'})
+    res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where fname ilike :name or sname ilike :name; """, {'name':'%'+name+'%'}) # READ STAFF FROM TABLE WHERE FULL A SINGLE LETTER IN A NAME RETURNS DATA ON ALL USERS WITH THAT LETTER IN THEIR NAME
     res = res.fetchall()
     return res
 
@@ -80,7 +80,7 @@ async def read_staff_by_name_auth(name:str, token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 async def read_roles(db:Session):
-    res = db.execute(""" SELECT role_id, role_description FROM public.roles; """)
+    res = db.execute(""" SELECT role_id, role_description FROM public.roles; """) # READ ROLES FROM TABLE
     res = res.fetchall()
     return res
 
@@ -102,7 +102,7 @@ async def read_roles_auth(token:str, db:Session):
 
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
-	FROM public.deadline; """)
+	FROM public.deadline; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
 
@@ -127,7 +127,7 @@ async def read_deadline_table_auth(token:str, db:Session):
 
 async def read_start_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
-	FROM public.deadline where deadline_type='Start'; """)
+	FROM public.deadline where deadline_type='Start'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
 
@@ -151,19 +151,20 @@ async def read_start_deadline_table_auth(token:str, db:Session):
 
 async def read_mid_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
-	FROM public.deadline where deadline_type='Mid'; """)
+	FROM public.deadline where deadline_type='Mid'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
 
 async def read_end_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
-	FROM public.deadline where deadline_type='End'; """)
+	FROM public.deadline where deadline_type='End'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
 
 
+# DEACTIVATE STAFF
 async def deactivate_staff(staff_id:int, db:Session):
-    res = db.execute(""" SELECT public.deactivate_staff (:staff_id) """, {'staff_id': staff_id})
+    res = db.execute(""" SELECT public.deactivate_staff (:staff_id) """, {'staff_id': staff_id}) #CHANGE STAFF STATUS FROM 1 TO 0 USING ID
     res = res.fetchall()
     db.commit()
     return res
@@ -185,14 +186,15 @@ async def deactivate_staff_auth(staff_id:int, token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 
+# CREATE STAFF DETAILS
 async def create_staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, db:Session):
     res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles)
     VALUES(:fname, :sname, :oname, :email, :supervisor, :gender, :department, :positions, :grade, :appointment, :roles)""",
-    {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment, 'roles':roles})
+    {'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment, 'roles':roles}) # INSERT STAFF DETAILS INTO TABLE
     db.commit()
     return JSONResponse(status_code=200, content={"message": "staff has been created"})
 
-async def create_staff_auth(fname:str, sname:str, oname:str, email:EmailStr, supervisor:int, gender:str, department:str, positions:str, grade:int, appointment:Optional[datetime.datetime], roles:int, token:str, db:Session):
+async def create_staff_auth(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -208,9 +210,8 @@ async def create_staff_auth(fname:str, sname:str, oname:str, email:EmailStr, sup
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
-
 async def create_roles(role_description:str, db:Session):
-    res = db.execute(""" INSERT INTO public.roles(role_description) VALUES(:role_description) """, {'role_description': role_description})
+    res = db.execute(""" INSERT INTO public.roles(role_description) VALUES(:role_description) """, {'role_description': role_description}) # TABLE INSERTION
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been created"})
 
@@ -234,7 +235,7 @@ async def create_deadline(deadline_type, start_date, ending, db:Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
     values(:deadline_type, :start_date, :ending) on conflict (deadline_type) do 
 	update set deadline_type = EXCLUDED.deadline_type, start_date = EXCLUDED.start_date, ending = EXCLUDED.ending;""",
-    {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending})
+    {'deadline_type':deadline_type, 'start_date':start_date, 'ending':ending}) # INSERT DEADLINES INTO TABLE
     db.commit()
     return JSONResponse(status_code=200, content={"message": "deadline has been created"})
 
@@ -257,15 +258,17 @@ async def create_deadline_auth(deadline_type:str, start_date:str, ending:str, to
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
+
+# UPDATE STAFF DETAILS
 async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles,  db:Session):
     res = db.execute("""UPDATE public.staff
-    SET staff_id = :staff_id, fname = :fname, sname = :sname, oname = :oname, email = :email, supervisor = :supervisor, gender = :gender, department = :department, positions = :positions, grade = :grade, appointment = :appointment, roles = :roles
-    WHERE staff_id = :staff_id;""",
-    {'staff_id':staff_id, 'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment, 'roles':roles})
+    SET staff_id=:staff_id, fname=:fname, sname=:sname, oname=:oname, email=:email, supervisor=:supervisor, gender=:gender, department=:department, positions=:positions, grade=:grade, appointment=:appointment, roles=:roles
+    WHERE staff_id=:staff_id;""",
+    {'staff_id':staff_id, 'fname':fname, 'sname':sname, 'oname':oname, 'email':email, 'supervisor':supervisor, 'gender':gender, 'department':department, 'positions':positions, 'grade':grade, 'appointment':appointment, 'roles':roles}) # UPDATE STAFF IN STAFF TABLE
     db.commit()
     return JSONResponse(status_code=200, content={"message": "staff has been updated"})
 
-async def update_staff_auth(staff_id:int, fname:str, sname:str, oname:str, email:EmailStr, supervisor:int, gender:str, department:str, positions:str, grade:int, appointment:Optional[datetime.datetime], roles:int, token:str, db:Session):
+async def update_staff_auth(staff_id, fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -282,8 +285,8 @@ async def update_staff_auth(staff_id:int, fname:str, sname:str, oname:str, email
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 async def update_roles(role_id, role_description, db:Session):
-    res = db.execute(""" UPDATE public.roles SET role_id = :role_id, role_description = :role_description WHERE role_id = :role_id; """,
-    {'role_id':role_id, 'role_description': role_description})
+    res = db.execute(""" UPDATE public.roles SET role_id=:role_id, role_description=:role_description WHERE role_id=:role_id; """,
+    {'role_id':role_id, 'role_description': role_description}) # UPDATE ROLES IN ROLES TABLE
     db.commit()
     return JSONResponse(status_code=200, content={"message": "role has been updated"})
 
@@ -305,9 +308,9 @@ async def update_roles_auth(role_id:int, role_description:int, token:str, db:Ses
 
 async def update_deadline(deadline:schemas.update_deadline, db:Session):
     res = db.execute("""UPDATE public.deadline
-	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
-	WHERE deadline_id = :deadline_id;""",
-    {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending})
+	SET deadline_id=:deadline_id, deadline_type=:deadline_type, start_date=:start_date, ending=:ending
+	WHERE deadline_id=:deadline_id;""",
+    {'deadline_id':deadline.deadline_id, 'deadline_type':deadline.deadline_type, 'start_date':deadline.start_date, 'ending':deadline.ending}) # UPDATE IN TABLE
     db.commit()
     return JSONResponse(status_code=200, content={"message": "deadline has been updated"})
 
@@ -330,12 +333,14 @@ async def update_deadline_auth(deadline:schemas.update_deadline, token:str, db:S
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
+
+# DELETE STAFF DETAILS
 async def delete_staff(staff_id:int, db: Session):
     res = db.execute("""DELETE FROM public.staff 
 	WHERE staff_id = :staff_id;""",
     {'staff_id':staff_id})
     db.commit()
-    return JSONResponse(status_code=200, content={"message": "staff has been deleted"})
+    return JSONResponse(status_code=200, content={"message":"staff has been deleted"})
 
 async def delete_staff_auth(staff_id:int, token:str, db:Session):
     try:

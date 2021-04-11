@@ -24,7 +24,6 @@ class User(Base):
     @staticmethod
     def verify_hash(password, hash):
         return sha256.verify(password, hash)
-
 class UserInfo(Base):
     __tablename__ = "user_info"
 
@@ -40,8 +39,6 @@ class UserInfo(Base):
 
     date_created = Column(DateTime,  default=datetime.datetime.utcnow)
     date_modified = Column(DateTime,  default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
-
-
 class ResetPasswordToken(Base):
     __tablename__ = "reset_password_token"
 
@@ -59,7 +56,6 @@ class ResetPasswordToken(Base):
     @staticmethod
     def verify_token(token, hash):
         return sha256.verify(token, hash)
-
 class UserType(Base):
     __tablename__ = "user_type"
 

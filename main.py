@@ -10,14 +10,13 @@ from sockets import manager
 import pytz, os, config
 
 
-
 api = FastAPI(docs_url="/api/docs")
-
+# INITIATE AUTHENTICATION SCHEME
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
 
 settings = config.Settings()
 
-
+# GIVE PERMISSION TO FRONTEND
 origins = ["*"]
 api.add_middleware(
     CORSMiddleware,
@@ -41,18 +40,17 @@ from routers.auth_router import models
 from routers.user_router import models
 models.Base.metadata.create_all(bind=engine)
 
-
+# IMPORT ALL ROUTERS
 from routers.phase1_router import main as phase1
 from routers.phase2_router import main as phase2
 from routers.phase3_router import main as phase3
 from routers.appraiser import main as appraiser
 from routers.staff_router import main as staff
-from routers.email import main as email
 from routers.auth_router import main as auth
 from routers.user_router import main as user
+from routers.email import main as email
 
-
-
+# CUSTOMIZE ALL ENDPOINT HEADERS
 api.include_router(auth.router, prefix="/auth", tags=["User Login"])
 api.include_router(user.router, prefix="/user", tags=["User"])
 api.include_router(staff.router,prefix="/api/staff",tags=["Staff"])

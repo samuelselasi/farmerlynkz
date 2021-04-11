@@ -17,7 +17,6 @@ class ResetPasswordCodes(Base):
     @staticmethod
     def generate_code():
         return utils.gen_alphanumeric_code(9)
-
 class RevokedToken(Base):
     __tablename__ = 'revoked_tokens'
 
