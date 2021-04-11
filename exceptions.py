@@ -1,6 +1,6 @@
 # DEFINE RESPONSE MESSAGES
 class BaseException(Exception):
-    def __init__(self, message:str=None):
+    def __init__(self, message:str=None): # DEFINE  BASE EXCEPTION (error messages will use this as base class)
         self.message = message
     
     def _message(self):

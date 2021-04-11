@@ -15,6 +15,7 @@ api = FastAPI(docs_url="/api/docs")
 # INITIATE AUTHENTICATION SCHEME
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
 
+# DEFINE SETTINGS
 settings = config.Settings()
 
 # GIVE PERMISSION TO FRONTEND

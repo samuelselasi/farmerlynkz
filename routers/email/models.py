@@ -242,7 +242,7 @@ apparisal forms will be due to start in three days time.</p>
 check your mail for a link on the due date.</p>
 
 <strong><p>Please fill the form by opening the link provided.</strong></br>
-<a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
+
 
 You are expected to access and fill the form provided in
 <strong>three days time  </strong> <br/>

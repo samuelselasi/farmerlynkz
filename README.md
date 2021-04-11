@@ -8,11 +8,13 @@
 
 5. setup mailtrap connection in main.py -> change the email details to your account
 
-6. run application with uvicorn main:api --reload [debug mode]
+6. run application with uvicorn main:api --reload [debug mode] OR run with docker using docker-compose up --build
 
-7. access swagger UI at localhost/api/docs 
+7. access swagger UI at localhost/api/docs or on allocated port
 
-6. \__(*_*)__/
+8. \__(*_*)__/
       /   \
+      S E L
+  
       
     
