@@ -16,7 +16,7 @@ api = FastAPI(docs_url="/api/docs")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
 
 # DEFINE SETTINGS
-settings = config.Settings()
+settings = config.Settings() # SETTINGS FROM CONFIG.PY WHERE VARIABLES ARE STORED IN ONE ENVIRONMENT
 
 # GIVE PERMISSION TO FRONTEND
 origins = ["*"]
@@ -65,4 +65,4 @@ api.include_router(email.router, prefix="/email", tags=["E-mails"])
 # DEFAULT ENDPOINT
 @api.get("/")
 def welcome():
-    return "BACKEND OF APPRAISAL MANAGEMENT APP"
+    return "BACKEND OF APPRAISAL MANAGEMENT APP (url/api/docs)"

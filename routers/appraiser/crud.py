@@ -175,7 +175,7 @@ async def read_incomplete_list_auth(deadline:str, user_id:int, token:str, db:Ses
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 async def read_supervisors(db: Session):
-    res = db.execute(""" SELECT public.get_view_supervisors() """) # GET FROM DB FUNCTION
+    res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where roles=2; """) # GET FROM STAFF TABLE
     res = res.fetchall()
     return res
 

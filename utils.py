@@ -19,17 +19,17 @@ def gen_alphanumeric_code(length):
 def create_token(data:dict, expires_delta:Optional[timedelta]=None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.utcnow() + expires_delta # DEFINE EXPIRY DATE FOR ACCESS TOKEN
     else:
-        expire = datetime.utcnow() + timedelta(minutes=30)
+        expire = datetime.utcnow() + timedelta(minutes=30) # EXPIRES 30 MINUTES AFTER CREATION
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM) # GET SECRET KEY FOR TOKEN FROM CONFIG.PY
     return encoded_jwt
 
 # DECRYPT ACCESS TOKEN
 def decode_token(*, data:str):
     to_decode = data
-    return jwt.decode(to_decode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return jwt.decode(to_decode, settings.SECRET_KEY, algorithm=settings.ALGORITHM) # GET SECRET KEY FOR TOKEN FROM CONFIG.PY
 
 # GET XCL FILE CONTENTS
 async def read_xcl_file_contents(file, header):

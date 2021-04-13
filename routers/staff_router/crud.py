@@ -38,7 +38,7 @@ async def read_staff_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 async def read_supervisors(db:Session):
-    res = db.execute(""" SELECT fname, sname, oname FROM public.staff where roles=1; """) # READ SUPERVISOR FROM TABLE
+    res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where roles=2; """) # READ SUPERVISOR FROM TABLE
     res = res.fetchall()
     return res
 

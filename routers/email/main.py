@@ -159,7 +159,7 @@ async def background_send_6(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Three Days To Start Reminder)",
             recipients=[item[1]], #INDEX OF EMAIL FROM DB
-            body=models.template4.format,
+            body=models.template4,
             subtype="html"
         )       
         await fm.send_message(message)      
