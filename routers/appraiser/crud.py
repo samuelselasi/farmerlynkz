@@ -8,6 +8,7 @@ from fastapi import Depends
 
 
 # GET APPRAISER DETAILS
+
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline; """) # READ DEADLINES FROM TABLE
@@ -88,7 +89,6 @@ async def read_appraiser_appraisees_auth(user_id:int, token:str, db: Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
-
 
 async def read_completed_list(deadline:str, user_id:int, db:Session):
     res = db.execute("""SELECT public.get_list_of_approved_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
@@ -218,6 +218,7 @@ async def read_yearly_form_deatails_auth(staff_id:int, form_year:int, token:str,
 
 
 # APPROVE FORM DETAILS
+
 async def approve_form(appraisal_form_id:int, type_form:str, db:Session):
     res = db.execute(""" SELECT public.approve_form_details(:appraisal_form_id, :type_form) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form}) # APPROVE FROM DB FUNCTION
     res = res.fetchall()
@@ -240,6 +241,7 @@ async def approve_form_details_auth(appraisal_form_id:int, type_form:str, token:
 
 
 # CREATE APPRAISER DETAILS
+
 async def create_deadline(deadline_type, start_date, ending, db:Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
     values(:deadline_type, :start_date, :ending) on conflict (deadline_type) do 
@@ -269,6 +271,7 @@ async def create_deadline_auth(deadline_type:str, start_date:str, ending:str, to
 
 
 # UPDATE APPRAISER DETAILS
+
 async def update_deadline(deadline:schemas.update_deadline, db:Session):
     res = db.execute("""UPDATE public.deadline
 	SET deadline_id = :deadline_id, deadline_type = :deadline_type, start_date = :start_date, ending = :ending
@@ -298,6 +301,7 @@ async def update_deadline_auth(deadline:schemas.update_deadline, token:str, db:S
 
 
 # DELETE APPRAISER DETAILS
+
 async def delete_deadline(deadline_id:int, db:Session):
     res = db.execute("""DELETE FROM public.deadline
 	WHERE deadline_id=:deadline_id;""",

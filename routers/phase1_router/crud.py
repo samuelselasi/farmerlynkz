@@ -8,6 +8,7 @@ from .. import email
 
  
 # READ PHASE-1 DETAILS 
+
 async def read_appraisal_form(db:Session):
     res = db.execute("""SELECT department, grade, positions, appraisal_form_id, date, staff_id FROM public.appraisal_form;""") # READ FROM TABLE 
     res = res.fetchall()
@@ -25,6 +26,7 @@ async def read_annual_appraisal(db:Session):
     return res
 
 # READ HASH TABLE
+
 async def read_hash_form(db:Session):
     res = db.execute("""SELECT public.get_entire_hash_table();""") # READ FROM DB FUNCTION 
     res = res.fetchall()
@@ -37,6 +39,7 @@ async def read_deadline_table(db:Session):
     return res
 
 # READ HASH FORM
+
 async def verify_hash_form(hash_:str, db:Session):
     res = db.execute(""" SELECT public.get_hash_verification(:hash_) """,{'hash_':hash_}) # READ FROM DB FUNCTION
     res = res.fetchall()
@@ -44,6 +47,7 @@ async def verify_hash_form(hash_:str, db:Session):
 
 
 # CREATE PHASE-1 DETAILS
+
 async def appraisal_form(department, grade, positions, date, staff_id, db:Session):
     res = db.execute("""insert into public.appraisal_form(department, grade, positions, date, staff_id)
     values(:department, :grade, :positions, :date, :staff_id);""",
@@ -82,6 +86,7 @@ async def create_appraisal_form(deadline, department, positions, grade, date, st
 
 
 # UPDATE PHASE-1 DETAILS
+
 async def update_appraisal_form(appraisal_form:schemas.update_appraisal_form, db:Session):
     res = db.execute("""UPDATE public.appraisal_form
 	SET appraisal_form_id = :appraisal_form_id, department = :department, grade = :grade, position = :positions, date = :date, staff_id = :staff_id
@@ -108,6 +113,7 @@ async def update_annual_appraisal(annual_appraisal:schemas.create_annual_apprais
 
 
 # DELETE PHASE-1 DETAILS
+
 async def delete_appraisal_form(appraisal_form_id: int, db:Session):
     res = db.execute("""DELETE FROM public.appraisal_form
 	WHERE appraisal_form_id = :appraisal_form_id;""",

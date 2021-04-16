@@ -10,6 +10,7 @@ router = APIRouter()
 
 
 # GET PHASE-1 DETAILS
+
 @router.get("/appraisalform/")
 async def read_appraisal_form(db:Session=Depends(get_db)):
     return await crud.read_appraisal_form(db)
@@ -36,6 +37,7 @@ async def read_deadline_table(db:Session=Depends(get_db)):
 
 
 # CREATE PHASE-1 DETAILS
+
 @router.post("/appraisalform/")
 async def appraisal_form(payload:schemas.appraisal_form, db:Session=Depends(get_db)):
     return await crud.appraisal_form(payload.department, payload.grade, payload.positions, payload.date, payload.staff_id, db)
@@ -54,6 +56,7 @@ async def create_annual_appraisal(payload:schemas.create_annual_appraisal, db:Se
 
 
 # UPDATE PHASE-1 DETAILS
+
 @router.put("/appraisalform/")
 async def update_appraisal_form(appraisal_form:schemas.update_appraisal_form, db:Session=Depends(get_db)):
     return await crud.update_appraisal_form(appraisal_form, db)
@@ -68,6 +71,7 @@ async def update_annual_appraisal(annual_appraisal:schemas.update_annual_apprais
 
 
 # DELETE PHASE-1 DETAILS
+
 @router.delete("/annualalan/{annual_plan_id}/")
 async def delete_annual_plan(annual_plan_id:int, db:Session=Depends(get_db)):
     return await crud.delete_annual_plan(annual_plan_id, db)
