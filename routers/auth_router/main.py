@@ -10,7 +10,7 @@ router = APIRouter()
 
 # READ AUTH DETAILS
 @router.get("/", response_model=schemas.User)
-async def get_current_user(token:str, db:Session=Depends(get_db)):
+async def get_current_user(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.get_current_user(token, db)
 
 # USER LOGIN/LOGOUT
