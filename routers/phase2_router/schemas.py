@@ -9,22 +9,16 @@ class UpdateMidYearReview(BaseModel):
     mid_status: int 
     appraisal_form_id: int 
     annual_plan_id: int 
-
-
 class update_mid_year_review(UpdateMidYearReview):
     pass
-
 class MidYearReview(BaseModel):
     progress_review: str 
     remarks: str 
     mid_status: int 
     appraisal_form_id: int 
     annual_plan_id: int 
-    
-
 class create_mid_year_review(MidYearReview):
     pass
-
 class FormBase(BaseModel):
     result_areas: str
     target: str 
@@ -47,8 +41,6 @@ class AnnualAppraisal(BaseModel):
     field: str 
     appraisal_form_id: int 
     status: int 
-    # annual_appraisal_id: int
-
 class UpdateAnnualAppraisal(BaseModel):
     grade: int
     comment: str 
@@ -56,7 +48,6 @@ class UpdateAnnualAppraisal(BaseModel):
     appraisal_form_id: int 
     status: int 
     annual_appraisal_id: int    
-
 class UpdateAppraisalForm(BaseModel):
     appraisal_form_id:int 
     department: str 
@@ -67,8 +58,7 @@ class UpdateAppraisalForm(BaseModel):
 class AppraisalForm(BaseModel):
     department: str 
     grade: int 
-    positions: str 
-    #appraisal_form_id:int 
+    positions: str  
     date: datetime
     staff_id: int
 class CreateAprpaisalForm(BaseModel):
@@ -123,7 +113,4 @@ class get_Phase1(BaseModel):
     target: FormBase
     resource_required: FormBase
 class approve_phase1(BaseModel):
-    # kra: FormBase
-    # target: FormBase
-    # resource_required: FormBase
     status:bool

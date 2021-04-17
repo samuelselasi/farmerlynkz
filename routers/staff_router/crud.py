@@ -149,17 +149,53 @@ async def read_start_deadline_table_auth(token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
-async def read_mid_deadline_table(db:Session):
+async def read_mid_deadline_table(token:str, db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline where deadline_type='Mid'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
+
+async def read_mid_deadline_table_auth(db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        if data==1:
+            return await read_mid_deadline_table(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 async def read_end_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline where deadline_type='End'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
+
+async def read_end_deadline_table_auth(db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        if data==1:
+            return await read_end_deadline_table(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
 # DEACTIVATE STAFF

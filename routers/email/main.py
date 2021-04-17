@@ -454,121 +454,123 @@ async def background_send_18(user_hash_list) -> JSONResponse:
 
 
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
+
 @router.post("/startreviewemail/")
-async def start_review_email(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+async def start_annual_plan_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
     return await background_send(res, background_tasks)
 
 @router.post("/midyearreviewemail/")
-async def midyear_review_email(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+async def start_midyear_review_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await background_send_2(res, background_tasks)
 
 @router.post("/endofyearreviewemail/")
-async def end_0f_year_review_email(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+async def start_end_0f_year_review_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await background_send_3(res, background_tasks)
 
-
-# EMAIL ENDPOINTS FOR SCHEDULED EMAILS
 @router.post("/startformdetails/")
-async def start_form_details(background_tasks:BackgroundTasks, db:Session=Depends(get_db)): # SEND FORM DETAILS TO APPROVED STAFF
+async def send_annual_plan_details_to_approved(background_tasks:BackgroundTasks, db:Session=Depends(get_db)): # SEND FORM DETAILS TO APPROVED STAFF
     res = db.execute("""SELECT public.get_list_of_approved_form('Start', 1)""") # SELECT EMAIL FROM LIST OF APPROVED FUNCTION IN DB
     res = res.first()[0]
     return await background_send_4(res, background_tasks)
 
-@router.post("/threedaysreminder/")
-async def three_days_to_start_reminder():
-    res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
-    res = res.fetchall()
-    return await background_send_6(res)     
-
-@router.post("/startday/")
-async def start_annual_plan():
-    res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
-    res = res.fetchall()
-    return await background_send_12(res)  
-
 @router.post("/approvestartreview/")
-async def approve_start_review(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+async def approve_completed_annual_plan(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
 
 
 # SCHEDULED REMINDERS FOR APPRAISEE
-@router.post("/lastfivedaysreminder/")
+
+# @router.post("/threedaysreminder/")
+async def three_days_to_start_reminder():
+    res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
+    res = res.fetchall()
+    return await background_send_6(res)   
+
+# @router.post("/startday/")
+async def start_annual_plan():
+    res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
+    res = res.fetchall()
+    return await background_send_12(res)  
+
+# @router.post("/lastfivedaysreminder/")
 async def last_five_days_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
     return await background_send_7(res)
 
-@router.post("/lastfourdaysreminder/")
+# @router.post("/lastfourdaysreminder/")
 async def last_four_days_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
     return await background_send_8(res)
 
-@router.post("/lastthreedaysreminder/")
+# @router.post("/lastthreedaysreminder/")
 async def last_three_days_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
     return await background_send_9(res)
 
-@router.post("/lasttwodaysreminder/")
+# @router.post("/lasttwodaysreminder/")
 async def last_two_days_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
     return await background_send_10(res)
 
-@router.post("/lastdayreminder/")
+# @router.post("/lastdayreminder/")
 async def last_day_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
     return await background_send_11(res)    
 
 
+# BACKGROUND REMINDER FOR APPRAISER TO APPROVE
+
+# @router.post("/approveannualplan/")
+async def approve_annual_plan():
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
+    res = res.first()[0]
+    return await background_send_18(res)
+
+
 # SCHEDULED REMINDERS FOR APPRAISER
-@router.post("/lastfivedaystoapprovereminder/")
+
+# @router.post("/lastfivedaystoapprovereminder/")
 async def last_five_days_to_approve_reminder():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
     res = res.first()[0]
     return await background_send_13(res)
 
-@router.post("/lastfourdaystoapprovereminder/")
+# @router.post("/lastfourdaystoapprovereminder/")
 async def last_four_days_to_approve_reminder():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
     res = res.first()[0]
     return await background_send_14(res)
 
-@router.post("/lastthreedaystoapprovereminder/")
+# @router.post("/lastthreedaystoapprovereminder/")
 async def last_three_days_to_approve_reminder():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
     res = res.first()[0]
     return await background_send_15(res)
 
-@router.post("/lasttwodaystoapprovereminder/")
+# @router.post("/lasttwodaystoapprovereminder/")
 async def last_two_days_to_approve_reminder():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
     res = res.first()[0]
     return await background_send_16(res)
 
-@router.post("/lastdaytoapprovereminder/")
+# @router.post("/lastdaytoapprovereminder/")
 async def last_day_to_approve_reminder():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""")
     res = res.first()[0]
     return await background_send_17(res)
-
-
-# PROMPT EMAIL THAT ANNUAL PLAN HAS BEEN SUBMITTED
-@router.post("/approveannualplan/")
-async def approve_annual_plan():
-    res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
-    res = res.first()[0]
-    return await background_send_18(res)
 
 
 
