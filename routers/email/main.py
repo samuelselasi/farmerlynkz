@@ -16,6 +16,7 @@ from main import settings
 import asyncio
 import pytz
 
+# IMPORT EMAILTENPLATES
 
 from static.email_templates.template_1 import template1
 from static.email_templates.template_2 import template2
@@ -63,6 +64,7 @@ background_tasks = BackgroundTasks()
 
 
 # BACKGROUND TASKS(WITHOUT SCHEDULER)
+
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -171,6 +173,7 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
 
 
 # BACKGROUND TASKS(WITH SCHEDULER)
+
 async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list: #CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -595,7 +598,9 @@ jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
 job_defaults = { 'coalesce': False, 'max_instances': 3}
 
+
 #  DATES TO EXECUTE SCHEDULED JOBS
+
 db=SessionLocal()
 deadline=db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'Start' """) # GET DEADLINES FROM DEADLINE TABLE
 deadline=deadline.fetchall()
@@ -608,7 +613,9 @@ send_date_4=end_date-timedelta(3) # LAST THREE DAYS REMINDER
 send_date_5=end_date-timedelta(2) # LAST TWO DAYS REMINDER
 send_date_6=end_date # LAST DAY REMINDER
 
+
 # JOB SCHEDULER
+
 scheduler = AsyncIOScheduler()  
 scheduler.add_job(func=three_days_to_start_reminder, trigger='date', run_date=send_date)
 scheduler.add_job(func=start_annual_plan, trigger='date', run_date=start_date)
