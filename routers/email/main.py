@@ -17,7 +17,6 @@ import asyncio
 import pytz
 
 # IMPORT EMAILTENPLATES
-
 from static.email_templates.template_1 import template1
 from static.email_templates.template_2 import template2
 from static.email_templates.template_3 import template3 
@@ -64,7 +63,6 @@ background_tasks = BackgroundTasks()
 
 
 # BACKGROUND TASKS(WITHOUT SCHEDULER)
-
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -100,35 +98,7 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form Details",
             recipients=[item["email"]],
-            body=template5.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]], gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]], end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -138,42 +108,13 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms",
             recipients=[item["supervisor_email"]],
-            body=template6.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template6.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]],gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]], end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]],role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
 
 
 # BACKGROUND TASKS(WITH SCHEDULER)
-
 async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list: #CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -249,35 +190,7 @@ async def background_send_13(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Last Five Days Reminder)",
             recipients=[item["supervisor_email"]],
-            body=template12.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template12.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]], gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]],end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -287,35 +200,7 @@ async def background_send_14(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Last Four Days Reminder)",
             recipients=[item["supervisor_email"]],
-            body=template13.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template13.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]], gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]], end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]],appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]],role_description=[item["role_description"]], supervisor_email= [item["supervisor_email"]], appraisal_form_id= [item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -325,35 +210,7 @@ async def background_send_15(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Last Three Days Reminder)",
             recipients=[item["supervisor_email"]],
-            body=template14.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template14.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]], gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]],end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -363,35 +220,7 @@ async def background_send_16(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Last Two Days Reminder)",
             recipients=[item["supervisor_email"]],
-            body=template15.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template15.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]], gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]],end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], sappraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -401,35 +230,7 @@ async def background_send_17(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Last Day Reminder)",
             recipients=[item["supervisor_email"]],
-            body=template16.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template16.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]],gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]],end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]],role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -439,42 +240,13 @@ async def background_send_18(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Alert)",
             recipients=[item["supervisor_email"]],
-            body=template17.format( 
-            email= [item["email"]],
-            grade= [item["grade"]],
-            roles= [item["roles"]],
-            score= [item["score"]],
-            gender= [item["gender"]],
-            target= [item["target"]],
-            weight= [item["weight"]],
-            comment= [item["comment"]],
-            remarks= [item["remarks"]],
-            lastname= [item["lastname"]],
-            staff_id= [item["staff_id"]],
-            firstname= [item["firstname"]],
-            positions= [item["positions"]],
-            resources= [item["resources"]],
-            assessment= [item["assessment"]],
-            department= [item["department"]],
-            end_status= [item["end_status"]],
-            mid_status= [item["mid_status"]],
-            middlename= [item["middlename"]],
-            supervisor= [item["supervisor"]],
-            result_areas= [item["result_areas"]],
-            start_status= [item["start_status"]],
-            appraisal_year= [item["appraisal_year"]],
-            progress_review= [item["progress_review"]],
-            supervisor_name= [item["supervisor_name"]],
-            role_description= [item["role_description"]],
-            supervisor_email= [item["supervisor_email"]],
-            appraisal_form_id= [item["appraisal_form_id"]]),
+            body=template17.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]],gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]],end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]],role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         await fm.send_message(message)
 
 
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
-
 @router.post("/startreviewemail/")
 async def start_annual_plan_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
@@ -507,7 +279,6 @@ async def approve_completed_annual_plan(background_tasks:BackgroundTasks, db:Ses
 
 
 # SCHEDULED REMINDERS FOR APPRAISEE
-
 # @router.post("/threedaysreminder/")
 async def three_days_to_start_reminder():
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
@@ -551,8 +322,6 @@ async def last_day_reminder():
     return await background_send_11(res)    
 
 
-# BACKGROUND REMINDER FOR APPRAISER TO APPROVE
-
 # @router.post("/approveannualplan/")
 async def approve_annual_plan():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
@@ -593,14 +362,11 @@ async def last_day_to_approve_reminder():
     return await background_send_17(res)
 
 
-
 jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
 job_defaults = { 'coalesce': False, 'max_instances': 3}
 
-
 #  DATES TO EXECUTE SCHEDULED JOBS
-
 db=SessionLocal()
 deadline=db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'Start' """) # GET DEADLINES FROM DEADLINE TABLE
 deadline=deadline.fetchall()
@@ -613,9 +379,7 @@ send_date_4=end_date-timedelta(3) # LAST THREE DAYS REMINDER
 send_date_5=end_date-timedelta(2) # LAST TWO DAYS REMINDER
 send_date_6=end_date # LAST DAY REMINDER
 
-
 # JOB SCHEDULER
-
 scheduler = AsyncIOScheduler()  
 scheduler.add_job(func=three_days_to_start_reminder, trigger='date', run_date=send_date)
 scheduler.add_job(func=start_annual_plan, trigger='date', run_date=start_date)
