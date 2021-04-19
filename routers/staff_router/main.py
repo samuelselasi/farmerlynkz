@@ -12,7 +12,7 @@ router = APIRouter()
 
 # READ STAFF DETAILS
 
-@router.get("/staff/")
+@router.get("/")
 async def read_staff(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_staff_auth(token, db)
 
@@ -53,7 +53,7 @@ async def deactivate_staff(staff_id:int, token:str=Depends(oauth2_scheme), db:Se
 
 # CREATE STAFF DETAILS
 
-@router.post("/staff/")
+@router.post("/")
 async def create_staff(payload:schemas.UserCreate, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.create_staff_auth(payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.department, payload.positions, payload.grade, payload.appointment, payload.roles, token, db)
 
@@ -68,7 +68,7 @@ async def create_deadline(payload:schemas.create_deadline, token:str=Depends(oau
 
 # UPDATE STAFF DETAILS
 
-@router.put("/staff/")
+@router.put("/")
 async def update_staff(payload:schemas.update_staff, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.update_staff_auth(payload.staff_id, payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.department, payload.positions, payload.grade, payload.appointment, payload.roles, token, db)
 
