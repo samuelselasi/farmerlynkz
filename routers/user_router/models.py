@@ -64,6 +64,7 @@ class UserType(Base):
 
     users = relationship('User', backref="user_type")
 
+
 @event.listens_for(UserType.__table__, 'after_create')
 def insert_initial_values(*args, **kwargs):
     db = SessionLocal()
