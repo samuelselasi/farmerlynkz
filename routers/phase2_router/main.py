@@ -15,6 +15,29 @@ router = APIRouter()
 async def read_mid_year_review(db: Session = Depends(get_db)):
     return await crud.read_mid_year_review(db)
 
+@router.get("/appraisalform/")
+async def read_appraisal_form(db:Session=Depends(get_db)):
+    return await crud.read_appraisal_form(db)
+
+@router.get("/annualplan/")
+async def read_annual_plan(db:Session=Depends(get_db)):
+    return await crud.read_annual_plan(db)
+
+@router.get("/annualappraisal/")
+async def read_annual_appraisal(db:Session=Depends(get_db)):
+    return await crud.read_annual_appraisal(db)
+
+@router.get("/formdetails/{hash}/")
+async def verify_hash_form(hash:str, db:Session=Depends(get_db)):
+    return await crud.verify_hash_form(hash, db)
+
+@router.get("/hashdetails/")
+async def read_hash_form(db:Session=Depends(get_db)):
+    return await crud.read_hash_form(db)
+
+@router.get("/deadline/")
+async def read_deadline_table(db:Session=Depends(get_db)):
+    return await crud.read_deadline_table(db)
 
 # CREATE PHASE-2 DETAILS
 

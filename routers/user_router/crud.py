@@ -25,9 +25,42 @@ async def read_users(db:Session=Depends(get_db), skip:int=0, limit:int=100, sear
         print("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
         raise HTTPException(status_code=500)
 
+async def read_users_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_users(db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})  
+
+
 # GET USER BY ID 
 async def read_user_by_id(id:int, db:Session=Depends(get_db)):
     return db.query(models.User).filter(models.User.id == id).first()
+
+async def read_user_by_id_auth(id:int,token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_user_by_id(id, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})  
 
 
 # CREATE USER
@@ -53,6 +86,22 @@ async def create_user(payload:schemas.UserCreate, db:Session=Depends(get_db)):
         print('{}'.format(sys.exc_info()[1]))
         raise HTTPException(status_code=500)
 
+async def create_user_auth(payload:schemas.UserCreate, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await create_user(payload, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})  
+
 
 # PASSWORD VERIFICATION
 async def verify_password(id, payload:schemas.ResetPassword, db:Session):
@@ -65,6 +114,22 @@ async def verify_password(id, payload:schemas.ResetPassword, db:Session):
         raise HTTPException(status_code=404, detail='{}'.format(sys.exc_info()[1]))
     except:
         raise HTTPException(status_code=500, detail='{}'.format(sys.exc_info()[1]))
+
+async def verify_password_auth(id, payload:schemas.ResetPassword, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await verify_password(id, payload, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
 # RESET PASSWORD
@@ -89,9 +154,42 @@ async def reset_password(id, payload:schemas.ResetPassword, db:Session):
         db.rollback()
         raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
 
+async def reset_password_auth(id, payload:schemas.ResetPassword, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await reset_password(id, payload, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
+
 # CODE VERIFICATION
 async def verify_code(id, code, db:Session):
     return db.query(ResetPasswordCodes).filter(sqlalchemy.and_(ResetPasswordCodes.user_id == id, ResetPasswordCodes.code == code)).first()
+
+async def verify_code_auth(id, code, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await verify_code(id, code, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
 # UPDATE USER
@@ -114,6 +212,22 @@ async def update_user(id:int, payload:schemas.UserUpdate, db:Session=Depends(get
         print("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
         raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
 
+async def update_user_auth(id:int, payload:schemas.UserUpdate, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await update_user(id, payload, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 
 # DELETE USER
 async def delete_user(id:int, db):
@@ -127,3 +241,19 @@ async def delete_user(id:int, db):
         db.rollback()
         print("{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
         raise HTTPException(status_code=500)
+
+async def delete_user_auth(id:int, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await delete_user(id, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
