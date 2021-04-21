@@ -113,7 +113,6 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
-
 # BACKGROUND TASKS(WITH SCHEDULER)
 async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list: #CREATE VARIABLES FOR EMAIL TEMPLATES
@@ -245,7 +244,6 @@ async def background_send_18(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
-
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
 @router.post("/startreviewemail/")
 async def start_annual_plan_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
@@ -322,14 +320,13 @@ async def last_day_reminder():
     return await background_send_11(res)    
 
 
+# SCHEDULED REMINDERS FOR APPRAISER
+
 # @router.post("/approveannualplan/")
 async def approve_annual_plan():
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
     res = res.first()[0]
     return await background_send_18(res)
-
-
-# SCHEDULED REMINDERS FOR APPRAISER
 
 # @router.post("/lastfivedaystoapprovereminder/")
 async def last_five_days_to_approve_reminder():

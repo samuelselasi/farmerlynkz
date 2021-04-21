@@ -15,9 +15,16 @@ async def read_users(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db
 
 @router.get("/{id}", description="get user by id", response_model=schemas.User)
 async def read_user_by_id(id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    user = await crud.read_user_by_id_auth(id, token, db)
+    user = await crud.read_user_by_id(id, db)
     if not user:
         raise HTTPException(status_code=404, detail="user with id: {} was not found".format(id))
+    return user
+
+@router.get("/{email}/", description="get user by email", response_model=schemas.User)
+async def read_user_by_email(email:str, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+    user = await crud.read_user_by_email_auth(email, token, db)
+    if not user:
+        raise HTTPException(status_code=404, detail="user with email: {} was not found".format(email))
     return user
 
 
@@ -45,3 +52,11 @@ async def verify_password(id:int, payload:schemas.ResetPassword, token:str=Depen
 @router.patch("/{id}/password", description="change user password", status_code=status.HTTP_202_ACCEPTED)
 async def update_password(id:int, payload:schemas.ResetPassword, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.reset_password_auth(id, payload, token, db)
+
+# @router.patch("/{id}/password_", description="change user password", status_code=status.HTTP_202_ACCEPTED)
+# async def update_password(id:int, payload:schemas.ResetPassword, db:Session=Depends(get_db)):
+#     return await crud.reset_password(id, payload, db)
+
+@router.patch("/{email}/password_", description="change user password", status_code=status.HTTP_202_ACCEPTED)
+async def update_password_(email:str, payload:schemas.ResetPassword, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+    return await crud.reset_password_auth(email, payload, token, db)

@@ -111,6 +111,33 @@ async def request_password_reset(payload:schemas.UserBase, db:Session, backgroun
         print("{}".format(sys.exc_info()[1]))
         raise HTTPException(status_code=500)
 
+async def request_password_reset_(payload:schemas.UserBase, db:Session, background_tasks):
+    try:
+        user = db.query(models.User).filter(models.User.email==payload.email).first() #CHECK IF USER IS PRESENT IN DB
+        if not user:
+            raise NotFoundError('user not found')
+        while True:
+            new_code = models.ResetPasswordCodes(user_email=user.email, code=models.ResetPasswordCodes.generate_code()) # GENERATE CODE TO RESET PASSWORD
+            code = db.query(models.ResetPasswordCodes).filter(models.ResetPasswordCodes.user_email==user.email).first()
+            if code:
+                db.delete(code) # DELETE OLD CODE FROM DB
+                db.flush()
+            break
+        db.add(new_code)
+        db.commit()
+        db.refresh(new_code)
+        scheduler.add_job(delete_password_reset_code, trigger='date', kwargs={'id': new_code.id}, id='ID{}'.format(new_code.id), replace_existing=True, run_date=datetime.utcnow()+timedelta(minutes=settings.RESET_PASSWORD_SESSION_DURATION_IN_MINUTES)) # SEND NEW CODE TO THE USER IN MAIL 
+        await send_in_background(background_tasks, Mail(email=['{}'.format(payload.email)], content={'code':new_code.code}), reset_password_template) # SEND NEW CODE TO THE USER IN MAIL 
+        return True
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail="{}".format(sys.exc_info()[1]))
+    except ExpectationFailure:
+        raise HTTPException(status_code=404, detail="{}".format(sys.exc_info()[1]))
+    except:
+        db.rollback()
+        print("{}".format(sys.exc_info()[1]))
+        raise HTTPException(status_code=500)
+
 # GET USERS LOGGED IN
 
 async def get_current_user(token:str, db:Session):

@@ -10,6 +10,7 @@ class ResetPasswordCodes(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     code = Column(String, unique=True)
     user_id = Column(Integer, unique=True)
+    user_email = Column(String, unique=True)
     status = Column(Boolean, nullable=False, default=True)
     date_created = Column(DateTime, default=datetime.datetime.utcnow)
     date_modified = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)

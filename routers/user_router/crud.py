@@ -46,7 +46,7 @@ async def read_users_auth(token:str, db:Session):
 async def read_user_by_id(id:int, db:Session=Depends(get_db)):
     return db.query(models.User).filter(models.User.id == id).first()
 
-async def read_user_by_id_auth(id:int,token:str, db:Session):
+async def read_user_by_id_auth(id:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -62,6 +62,26 @@ async def read_user_by_id_auth(id:int,token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})  
 
+
+# GET USER BY EMAIL 
+async def read_user_by_email(email:str, db:Session=Depends(get_db)):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+async def read_user_by_email_auth(email:str, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await read_user_by_email(email, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})  
 
 # CREATE USER
 async def create_user(payload:schemas.UserCreate, db:Session=Depends(get_db)):    
@@ -171,6 +191,43 @@ async def reset_password_auth(id, payload:schemas.ResetPassword, token:str, db:S
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+async def reset_password_(email, payload:schemas.ResetPassword, db:Session):
+    try:
+        if not payload.code:
+            raise UnAcceptableError('code required')
+        if not await read_user_by_email(email,db):
+            raise NotFoundError('user not found')
+        if not await verify_code_(email, payload.code, db):
+            raise ExpectationFailure('could not verify reset code')
+        res = db.query(models.User).filter(models.User.email == email).update({'password':models.User.generate_hash(payload.password)})
+        db.commit()
+        return True
+    except UnAcceptableError:
+        raise HTTPException(status_code=422, detail='{}'.format(sys.exc_info()[1]))
+    except NotFoundError:
+        raise HTTPException(status_code=404, detail='{}'.format(sys.exc_info()[1]))
+    except ExpectationFailure:
+        raise HTTPException(status_code=417, detail='{}'.format(sys.exc_info()[1]))
+    except:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
+
+async def reset_password_auth_(email, payload:schemas.ResetPassword, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await reset_password_(email, payload, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 # CODE VERIFICATION
 async def verify_code(id, code, db:Session):
     return db.query(ResetPasswordCodes).filter(sqlalchemy.and_(ResetPasswordCodes.user_id == id, ResetPasswordCodes.code == code)).first()
@@ -191,6 +248,24 @@ async def verify_code_auth(id, code, token:str, db:Session=Depends(get_db)):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+async def verify_code_(email, code, db:Session):
+    return db.query(ResetPasswordCodes).filter(sqlalchemy.and_(ResetPasswordCodes.user_email == email, ResetPasswordCodes.code == code)).first()
+
+async def verify_code_auth_(email, code, token:str, db:Session=Depends(get_db)):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await verify_code_(email, code, db)
+        else:
+            return UnAuthorised('Not qualified') 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 # UPDATE USER
 async def update_user(id:int, payload:schemas.UserUpdate, db:Session=Depends(get_db)):

@@ -21,7 +21,7 @@ fm = FastMail(
 
 async def simple_send(mail: Mail, template):
     message = MessageSchema(
-        subject=mail.content.get('subject') or 'AITI-KACE mail module',
+        subject=mail.content.get('subject') or 'AITI-KACE Appraisal Management Password Reset',
         recipients=mail.email,
         body=template.format(**mail.content),
         subtype="html"
