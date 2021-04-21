@@ -1,4 +1,4 @@
-from exceptions import NotFoundError, UnAcceptableError, ExpectationFailure
+from exceptions import NotFoundError, UnAcceptableError, ExpectationFailure, UnAuthorised
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..auth_router.models import ResetPasswordCodes
 from passlib.hash import pbkdf2_sha256 as sha256
@@ -105,6 +105,7 @@ async def create_user(payload:schemas.UserCreate, db:Session=Depends(get_db)):
         db.rollback()
         print('{}'.format(sys.exc_info()[1]))
         raise HTTPException(status_code=500)
+
 
 async def create_user_auth(payload:schemas.UserCreate, token:str, db:Session=Depends(get_db)):
     try:
