@@ -29,8 +29,13 @@ async def read_user_by_email(email:str, token:str=Depends(oauth2_scheme), db:Ses
 
 
 @router.get("/rread/hash/")
-async def read_hash_details(code:str,  db:Session=Depends(get_db)):
+async def verify_hash_details(code:str,  db:Session=Depends(get_db)):
     return await crud.read_hash_code( code, db)
+
+@router.get("/rread/hash/table/")
+async def read_hash_table(db:Session=Depends(get_db)):
+    return await crud.read_hash_table(db)
+
 
 # CREATE USER DETAILS
 @router.post("/", description="create user", response_model=schemas.User)

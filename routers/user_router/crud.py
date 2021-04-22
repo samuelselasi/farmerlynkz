@@ -153,15 +153,15 @@ async def verify_password_auth(id, payload:schemas.ResetPassword, token:str, db:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 async def read_hash_code(code:str, db:Session):
-    res = db.execute(""" SELECT id, code, user_id, user_email, status, date_created, date_modified
-	FROM public.reset_password_codes where code=:code; """, {'code':code})
+    res = db.execute(""" SELECT id, code, user_id, user_email, status, date_created, date_modifiedFROM public.reset_password_codes where code=:code; """, {'code':code})
     res = res.fetchall()
     return res
 
+async def read_hash_table(db:Session):
+    res = db.execute(""" SELECT id, code, user_id, user_email, status, date_created, date_modified FROM public.reset_password_codes; """)
+    res = res.fetchall()
+    return res
 
-# async def verify_hash(hash, db:Session):
-#     try:
-#         user = read
 
 # RESET PASSWORD
 async def reset_password(id, payload:schemas.ResetPassword, db:Session):
