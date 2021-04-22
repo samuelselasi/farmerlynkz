@@ -1,3 +1,4 @@
+from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
 from fastapi import Depends, HTTPException, Response, status, Body, Header
 from fastapi import Depends, HTTPException, BackgroundTasks
 from starlette.responses import JSONResponse
@@ -29,6 +30,7 @@ async def read_appraisal_form_auth(token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+
 async def read_annual_plan(db:Session):
     res = db.execute("""SELECT result_areas, target, resources, appraisal_form_id, annual_plan_id
 	FROM public.annual_plan;""") # READ FROM TABLE
@@ -50,6 +52,7 @@ async def read_annual_plan_auth(token:str, db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 
 async def read_annual_appraisal(db:Session):
     res = db.execute("""SELECT public.get_appraisal_form();""") # READ FROM DB FUNCTION
@@ -94,6 +97,7 @@ async def read_hash_form_auth(token:str, db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
@@ -207,6 +211,7 @@ async def update_appraisal_form_auth(appraisal_form:schemas.update_appraisal_for
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+
 async def update_annual_plan(annual_plan:schemas.update_annual_plan, db:Session):
     res = db.execute("""UPDATE public.annual_plan 
     SET result_areas = :result_areas, target = :target, resources = :resources, appraisal_form_id = :appraisal_form_id, annual_plan_id = :annual_plan_id
@@ -230,6 +235,7 @@ async def update_annual_plan_auth(annual_plan:schemas.update_annual_plan, token:
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 
 async def update_annual_appraisal(annual_appraisal:schemas.create_annual_appraisal, db:Session):
     res = db.execute("""UPDATE public.annual_appraisal
@@ -280,6 +286,7 @@ async def delete_appraisal_form_auth(appraisal_form_id:int, token:str, db:Sessio
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+
 async def delete_annual_plan(annual_plan_id: int, db: Session):
     res = db.execute("""DELETE FROM public.annual_plan
 	WHERE annual_plan_id = :annual_plan_id;""",
@@ -302,6 +309,7 @@ async def delete_annual_plan_auth(annual_plan_id:int, token:str, db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 
 async def delete_annual_appraisal(annual_appraisal_id: int, db: Session):
     res = db.execute("""DELETE FROM public.annual_appraisal

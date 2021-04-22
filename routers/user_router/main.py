@@ -28,11 +28,11 @@ async def read_user_by_email(email:str, token:str=Depends(oauth2_scheme), db:Ses
     return user
 
 
-@router.get("/rread/hash/")
-async def verify_hash_details(code:str,  db:Session=Depends(get_db)):
-    return await crud.read_hash_code( code, db)
+@router.get("/read/hash/")
+async def verify_hash_details(code:str, db:Session=Depends(get_db)):
+    return await crud.read_hash_code(code, db)
 
-@router.get("/rread/hash/table/")
+@router.get("/read/hash/table/")
 async def read_hash_table(db:Session=Depends(get_db)):
     return await crud.read_hash_table(db)
 

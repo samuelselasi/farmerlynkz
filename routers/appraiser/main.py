@@ -11,7 +11,6 @@ router = APIRouter()
 
 
 # GET FORM DETAILS
-
 @router.get("/Appraisees/{user_id}/")
 async def read_appraiser_appraisees(user_id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_appraiser_appraisees_auth(user_id, token, db)
@@ -94,7 +93,6 @@ async def read_yearly_form_deatails(staff_id:int, form_year:int, token:str=Depen
 
 
 # APPROVE FORM DETAILS
-
 @router.get("/approveform/{appraisal_form_id}/")
 async def approve_form_details(appraisal_form_id:int, type_form='Start', token: str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.approve_form_details_auth(appraisal_form_id, type_form, token, db)
@@ -109,21 +107,18 @@ async def approve_form_details(appraisal_form_id:int, type_form='End', token: st
 
 
 # CREATE APPRAISER DETAILS
-
 @router.post("/deadline/")
 async def create_deadline(payload:schemas.create_deadline, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.create_deadline_auth(payload.deadline_type, payload.start_date, payload.ending, token, db)
 
 
 # UPDATE APPRAISER DETAILS
-
 @router.put("/deadline/")
 async def update_deadline_table(deadline:schemas.update_deadline, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.update_deadline_auth(deadline, token, db)
 
 
 # DELETE APPRAISER DETAILS
-
 @router.delete("/deadline/{deadline_id}/")
 async def delete_deadline(deadline_id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.delete_deadline_auth(deadline_id, token, db) 

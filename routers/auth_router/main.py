@@ -31,10 +31,6 @@ async def refresh_token(payload: schemas.Token, db: Session=Depends(get_db)):
 
 
 # RESET PASSWORD
-# @router.post("/request", description="authenticate user details")
-# async def request_password_reset(payload:schemas.UserBase, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
-#     return await crud.request_password_reset(payload, db, background_tasks)
-
 @router.post("/request", description="authenticate user details")
 async def request_password_reset(payload:schemas.UserBase, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     return await crud.request_password_reset_(payload, db, background_tasks)
