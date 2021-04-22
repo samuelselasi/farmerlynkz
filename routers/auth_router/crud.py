@@ -13,6 +13,7 @@ import sys, utils, jwt
 
 
 # LOGIN USER
+
 async def authenticate(payload:schemas.Auth, db:Session):
     try:
         user = db.query(models.User).filter(models.User.email==payload.email).first() # CHECK IF EMAIL IS PRESENT IN DB
@@ -32,8 +33,8 @@ async def authenticate(payload:schemas.Auth, db:Session):
         print("{}".format(sys.exc_info()))
         raise HTTPException(status_code=500)
 
-
 # LOG OUT USER
+
 async def revoke_token(payload:schemas.Token, db:Session):
     try:
         db.add_all([models.RevokedToken(jti=token) for token in list({v for (k,v) in payload.dict().items()}) if token is not None])
@@ -46,8 +47,8 @@ async def revoke_token(payload:schemas.Token, db:Session):
         print("{}".format(sys.exc_info()))
         raise HTTPException(status_code=500)
 
-
 # RELOAD USER
+
 async def refresh_token(payload:schemas.Token, db:Session):
     try:
         if not payload.refresh_token:
@@ -73,16 +74,16 @@ async def refresh_token(payload:schemas.Token, db:Session):
         print("{}".format(sys.exc_info()[1]))
         raise HTTPException(status_code=500)
 
-
 # CHECK BLACKLISTED TOKEN  
+
 async def is_token_blacklisted(token:str, db:Session):
     res = db.query(models.RevokedToken).filter(models.RevokedToken.jti == token).first() # GET EXPIRED TOKENS FROM DB
     if res is None:
         return False
     return True
 
-
 # RESET PASSWORD
+
 async def request_password_reset(payload:schemas.UserBase, db:Session, background_tasks):
     try:
         user = db.query(models.User).filter(models.User.email==payload.email).first() #CHECK IF USER IS PRESENT IN DB
@@ -137,8 +138,8 @@ async def request_password_reset_(payload:schemas.UserBase, db:Session, backgrou
         print("{}".format(sys.exc_info()[1]))
         raise HTTPException(status_code=500)
 
-
 # GET USERS LOGGED IN
+
 async def get_current_user(token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db) : # CHECK IF TOKEN EXISTS
@@ -153,8 +154,8 @@ async def get_current_user(token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
-
 # DELETE PASSWORD RESET CODE
+
 def delete_password_reset_code(id:int, db:Session=SessionLocal()):
     try:
         code = db.query(models.ResetPasswordCodes).filter(models.ResetPasswordCodes.id==id).first()

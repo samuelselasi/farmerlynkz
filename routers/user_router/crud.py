@@ -1,4 +1,3 @@
-from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
 from exceptions import NotFoundError, UnAcceptableError, ExpectationFailure, UnAuthorised
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..auth_router.models import ResetPasswordCodes
@@ -9,8 +8,7 @@ from . import models, schemas
 from main import get_db
 import sqlalchemy
 import utils
-import sys, jwt
-
+import sys
 
 
 # GET USERS
