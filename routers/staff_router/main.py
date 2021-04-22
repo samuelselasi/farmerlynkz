@@ -32,7 +32,7 @@ async def read_roles(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db
 async def read_deadline_table(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_deadline_table_auth(token, db)
 
-@router.get("/deadlinestart/")
+@router.get("/deadline/start/")
 async def read_start_deadline(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_start_deadline_table_auth(token, db)
 

@@ -29,7 +29,7 @@ reset_password_template = """
         </tr>
         <tr>
             <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 20px 0 30px 0;">
-            <p style="margin: 0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.</p>
+            <p style="margin: 0;">You have requested to reset your passwword. You have a chance of doing so by clicking on the link provided. Please ignore this message if you did not request for a password reset. We are sorry for any inconveniences caused.</p>
             </td>
         </tr>
         <tr>
@@ -45,7 +45,8 @@ reset_password_template = """
                     </tr>
                     <tr>
                         <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 25px 0 0 0;">
-                        <p style="margin: 0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.</p>
+                        <p style="margin: 0;">Please fill the form by opening the link provided.</strong></br>
+                        <a href="{url}/{code}" target="_blank">click this link to fill form</a> </p>
                         </td>
                     </tr>
                     </table>

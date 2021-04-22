@@ -113,7 +113,6 @@ async def read_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        print(data)
         if data==1:
             return await read_deadline_table(db)
         else:
@@ -141,7 +140,7 @@ async def read_start_deadline_table_auth(token:str, db:Session):
         if data==1:
             return await read_start_deadline_table(db)
         else:
-            return UnAuthorised('Not qualified') 
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
     except UnAuthorised:
         raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.ExpiredSignatureError:

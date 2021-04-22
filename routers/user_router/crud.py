@@ -1,3 +1,4 @@
+from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
 from exceptions import NotFoundError, UnAcceptableError, ExpectationFailure, UnAuthorised
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from ..auth_router.models import ResetPasswordCodes
@@ -8,7 +9,8 @@ from . import models, schemas
 from main import get_db
 import sqlalchemy
 import utils
-import sys
+import sys, jwt
+
 
 
 # GET USERS
@@ -175,6 +177,10 @@ async def reset_password(id, payload:schemas.ResetPassword, db:Session):
         db.rollback()
         raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
 
+async def change_password(email:str, password:str, db:Session):
+    res = db.execute(""" UPDATE public.users SET email=:email, password=:password WHERE email=:email; """, {'email':email, 'password':models.User.generate_hash(password)})
+    db.commit()
+
 async def reset_password_auth(id, payload:schemas.ResetPassword, token:str, db:Session=Depends(get_db)):
     try:
         if await is_token_blacklisted(token, db):
@@ -212,7 +218,6 @@ async def reset_password_(email, payload:schemas.ResetPassword, db:Session):
     except:
         db.rollback()
         raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
-
 async def reset_password_auth_(email, payload:schemas.ResetPassword, token:str, db:Session=Depends(get_db)):
     try:
         if await is_token_blacklisted(token, db):
@@ -303,6 +308,7 @@ async def update_user_auth(id:int, payload:schemas.UserUpdate, token:str, db:Ses
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 
 
 # DELETE USER

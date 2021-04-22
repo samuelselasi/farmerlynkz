@@ -20,6 +20,9 @@ class UserUpdate(BaseModel):
 class ResetPassword(BaseModel):
     password: str
     code: Optional[str]
+class ChangePassword(BaseModel):
+    email: str
+    password: str
 class UserInfo(BaseModel):
     id: int
     first_name: Optional[str]
@@ -38,3 +41,4 @@ class User(UserBase):
     
     class Config:
         orm_mode = True
+    
