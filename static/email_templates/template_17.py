@@ -50,30 +50,20 @@ template17 = """
                     <strong><p>Kindly review the form details.</strong></br>
                                
                                 email = {email}</br>
+                                grade = {grade}</br>
                                 roles = {roles}</br>
-                                score = {score}</br>
                                 gender = {gender}</br>
                                 target = {target}</br>
-                                weight = {weight}</br>
-                                comment = {comment}</br>
-                                remarks = {remarks}</br>
                                 last name = {lastname}</br>
                                 staff id = {staff_id}</br>
                                 first name ={firstname}</br>
                                 position = {positions}</br>
-                                resources = {resources}</br>
-                                assessment = {assessment}</br>
                                 department = {department}</br>
-                                end status = {end_status}</br>
-                                mid status = {mid_status}</br>
                                 middle name = {middlename}</br>
                                 supervisor = {supervisor}</br>
                                 result areas = {result_areas}</br>
                                 start status ={start_status}</br>
-                                appraisal year = {appraisal_year}</br>
-                                progress review ={progress_review}</br>
-                                supervisor name = {supervisor_name}</br>
-                                role = {role_description}</br>
+                                supervisor = {supervisor}</br>
                                 supervisor email = {supervisor_email}</br>
                                 appraisal form id = {appraisal_form_id} </p></br>
 

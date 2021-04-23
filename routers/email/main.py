@@ -238,8 +238,8 @@ async def background_send_18(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Alert)",
-            recipients=[item["supervisor_email"]],
-            body=template17.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], score=[item["score"]],gender=[item["gender"]], target=[item["target"]], weight=[item["weight"]], comment=[item["comment"]], remarks=[item["remarks"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],positions=[item["positions"]], resources=[item["resources"]], assessment=[item["assessment"]], department=[item["department"]],end_status=[item["end_status"]], mid_status=[item["mid_status"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], appraisal_year=[item["appraisal_year"]], progress_review=[item["progress_review"]], supervisor_name=[item["supervisor_name"]],role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            recipients=[item[16]],
+            body=template17.format( email=[item[0]], grade=[item[1]], roles=[item[2]], gender=[item[3]], target=[item[4]], lastname=[item[5]], staff_id=[item[6]], firstname=[item[7]],positions=[item[8]], resources=[item[9]], department=[item[10]], middlename=[item[11]], supervisor=[item[12]], result_areas=[item[13]], start_status=[item[14]], appraisal_form_id=[item[15]], supervisor_email=[item[16]]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -323,9 +323,9 @@ async def last_day_reminder():
 # SCHEDULED REMINDERS FOR APPRAISER
 
 # @router.post("/approveannualplan/")
-async def approve_annual_plan():
-    res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
-    res = res.first()[0]
+async def approve_annual_plan(appraisal_form_id):
+    res = db.execute(""" SELECT email, grade, roles, gender, target, lastname, staff_id, firstname, positions, resources, department, middlename, supervisor, result_areas, start_status, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
+    res = res.fetchall()
     return await background_send_18(res)
 
 # @router.post("/lastfivedaystoapprovereminder/")

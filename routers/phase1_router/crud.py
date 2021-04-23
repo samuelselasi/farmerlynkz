@@ -166,7 +166,7 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
 	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources; """,
                         {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id}) # CREATE INTO TABLE
         db.commit()
-        await email.main.approve_annual_plan() # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+        await email.main.approve_annual_plan(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
         
         return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
     else:
