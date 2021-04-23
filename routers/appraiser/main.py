@@ -67,6 +67,7 @@ async def read_incompleted_list(deadline='Mid', user_id=1, token:str=Depends(oau
 async def read_incompleted_list(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_incomplete_list( deadline, user_id, token, db)  
 
+# READ DEADLINES
 @router.get("/deadline/")
 async def read_deadline_table(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_deadline_table_auth(token, db)
@@ -82,6 +83,7 @@ async def read_mid_deadline(token:str=Depends(oauth2_scheme), db:Session=Depends
 @router.get("/deadline/end/")
 async def read_end_deadline(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_end_deadline_table_auth(token, db)
+
 
 @router.get("/supervisors/")
 async def read_supervisors(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):

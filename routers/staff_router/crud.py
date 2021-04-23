@@ -37,6 +37,7 @@ async def read_staff_auth(token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
+
 async def read_supervisors(db:Session):
     res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where roles=2; """) # READ SUPERVISOR FROM TABLE
     res = res.fetchall()
@@ -57,6 +58,7 @@ async def read_supervisors_auth(token:str, db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
+
 
 async def read_staff_by_name(name:str, db:Session):
     res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where fname ilike :name or sname ilike :name; """, {'name':'%'+name+'%'}) # READ STAFF FROM TABLE WHERE FULL A SINGLE LETTER IN A NAME RETURNS DATA ON ALL USERS WITH THAT LETTER IN THEIR NAME
@@ -79,6 +81,7 @@ async def read_staff_by_name_auth(name:str, token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
+
 async def read_roles(db:Session):
     res = db.execute(""" SELECT role_id, role_description FROM public.roles; """) # READ ROLES FROM TABLE
     res = res.fetchall()
@@ -100,6 +103,8 @@ async def read_roles_auth(token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})         
 
+
+# GET DEADLINES
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline; """) # READ DEADLINES FROM TABLE
@@ -123,6 +128,7 @@ async def read_deadline_table_auth(token:str, db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
 
 async def read_start_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
@@ -148,13 +154,14 @@ async def read_start_deadline_table_auth(token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
+
 async def read_mid_deadline_table(token:str, db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline where deadline_type='Mid'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
 
-async def read_mid_deadline_table_auth(db:Session):
+async def read_mid_deadline_table_auth(token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -172,13 +179,14 @@ async def read_mid_deadline_table_auth(db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
+
 async def read_end_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline where deadline_type='End'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
 
-async def read_end_deadline_table_auth(db:Session):
+async def read_end_deadline_table_auth(token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -195,6 +203,7 @@ async def read_end_deadline_table_auth(db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
 
 
 # DEACTIVATE STAFF
@@ -221,6 +230,7 @@ async def deactivate_staff_auth(staff_id:int, token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 
+
 # CREATE STAFF DETAILS
 async def create_staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, db:Session):
     res = db.execute("""insert into public.staff(fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles)
@@ -245,6 +255,7 @@ async def create_staff_auth(fname, sname, oname, email, supervisor, gender, depa
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
+
 async def create_roles(role_description:str, db:Session):
     res = db.execute(""" INSERT INTO public.roles(role_description) VALUES(:role_description) """, {'role_description': role_description}) # TABLE INSERTION
     db.commit()
@@ -265,6 +276,7 @@ async def create_roles_auth(role_description:str, token:str, db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})         
+
 
 async def create_deadline(deadline_type, start_date, ending, db:Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
@@ -294,6 +306,7 @@ async def create_deadline_auth(deadline_type:str, start_date:str, ending:str, to
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+
 # UPDATE STAFF DETAILS
 async def update_staff(staff_id, fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles,  db:Session):
     res = db.execute("""UPDATE public.staff
@@ -319,6 +332,7 @@ async def update_staff_auth(staff_id, fname, sname, oname, email, supervisor, ge
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+
 async def update_roles(role_id, role_description, db:Session):
     res = db.execute(""" UPDATE public.roles SET role_id=:role_id, role_description=:role_description WHERE role_id=:role_id; """,
     {'role_id':role_id, 'role_description': role_description}) # UPDATE ROLES IN ROLES TABLE
@@ -340,6 +354,7 @@ async def update_roles_auth(role_id:int, role_description:int, token:str, db:Ses
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
 
 async def update_deadline(deadline:schemas.update_deadline, db:Session):
     res = db.execute("""UPDATE public.deadline
@@ -369,6 +384,7 @@ async def update_deadline_auth(deadline:schemas.update_deadline, token:str, db:S
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+
 # DELETE STAFF DETAILS
 async def delete_staff(staff_id:int, db: Session):
     res = db.execute("""DELETE FROM public.staff 
@@ -393,6 +409,7 @@ async def delete_staff_auth(staff_id:int, token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+
 async def delete_roles(role_id:int, db: Session):
     res = db.execute(""" DELETE FROM public.roles WHERE role_id = :role_id; """, {'role_id':role_id})
     db.commit()
@@ -413,6 +430,7 @@ async def delete_roles_auth(role_id:int, token:str, db:Session):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
 
 async def delete_deadline(deadline_id: int, db: Session):
     res = db.execute("""DELETE FROM public.deadline

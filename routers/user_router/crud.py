@@ -106,7 +106,6 @@ async def create_user(payload:schemas.UserCreate, db:Session=Depends(get_db)):
         print('{}'.format(sys.exc_info()[1]))
         raise HTTPException(status_code=500)
 
-
 async def create_user_auth(payload:schemas.UserCreate, token:str, db:Session=Depends(get_db)):
     try:
         if await is_token_blacklisted(token, db):
@@ -152,10 +151,12 @@ async def verify_password_auth(id, payload:schemas.ResetPassword, token:str, db:
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+
 async def read_hash_code(code:str, db:Session):
     res = db.execute("""SELECT id, code, user_id, user_email, status, date_created, date_modified FROM public.reset_password_codes where code=:code""", {'code':code})
     res = res.fetchall()
     return res
+
 
 async def read_hash_table(db:Session):
     res = db.execute(""" SELECT id, code, user_id, user_email, status, date_created, date_modified FROM public.reset_password_codes; """)
@@ -262,6 +263,7 @@ async def verify_code_auth(id, code, token:str, db:Session=Depends(get_db)):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+
 async def verify_code_(email, code, db:Session):
     return db.query(ResetPasswordCodes).filter(sqlalchemy.and_(ResetPasswordCodes.user_email == email, ResetPasswordCodes.code == code)).first()
 
@@ -280,6 +282,7 @@ async def verify_code_auth_(email, code, token:str, db:Session=Depends(get_db)):
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
 
 # UPDATE USER
 async def update_user(id:int, payload:schemas.UserUpdate, db:Session=Depends(get_db)):
@@ -316,7 +319,6 @@ async def update_user_auth(id:int, payload:schemas.UserUpdate, token:str, db:Ses
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
-
 
 
 # DELETE USER

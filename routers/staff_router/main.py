@@ -11,7 +11,6 @@ from uuid import UUID
 router = APIRouter()
 
 # READ STAFF DETAILS
-
 @router.get("/")
 async def read_staff(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_staff_auth(token, db)
@@ -28,6 +27,8 @@ async def read_staff_by_name(name:str, token:str=Depends(oauth2_scheme), db:Sess
 async def read_roles(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_roles_auth(token, db)
 
+
+# READ DEADLINES 
 @router.get("/deadline/")
 async def read_deadline_table(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_deadline_table_auth(token, db)
@@ -44,15 +45,14 @@ async def read_mid_deadline(token:str=Depends(oauth2_scheme), db:Session=Depends
 async def read_end_deadline(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_end_deadline_table_auth(token, db)
 
-# DEACTIVATE STAFF 
 
+# DEACTIVATE STAFF 
 @router.get("/deactivatestaff/{staff_id}/")
 async def deactivate_staff(staff_id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.deactivate_staff_auth(staff_id, token, db)
 
 
 # CREATE STAFF DETAILS
-
 @router.post("/")
 async def create_staff(payload:schemas.UserCreate, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.create_staff_auth(payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.department, payload.positions, payload.grade, payload.appointment, payload.roles, token, db)
@@ -67,7 +67,6 @@ async def create_deadline(payload:schemas.create_deadline, token:str=Depends(oau
 
 
 # UPDATE STAFF DETAILS
-
 @router.put("/")
 async def update_staff(payload:schemas.update_staff, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.update_staff_auth(payload.staff_id, payload.fname, payload.sname, payload.oname, payload.email, payload.supervisor, payload.gender, payload.department, payload.positions, payload.grade, payload.appointment, payload.roles, token, db)
@@ -82,7 +81,6 @@ async def update_roles(payload:schemas.update_roles, token:str=Depends(oauth2_sc
 
 
 # DELETE STAFF DETAILS
-
 @router.delete("/{staff_id}/")
 async def delete_staff(staff_id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.delete_staff_auth(staff_id, token, db)

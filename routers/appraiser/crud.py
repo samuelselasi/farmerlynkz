@@ -58,13 +58,13 @@ async def read_start_deadline_table_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
-async def read_mid_deadline_table(token:str, db:Session):
+async def read_mid_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline where deadline_type='Mid'; """) # READ DEADLINES FROM TABLE
     res = res.fetchall()
     return res
 
-async def read_mid_deadline_table_auth(db:Session):
+async def read_mid_deadline_table_auth(token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
@@ -89,7 +89,7 @@ async def read_end_deadline_table(db:Session):
     res = res.fetchall()
     return res
 
-async def read_end_deadline_table_auth(db:Session):
+async def read_end_deadline_table_auth(token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
