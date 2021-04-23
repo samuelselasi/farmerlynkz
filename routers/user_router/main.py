@@ -54,11 +54,11 @@ async def verify_password(id:int, payload:schemas.ResetPassword, token:str=Depen
 async def update_user(id:int, payload:schemas.UserUpdate, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.update_user_auth(id, payload, token, db)
 
-@router.patch("/{id}/password", description="change user password", status_code=status.HTTP_202_ACCEPTED)
+@router.patch("/{id}/password/", description="change user password", status_code=status.HTTP_202_ACCEPTED)
 async def update_password(id:int, payload:schemas.ResetPassword, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.reset_password_auth(id, payload, token, db)
 
-@router.patch("/password", description="change user password", status_code=status.HTTP_202_ACCEPTED)
+@router.patch("/password/", description="change user password", status_code=status.HTTP_202_ACCEPTED)
 async def update_password_(email:str, payload:schemas.ResetPassword, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.reset_password_auth(email, payload, token, db)
 
