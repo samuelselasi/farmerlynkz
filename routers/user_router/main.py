@@ -71,5 +71,5 @@ async def update_password_(email:str, payload:schemas.ResetPassword, token:str=D
     return await crud.reset_password_auth(email, payload, token, db)
 
 @router.put("/change/password")
-async def change_password(email:str, password:str, db:Session=Depends(get_db)):
-    return await crud.change_password(email, password, db)
+async def change_password(email:str, password:str, confirm_password:str, db:Session=Depends(get_db)):
+    return await crud.change_password(email, password, confirm_password, db)

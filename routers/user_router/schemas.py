@@ -23,6 +23,7 @@ class ResetPassword(BaseModel):
 class ChangePassword(BaseModel):
     email: str
     password: str
+    confirm_password: str
 class UserInfo(BaseModel):
     id: int
     first_name: Optional[str]

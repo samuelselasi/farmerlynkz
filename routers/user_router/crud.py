@@ -185,7 +185,7 @@ async def reset_password(id, payload:schemas.ResetPassword, db:Session):
         db.rollback()
         raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
 
-async def change_password(email:str, password:str, db:Session):
+async def change_password(email:str, password:str, confirm_password:str, db:Session):
     res = db.execute(""" UPDATE public.users SET email=:email, password=:password WHERE email=:email; """, {'email':email, 'password':models.User.generate_hash(password)})
     db.commit()
 
