@@ -32,6 +32,7 @@ async def authenticate(payload:schemas.Auth, db:Session):
         print("{}".format(sys.exc_info()))
         raise HTTPException(status_code=500)
 
+
 # LOG OUT USER
 async def revoke_token(payload:schemas.Token, db:Session):
     try:
@@ -79,6 +80,7 @@ async def is_token_blacklisted(token:str, db:Session):
     if res is None:
         return False
     return True
+
 
 
 # RESET PASSWORD
@@ -135,6 +137,7 @@ async def request_password_reset_(payload:schemas.UserBase, db:Session, backgrou
         db.rollback()
         print("{}".format(sys.exc_info()[1]))
         raise HTTPException(status_code=500)
+
 
 
 # GET USERS LOGGED IN

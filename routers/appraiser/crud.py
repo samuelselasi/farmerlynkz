@@ -7,7 +7,7 @@ from . import models, schemas
 from fastapi import Depends
 
 
-# GET APPRAISER DETAILS
+# GET DEADLINES
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline; """) # READ DEADLINES FROM TABLE
@@ -108,6 +108,7 @@ async def read_end_deadline_table_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+# GET APPRAISEES
 async def read_appraiser_appraisees(user_id, db: Session):
     res = db.execute(""" SELECT public.get_list_of_appraisee(:user_id) """,{'user_id':user_id}) # GET APPRAISEE FROM DB FUNCTION
     return res.fetchall()  
@@ -129,6 +130,7 @@ async def read_appraiser_appraisees_auth(user_id:int, token:str, db: Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+# GET COMPLETED
 async def read_completed_list(deadline:str, user_id:int, db:Session):
     res = db.execute("""SELECT public.get_list_of_approved_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
     res = res.fetchall()
@@ -151,6 +153,7 @@ async def read_completed_list_auth(deadline:str, user_id:int, token:str, db:Sess
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+# GET APROVED
 async def read_approved_forms(deadline:str, user_id:int, db:Session):
     res = db.execute("""SELECT public.get_list_of_approved_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
     res = res.fetchall()
@@ -173,6 +176,7 @@ async def read_approved_forms_auth(deadline:str, user_id:int, token:str, db:Sess
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+# GET WAITING APPROVAL
 async def waiting_approval_list(deadline:str, user_id:int, db:Session):
     res = db.execute("""SELECT public.get_list_of_waiting_approval(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
     res = res.fetchall()
@@ -195,6 +199,7 @@ async def waiting_approval_list_auth(deadline:str, user_id:int, token:str, db:Se
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# GET INCOMPLETED
 async def read_incomplete_list(deadline:str, user_id:int, db:Session):
     res = db.execute("""SELECT public.get_list_of_incompleted_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
     res = res.fetchall()
@@ -217,6 +222,7 @@ async def read_incomplete_list_auth(deadline:str, user_id:int, token:str, db:Ses
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
 
+# GET SUPERVISORS
 async def read_supervisors(db: Session):
     res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where roles=2; """) # GET FROM STAFF TABLE
     res = res.fetchall()
@@ -239,6 +245,7 @@ async def read_supervisors_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+# GET YEARLY DETAILS
 async def read_yearly_form_deatails(staff_id:int, form_year:int, db:Session):
     res = db.execute(""" SELECT public.get_form_details_yearly(:staff_id, :form_year) """, {'staff_id':staff_id, 'form_year':form_year}) # GET FROM DB FUNCTION
     res = res.fetchall()

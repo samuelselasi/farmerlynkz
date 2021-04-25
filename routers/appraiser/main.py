@@ -10,11 +10,13 @@ from . import crud, schemas
 router = APIRouter()
 
 
-# GET FORM DETAILS
+# GET APPRAISEES
 @router.get("/Appraisees/{user_id}/")
 async def read_appraiser_appraisees(user_id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_appraiser_appraisees_auth(user_id, token, db)
 
+
+# GET APPROVED
 @router.get("/approved/start/")
 async def read_approved_forms(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_approved_forms_auth( deadline, user_id, token, db)
@@ -27,6 +29,8 @@ async def read_approved_forms(deadline='Mid', user_id=1, token:str=Depends(oauth
 async def read_approved_forms(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_approved_forms_auth( deadline, user_id, token, db)
 
+
+# GET COMPLETED
 @router.get("/completedlist/start/")
 async def read_completed_list(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_completed_list_auth( deadline, user_id, token, db)
@@ -39,6 +43,8 @@ async def read_completed_list(deadline='Mid', user_id=1, token:str=Depends(oauth
 async def read_completed_list(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_completed_list( deadline, user_id, token, db)
 
+
+# GET WAITING APPROVAL
 @router.get("/waitingapproval/start/")
 async def waiting_approval_list(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
@@ -47,14 +53,12 @@ async def waiting_approval_list(deadline='Start', user_id=1, token:str=Depends(o
 async def waiting_approval_list(deadline='Mid', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
 
-@router.get("/waitingapprovalauth/mid/")
-async def waiting_approval_list_auth(deadline='Mid', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
-    return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
-
 @router.get("/waitingapproval/end/")
 async def waiting_approval_list(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.waiting_approval_list( deadline, user_id, token, db)
+    return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
 
+
+# GET INCOMPLETED
 @router.get("/incompletedlist/start/")
 async def read_incompleted_list(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_incomplete_list_auth( deadline, user_id, token, db) 
@@ -65,7 +69,9 @@ async def read_incompleted_list(deadline='Mid', user_id=1, token:str=Depends(oau
 
 @router.get("/incompletedlist/end/")
 async def read_incompleted_list(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.read_incomplete_list( deadline, user_id, token, db)  
+    return await crud.read_incomplete_list_auth( deadline, user_id, token, db)  
+
+
 
 # READ DEADLINES
 @router.get("/deadline/")
@@ -85,10 +91,13 @@ async def read_end_deadline(token:str=Depends(oauth2_scheme), db:Session=Depends
     return await crud.read_end_deadline_table_auth(token, db)
 
 
+# GET SUPERVISORS
 @router.get("/supervisors/")
 async def read_supervisors(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_supervisors_auth(token, db)
 
+
+# GET YEARLY DETAILS
 @router.get("/yearlyformdetails/{staff_id}/{form_year}")
 async def read_yearly_form_deatails(staff_id:int, form_year:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_yearly_form_deatails_auth(staff_id, form_year, token, db)
@@ -108,16 +117,19 @@ async def approve_form_details(appraisal_form_id:int, type_form='End', token: st
     return await crud.approve_form_details_auth(appraisal_form_id, type_form, token, db)
 
 
+
 # CREATE APPRAISER DETAILS
 @router.post("/deadline/")
 async def create_deadline(payload:schemas.create_deadline, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.create_deadline_auth(payload.deadline_type, payload.start_date, payload.ending, token, db)
 
 
+
 # UPDATE APPRAISER DETAILS
 @router.put("/deadline/")
 async def update_deadline_table(deadline:schemas.update_deadline, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.update_deadline_auth(deadline, token, db)
+
 
 
 # DELETE APPRAISER DETAILS

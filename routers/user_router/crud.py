@@ -152,19 +152,20 @@ async def verify_password_auth(id, payload:schemas.ResetPassword, token:str, db:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# READ HASH DETAILS
 async def read_hash_code(code:str, db:Session):
     res = db.execute("""SELECT id, code, user_id, user_email, status, date_created, date_modified FROM public.reset_password_codes where code=:code""", {'code':code})
     res = res.fetchall()
     return res
 
-
+# READ HASH TABLE
 async def read_hash_table(db:Session):
     res = db.execute(""" SELECT id, code, user_id, user_email, status, date_created, date_modified FROM public.reset_password_codes; """)
     res = res.fetchall()
     return res
 
 
-# RESET PASSWORD
+# RESET PASSWORD BY ID
 async def reset_password(id, payload:schemas.ResetPassword, db:Session):
     try:
         if not payload.code:
@@ -186,10 +187,6 @@ async def reset_password(id, payload:schemas.ResetPassword, db:Session):
         db.rollback()
         raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
 
-async def change_password(email:str, password:str, db:Session):
-    res = db.execute(""" UPDATE public.users SET email=:email, password=:password WHERE email=:email; """, {'email':email, 'password':models.User.generate_hash(password)})
-    db.commit()
-
 async def reset_password_auth(id, payload:schemas.ResetPassword, token:str, db:Session=Depends(get_db)):
     try:
         if await is_token_blacklisted(token, db):
@@ -206,7 +203,7 @@ async def reset_password_auth(id, payload:schemas.ResetPassword, token:str, db:S
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
-
+# RESET PASSWORD BY EMAIL
 async def reset_password_(email, payload:schemas.ResetPassword, db:Session):
     try:
         if not payload.code:
@@ -227,6 +224,7 @@ async def reset_password_(email, payload:schemas.ResetPassword, db:Session):
     except:
         db.rollback()
         raise HTTPException(status_code=500, detail="{}: {}".format(sys.exc_info()[0], sys.exc_info()[1]))
+
 async def reset_password_auth_(email, payload:schemas.ResetPassword, token:str, db:Session=Depends(get_db)):
     try:
         if await is_token_blacklisted(token, db):
@@ -242,6 +240,12 @@ async def reset_password_auth_(email, payload:schemas.ResetPassword, token:str, 
         raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
+
+# CHANGE PASSWORD
+async def change_password(email:str, password:str, db:Session): # CHANGE PASSWORD BY EMAIL(IN USE TO RESET PASSWORD)
+    res = db.execute(""" UPDATE public.users SET email=:email, password=:password WHERE email=:email; """, {'email':email, 'password':models.User.generate_hash(password)})
+    db.commit()
+
 
 # CODE VERIFICATION
 async def verify_code(id, code, db:Session):
@@ -263,7 +267,7 @@ async def verify_code_auth(id, code, token:str, db:Session=Depends(get_db)):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
-
+# VERIFY CODE BY EMAIL
 async def verify_code_(email, code, db:Session):
     return db.query(ResetPasswordCodes).filter(sqlalchemy.and_(ResetPasswordCodes.user_email == email, ResetPasswordCodes.code == code)).first()
 

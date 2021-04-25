@@ -8,11 +8,12 @@ from main import get_db
 router = APIRouter()
 
 
-# GET USER DETAILS
+# GET ALL USERS
 @router.get("/", description="get all users", response_model=List[schemas.User])
 async def read_users(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_users_auth(token, db)
 
+# GET USER BY ID
 @router.get("/{id}", description="get user by id", response_model=schemas.User)
 async def read_user_by_id(id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     user = await crud.read_user_by_id(id, db)
@@ -20,6 +21,7 @@ async def read_user_by_id(id:int, token:str=Depends(oauth2_scheme), db:Session=D
         raise HTTPException(status_code=404, detail="user with id: {} was not found".format(id))
     return user
 
+# GET USER BY EMAIL
 @router.get("/{email}/", description="get user by email", response_model=schemas.User)
 async def read_user_by_email(email:str, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     user = await crud.read_user_by_email_auth(email, token, db)
@@ -28,13 +30,16 @@ async def read_user_by_email(email:str, token:str=Depends(oauth2_scheme), db:Ses
     return user
 
 
+# READ HASH DETAILS
 @router.get("/read/hash/")
 async def verify_hash_details(code:str, db:Session=Depends(get_db)):
     return await crud.read_hash_code(code, db)
 
+# READ HASH TABLE
 @router.get("/read/hash/table/")
 async def read_hash_table(db:Session=Depends(get_db)):
     return await crud.read_hash_table(db)
+
 
 
 # CREATE USER DETAILS
@@ -49,25 +54,28 @@ async def verify_password(id:int, payload:schemas.ResetPassword, token:str=Depen
     return await crud.verify_password_auth(id, payload, token, db)
 
 
-# UPDATE USER DETAILS
+# UPDATE USER BY ID
 @router.patch("/update/{id}", description="update user by id", response_model=schemas.User, status_code=202)
 async def update_user(id:int, payload:schemas.UserUpdate, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.update_user_auth(id, payload, token, db)
 
+# UPDATE PASSWORD BY ID
 @router.patch("/{id}/password/", description="change user password", status_code=status.HTTP_202_ACCEPTED)
 async def update_password(id:int, payload:schemas.ResetPassword, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.reset_password_auth(id, payload, token, db)
 
+# UPDATE PASSWORD BY EMAIL
 @router.patch("/password/", description="change user password", status_code=status.HTTP_202_ACCEPTED)
 async def update_password_(email:str, payload:schemas.ResetPassword, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.reset_password_auth(email, payload, token, db)
 
+# CHANGE PASSWORD(IN USE)
 @router.put("/change/password")
 async def change_password(payload:schemas.ChangePassword, db:Session=Depends(get_db)):
     return await crud.change_password(payload.email, payload.password, db)
 
 
-# DELETE USER DETAILS
+# DELETE USER BY ID
 @router.delete("/{id}", description="delete user by id")
 async def delete_user(id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.delete_user_auth(id, token, db)

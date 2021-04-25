@@ -8,7 +8,7 @@ from . import models, schemas
 from .. import email
 
  
-# READ PHASE-1 DETAILS 
+# READ APPRAISAL FORM
 async def read_appraisal_form(db:Session):
     res = db.execute("""SELECT department, grade, positions, appraisal_form_id, date, staff_id FROM public.appraisal_form;""") # READ FROM TABLE 
     res = res.fetchall()
@@ -31,6 +31,7 @@ async def read_appraisal_form_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# READ ANNUAL PLAN
 async def read_annual_plan(db:Session):
     res = db.execute("""SELECT result_areas, target, resources, appraisal_form_id, annual_plan_id
 	FROM public.annual_plan;""") # READ FROM TABLE
@@ -54,6 +55,7 @@ async def read_annual_plan_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# READ ANNUAL APPRAISAL
 async def read_annual_appraisal(db:Session):
     res = db.execute("""SELECT public.get_appraisal_form();""") # READ FROM DB FUNCTION
     res = res.fetchall()
@@ -99,6 +101,7 @@ async def read_hash_form_auth(token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# READ DEADLINES
 async def read_deadline_table(db:Session):
     res = db.execute(""" SELECT deadline_type, start_date, ending, deadline_id
 	FROM public.deadline; """) # READ DEADLINES FROM TABLE
@@ -148,7 +151,7 @@ async def verify_hash_form_auth(hash_:str, token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
-# CREATE PHASE-1 DETAILS
+# CREATE APPRAISAL FORM
 async def appraisal_form(department, grade, positions, date, staff_id, db:Session):
     res = db.execute("""insert into public.appraisal_form(department, grade, positions, date, staff_id)
     values(:department, :grade, :positions, :date, :staff_id);""",
@@ -156,6 +159,7 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     db.commit()
     return JSONResponse(status_code=200, content={"message": "appraisal form has been created"})
 
+# CREATE ANNUAL PLAN
 async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
     query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Start'; """) # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
@@ -171,7 +175,8 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
         return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
     else:
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
-            
+
+# CREATE ANNUAL APPRAISAL
 async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(comment, field, appraisal_form_id)
     values(:comment, :field, :appraisal_form_id);""",
@@ -179,6 +184,7 @@ async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session)
     db.commit()
     return JSONResponse(status_code=200, content={"message": "annual appraisal has been created"})
 
+# CREATE APPRAISAL FORM(YEARLY)
 async def create_appraisal_form(deadline, department, positions, grade, date, staff_id, progress_review, remarks, assessment, score, weight, comment, db:Session):
     res = db.execute("""SELECT public.create_appraisal_form(deadline:deadline, department:department, positions:positions, grade:grade, date:date, staff_id:staff_id, progress_review:progress_review, remarks:remarks, assessment:assessment, score:score, weight:weight, comment:comment);""",
     {'deadline':deadline, 'department':department, 'positions':positions, 'grade':grade, 'date':date, 'staff_id':staff_id, 'progress_review':progress_review, 'remarks':remarks, 'assessment':assessment, 'score':score, 'weight':weight, 'comment':comment}) # INSERT INTO TABLE
@@ -186,7 +192,7 @@ async def create_appraisal_form(deadline, department, positions, grade, date, st
     return res
 
 
-# UPDATE PHASE-1 DETAILS
+# UPDATE APPRAISAL FORM
 async def update_appraisal_form(appraisal_form:schemas.update_appraisal_form, db:Session):
     res = db.execute("""UPDATE public.appraisal_form
 	SET appraisal_form_id = :appraisal_form_id, department = :department, grade = :grade, position = :positions, date = :date, staff_id = :staff_id
@@ -212,6 +218,7 @@ async def update_appraisal_form_auth(appraisal_form:schemas.update_appraisal_for
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# UPDATE ANNUAL PLAN
 async def update_annual_plan(annual_plan:schemas.update_annual_plan, db:Session):
     res = db.execute("""UPDATE public.annual_plan 
     SET result_areas = :result_areas, target = :target, resources = :resources, appraisal_form_id = :appraisal_form_id, annual_plan_id = :annual_plan_id
@@ -237,6 +244,7 @@ async def update_annual_plan_auth(annual_plan:schemas.update_annual_plan, token:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# UPDATE ANNUAL APPRAISAL
 async def update_annual_appraisal(annual_appraisal:schemas.create_annual_appraisal, db:Session):
     res = db.execute("""UPDATE public.annual_appraisal
 	SET comment = :comment, field = :field, appraisal_form_id = :appraisal_form_id, annual_appraisal_id = :annual_appraisal_id
@@ -262,7 +270,7 @@ async def update_annual_appraisal_auth(annual_appraisal:schemas.update_annual_ap
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
-# DELETE PHASE-1 DETAILS
+# DELETE APPRAISAL FORM
 async def delete_appraisal_form(appraisal_form_id: int, db:Session):
     res = db.execute("""DELETE FROM public.appraisal_form
 	WHERE appraisal_form_id = :appraisal_form_id;""",
@@ -287,6 +295,7 @@ async def delete_appraisal_form_auth(appraisal_form_id:int, token:str, db:Sessio
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# DELETE ANNUAL PLAN
 async def delete_annual_plan(annual_plan_id: int, db: Session):
     res = db.execute("""DELETE FROM public.annual_plan
 	WHERE annual_plan_id = :annual_plan_id;""",
@@ -311,6 +320,7 @@ async def delete_annual_plan_auth(annual_plan_id:int, token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
 
+# DELETE ANNUAL APPRAISAL
 async def delete_annual_appraisal(annual_appraisal_id: int, db: Session):
     res = db.execute("""DELETE FROM public.annual_appraisal
 	WHERE annual_appraisal_id = :annual_appraisal_id;""",
