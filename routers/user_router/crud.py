@@ -1,14 +1,22 @@
-from exceptions import NotFoundError, UnAcceptableError, ExpectationFailure, UnAuthorised
+from exceptions import NotFoundError, UnAuthorised, UnAcceptableError, ExpectationFailure
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from ..auth_router.models import ResetPasswordCodes
+from ..auth_router.models import ResetPasswordCodes, RevokedToken
 from passlib.hash import pbkdf2_sha256 as sha256
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Response, status, Body, Header
 from sqlalchemy.orm import Session
 from . import models, schemas
 from main import get_db
 import sqlalchemy
-import utils
-import sys
+import utils, jwt, sys
+
+
+
+
+async def is_token_blacklisted(token:str, db:Session):
+    res = db.query(RevokedToken).filter(RevokedToken.jti == token).first() # GET EXPIRED TOKENS FROM DB
+    if res is None:
+        return False
+    return True
 
 
 # GET USERS
