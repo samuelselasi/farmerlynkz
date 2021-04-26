@@ -244,6 +244,15 @@ async def background_send_18(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
+async def background_send_19(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Form Approved",
+            recipients=[item[0]],
+            body=template18.format( email=[item[0]], grade=[item[1]], roles=[item[2]], gender=[item[3]], target=[item[4]], lastname=[item[5]], staff_id=[item[6]], firstname=[item[7]],positions=[item[8]], resources=[item[9]], department=[item[10]], middlename=[item[11]], supervisor=[item[12]], result_areas=[item[13]], start_status=[item[14]], appraisal_form_id=[item[15]], supervisor_email=[item[16]]),
+            subtype="html"
+        )        
+        await fm.send_message(message)
 
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
 @router.post("/startreviewemail/")
@@ -329,6 +338,12 @@ async def approve_annual_plan(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM 
     res = db.execute(""" SELECT email, grade, roles, gender, target, lastname, staff_id, firstname, positions, resources, department, middlename, supervisor, result_areas, start_status, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
     res = res.fetchall()
     return await background_send_18(res)
+
+# @router.post("/annualplanapproved/")
+async def annual_plan_approved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
+    res = db.execute(""" SELECT email, grade, roles, gender, target, lastname, staff_id, firstname, positions, resources, department, middlename, supervisor, result_areas, start_status, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
+    res = res.fetchall()
+    return await background_send_19(res)
 
 # @router.post("/lastfivedaystoapprovereminder/")
 async def last_five_days_to_approve_reminder():

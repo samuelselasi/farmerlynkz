@@ -5,6 +5,7 @@ from ..user_router.models import User
 from sqlalchemy.orm import Session
 from . import models, schemas
 from fastapi import Depends
+from .. import email
 
 
 # GET DEADLINES
@@ -21,7 +22,7 @@ async def read_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_deadline_table(db)
         else:
             return UnAuthorised('Not qualified') 
@@ -46,7 +47,7 @@ async def read_start_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token) 
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_start_deadline_table(db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
@@ -71,7 +72,7 @@ async def read_mid_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_mid_deadline_table(db)
         else:
             return UnAuthorised('Not qualified') 
@@ -96,7 +97,7 @@ async def read_end_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_end_deadline_table(db)
         else:
             return UnAuthorised('Not qualified') 
@@ -273,6 +274,7 @@ async def approve_form(appraisal_form_id:int, type_form:str, db:Session):
     res = db.execute(""" SELECT public.approve_form_details(:appraisal_form_id, :type_form) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form}) # APPROVE FROM DB FUNCTION
     res = res.fetchall()
     db.commit()
+    await email.main.annual_plan_approved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
     return res
 
 async def approve_form_details_auth(appraisal_form_id:int, type_form:str, token:str, db:Session):

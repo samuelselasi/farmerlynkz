@@ -121,7 +121,7 @@ async def read_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_deadline_table(db)
         else:
             return UnAuthorised('Not qualified') 
@@ -146,7 +146,7 @@ async def read_start_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token) 
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_start_deadline_table(db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
@@ -171,7 +171,7 @@ async def read_mid_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_mid_deadline_table(db)
         else:
             return UnAuthorised('Not qualified') 
@@ -196,7 +196,7 @@ async def read_end_deadline_table_auth(token:str, db:Session):
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        if data==1:
+        if token_data:
             return await read_end_deadline_table(db)
         else:
             return UnAuthorised('Not qualified') 
