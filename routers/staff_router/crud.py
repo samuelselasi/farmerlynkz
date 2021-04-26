@@ -221,7 +221,7 @@ async def deactivate_staff_auth(staff_id:int, token:str, db:Session):
             raise UnAuthorised('token blacklisted')
         token_data = utils.decode_token(data=token) 
         if token_data:
-            return await read_start_deadline_table(staff_id, db)
+            return await deactivate_staff(staff_id, db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
     except UnAuthorised:
@@ -231,6 +231,29 @@ async def deactivate_staff_auth(staff_id:int, token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
+
+# REACTIVATE STAFF
+async def reactivate_staff(staff_id:int, db:Session):
+    res = db.execute(""" UPDATE public.staff  SET staff_id=:staff_id, staff_status=1 WHERE staff_id=:staff_id """, {'staff_id': staff_id}) #CHANGE STAFF STATUS FROM 1 TO 0 USING ID
+    res = res.fetchall()
+    db.commit()
+    return res
+
+async def reactivate_staff_auth(staff_id:int, token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        if token_data:
+            return await reactivate_staff(staff_id, db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})       
 
 
 # CREATE STAFF DETAILS

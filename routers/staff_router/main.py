@@ -56,6 +56,10 @@ async def read_end_deadline(token:str=Depends(oauth2_scheme), db:Session=Depends
 async def deactivate_staff(staff_id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.deactivate_staff_auth(staff_id, token, db)
 
+# REACTIVATE STAFF 
+@router.get("/reactivatestaff/{staff_id}/")
+async def reactivate_staff(staff_id:int, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+    return await crud.reactivate_staff_auth(staff_id, token, db)
 
 # CREATE STAFF DETAILS
 @router.post("/")
