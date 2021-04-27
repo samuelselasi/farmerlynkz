@@ -49,25 +49,11 @@ template15 =  """
 
                     <strong><p>Kindly review the form details.</strong></br>
                                
-                                    grade = {grade}</br>
-                                    roles = {roles}</br>
-                                    gender = {gender}</br>
                                     target = {target}</br>
-                                    last name = {lastname}</br>
-                                    staff id = {staff_id}</br>
-                                    first name ={firstname}</br>
-                                    position = {positions}</br>
                                     resources = {resources}</br>
-                                    department = {department}</br>
-                                    middle name = {middlename}</br>
-                                    supervisor = {supervisor}</br>
                                     result areas = {result_areas}</br>
-                                    start status ={start_status}</br>
-                                    progress review ={progress_review}</br>
-                                    supervisor name = {supervisor_name}</br>
-                                    role = {role_description}</br>
-                                    supervisor email = {supervisor_email}</br>
                                     appraisal form id = {appraisal_form_id} </p></br>
+
 
                     You are expected to review and approve the form details
                     <strong>before the start of Mid-Year Review in 4 days time  </strong> <br/>

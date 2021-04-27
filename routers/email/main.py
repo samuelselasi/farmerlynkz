@@ -34,7 +34,7 @@ from static.email_templates.template_14 import template14
 from static.email_templates.template_15 import template15
 from static.email_templates.template_16 import template16
 from static.email_templates.template_17 import template17
-
+from static.email_templates.template_18 import template18
 
 router = APIRouter()
 
@@ -98,7 +98,7 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form Details",
             recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], gender=[item["gender"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], department=[item["department"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -108,7 +108,7 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms",
             recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], gender=[item["gender"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], department=[item["department"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -189,7 +189,7 @@ async def background_send_13(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Five Days Reminder)",
             recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], gender=[item["gender"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], department=[item["department"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -199,7 +199,7 @@ async def background_send_14(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Four Days Reminder)",
             recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], gender=[item["gender"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], department=[item["department"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -209,7 +209,7 @@ async def background_send_15(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Three Days Reminder)",
             recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], gender=[item["gender"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], department=[item["department"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -219,7 +219,7 @@ async def background_send_16(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Two Days Reminder)",
             recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], gender=[item["gender"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], department=[item["department"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -229,7 +229,7 @@ async def background_send_17(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Day Reminder)",
             recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], grade=[item["grade"]], roles=[item["roles"]], gender=[item["gender"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  positions=[item["positions"]], resources=[item["resources"]], department=[item["department"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], start_status=[item["start_status"]], supervisor_name=[item["supervisor_name"]], role_description=[item["role_description"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -238,8 +238,8 @@ async def background_send_18(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms (Alert)",
-            recipients=[item[16]],
-            body=template17.format( email=[item[0]], grade=[item[1]], roles=[item[2]], gender=[item[3]], target=[item[4]], lastname=[item[5]], staff_id=[item[6]], firstname=[item[7]],positions=[item[8]], resources=[item[9]], department=[item[10]], middlename=[item[11]], supervisor=[item[12]], result_areas=[item[13]], start_status=[item[14]], appraisal_form_id=[item[15]], supervisor_email=[item[16]]),
+            recipients=[item[9]],
+            body=template17.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -249,7 +249,7 @@ async def background_send_19(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Form Approved",
             recipients=[item[0]],
-            body=template18.format( email=[item[0]], grade=[item[1]], roles=[item[2]], gender=[item[3]], target=[item[4]], lastname=[item[5]], staff_id=[item[6]], firstname=[item[7]],positions=[item[8]], resources=[item[9]], department=[item[10]], middlename=[item[11]], supervisor=[item[12]], result_areas=[item[13]], start_status=[item[14]], appraisal_form_id=[item[15]], supervisor_email=[item[16]]),
+            body=template18.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -335,13 +335,13 @@ async def last_day_reminder():
 
 # @router.post("/approveannualplan/")
 async def approve_annual_plan(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "create_annual_plan" FUNCTION IN phase_1 Router, crud.py 
-    res = db.execute(""" SELECT email, grade, roles, gender, target, lastname, staff_id, firstname, positions, resources, department, middlename, supervisor, result_areas, start_status, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
+    res = db.execute(""" SELECT email, target, lastname, staff_id, firstname, resources, middlename, result_areas, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
     res = res.fetchall()
     return await background_send_18(res)
 
 # @router.post("/annualplanapproved/")
 async def annual_plan_approved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
-    res = db.execute(""" SELECT email, grade, roles, gender, target, lastname, staff_id, firstname, positions, resources, department, middlename, supervisor, result_areas, start_status, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
+    res = db.execute(""" SELECT email, target, lastname, staff_id, firstname, resources, middlename, result_areas, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
     res = res.fetchall()
     return await background_send_19(res)
 

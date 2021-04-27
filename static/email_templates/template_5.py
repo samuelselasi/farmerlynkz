@@ -45,24 +45,10 @@ template5 =  """
                         reference in completing the mid-year and end of year review forms.</p>
 
                         <strong><p>View your form details to keep track of your progress.</strong></br>
-                                    grade = {grade}</br>
-                                    roles = {roles}</br>
-                                    gender = {gender}</br>
+                        
                                     target = {target}</br>
-                                    last name = {lastname}</br>
-                                    staff id = {staff_id}</br>
-                                    first name ={firstname}</br>
-                                    position = {positions}</br>
                                     resources = {resources}</br>
-                                    department = {department}</br>
-                                    middle name = {middlename}</br>
-                                    supervisor = {supervisor}</br>
                                     result areas = {result_areas}</br>
-                                    start status ={start_status}</br>
-                                    progress review ={progress_review}</br>
-                                    supervisor name = {supervisor_name}</br>
-                                    role = {role_description}</br>
-                                    supervisor email = {supervisor_email}</br>
                                     appraisal form id = {appraisal_form_id} </p></br>
 
                         The forms will be avilable untill the start of the
