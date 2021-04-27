@@ -18,57 +18,57 @@ async def read_appraiser_appraisees(user_id:int, token:str=Depends(oauth2_scheme
 
 # GET APPROVED
 @router.get("/approved/start/")
-async def read_approved_forms(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+async def read_approved_forms( user_id:int, deadline='Start', token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_approved_forms_auth( deadline, user_id, token, db)
 
 @router.get("/approved/mid/")
-async def read_approved_forms(deadline='Mid', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def read_approved_forms( user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_approved_forms_auth( deadline, user_id, token, db)
 
 @router.get("/approved/end/")
-async def read_approved_forms(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def read_approved_forms(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_approved_forms_auth( deadline, user_id, token, db)
 
 
 # GET COMPLETED
 @router.get("/completedlist/start/")
-async def read_completed_list(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+async def read_completed_list(user_id:int, deadline='Start', token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_completed_list_auth( deadline, user_id, token, db)
 
 @router.get("/completedlist/mid/")
-async def read_completed_list(deadline='Mid', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def read_completed_list(user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_completed_list_auth( deadline, user_id, token, db)
 
 @router.get("/completedlist/end/")
-async def read_completed_list(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def read_completed_list(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_completed_list( deadline, user_id, token, db)
 
 
 # GET WAITING APPROVAL
 @router.get("/waitingapproval/start/")
-async def waiting_approval_list(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+async def waiting_approval_list(user_id:int, deadline='Start', token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
 
 @router.get("/waitingapproval/mid/")
-async def waiting_approval_list(deadline='Mid', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def waiting_approval_list(user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
 
 @router.get("/waitingapproval/end/")
-async def waiting_approval_list(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def waiting_approval_list(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
 
 
 # GET INCOMPLETED
 @router.get("/incompletedlist/start/")
-async def read_incompleted_list(deadline='Start', user_id=1, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+async def read_incompleted_list(user_id:int, deadline='Start', token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_incomplete_list_auth( deadline, user_id, token, db) 
 
 @router.get("/incompletedlist/mid/")
-async def read_incompleted_list(deadline='Mid', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def read_incompleted_list(user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_incomplete_list_auth( deadline, user_id, token, db)  
 
 @router.get("/incompletedlist/end/")
-async def read_incompleted_list(deadline='End', user_id=1, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+async def read_incompleted_list(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
     return await crud.read_incomplete_list_auth( deadline, user_id, token, db)  
 
 

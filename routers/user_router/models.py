@@ -15,7 +15,7 @@ class User(Base):
     status = Column(Boolean, default=True)
     user_info=relationship('UserInfo', backref='user',uselist=False, cascade=("all, delete"))
     user_type_id = Column(Integer, ForeignKey("user_type.id"), nullable=True )
-    
+    department_type_id = Column(Integer, ForeignKey("department_type.id"), nullable=True )
 
     @staticmethod
     def generate_hash(password):
@@ -70,3 +70,18 @@ def insert_initial_values(*args, **kwargs):
     db = SessionLocal()
     db.add_all([ UserType(title='System Admin'), UserType(title='Appraiser'), UserType(title='HR Manager') ])
     db.commit()
+
+class DepartmentType(Base):
+    __tablename__ = "department_type"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    title = Column(String, unique=True, index=True)
+
+    users = relationship('User', backref="department_type")
+
+
+@event.listens_for(DepartmentType.__table__, 'after_create')
+def insert_initial_values(*args, **kwargs):
+    db = SessionLocal()
+    db.add_all([ DepartmentType(title='System Admin'), DepartmentType(title='Research'), DepartmentType(title='Consultancy'), DepartmentType(title='Finance'), DepartmentType(title='Corporate'), DepartmentType(title='Academics') ])
+    db.commit()    

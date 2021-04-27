@@ -11,6 +11,7 @@ class UserCreate(UserBase):
     last_name: str
     # phone: Optional[str]
     user_type_id: int
+    department_type_id: int
     status: Optional[bool]
 class UserUpdate(BaseModel):
     first_name: Optional[str]

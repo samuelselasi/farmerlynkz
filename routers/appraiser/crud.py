@@ -225,7 +225,7 @@ async def read_incomplete_list_auth(deadline:str, user_id:int, token:str, db:Ses
 
 # GET SUPERVISORS
 async def read_supervisors(db: Session):
-    res = db.execute(""" SELECT staff_id, fname, sname, oname FROM public.staff where roles=2; """) # GET FROM STAFF TABLE
+    res = db.execute(""" SELECT user_id, first_name, middle_name, last_name FROM public.user_info; """) # GET FROM USERS TABLE
     res = res.fetchall()
     return res
 
