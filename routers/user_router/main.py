@@ -43,10 +43,13 @@ async def read_hash_table(db:Session=Depends(get_db)):
 
 
 # CREATE USER DETAILS
-@router.post("/", description="create user", response_model=schemas.User)
-async def create_user(payload:schemas.UserCreate, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.create_user_auth(payload, token, db)
+# @router.post("/", description="create user", response_model=schemas.User)
+# async def create_user(payload:schemas.UserCreate, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+#     return await crud.create_user_auth(payload, token, db)
 
+@router.post("/", description="create user", response_model=schemas.User)
+async def create_user(payload:schemas.UserCreate, db:Session=Depends(get_db)):
+    return await crud.create_user(payload, db)
 
 # VERIFY PASSWORD
 @router.post("/verify/password", description="verify user password")

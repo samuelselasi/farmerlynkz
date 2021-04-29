@@ -155,18 +155,18 @@ async def read_completed_list_auth(deadline:str, user_id:int, token:str, db:Sess
 
 
 # GET APROVED
-async def read_approved_forms(deadline:str, user_id:int, db:Session):
-    res = db.execute("""SELECT public.get_list_of_approved_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
+async def read_approved_forms(supervisor:int, db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where supervisor=:supervisor and start_status=1""",{'supervisor':supervisor}) # GET FROM DB FUNCTION
     res = res.fetchall()
     return res 
 
-async def read_approved_forms_auth(deadline:str, user_id:int, token:str, db:Session):
+async def read_approved_forms_auth(supervisor:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
         token_data = utils.decode_token(data=token) 
         if token_data:
-            return await read_approved_forms(deadline, user_id, db)
+            return await read_approved_forms(supervisor, db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
     except UnAuthorised:
@@ -178,18 +178,18 @@ async def read_approved_forms_auth(deadline:str, user_id:int, token:str, db:Sess
 
 
 # GET WAITING APPROVAL
-async def waiting_approval_list(deadline:str, user_id:int, db:Session):
-    res = db.execute("""SELECT public.get_list_of_waiting_approval(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
+async def waiting_approval_list(supervisor:int, db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where supervisor=:supervisor and start_status=0 and target is not null and result_areas is not null and resources is not null""",{'supervisor':supervisor}) # GET FROM DB FUNCTION
     res = res.fetchall()
     return res 
 
-async def waiting_approval_list_auth(deadline:str, user_id:int, token:str, db:Session):
+async def waiting_approval_list_auth(supervisor:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
         token_data = utils.decode_token(data=token) 
         if token_data:
-            return await read_approved_forms(deadline, user_id, db)
+            return await waiting_approval_list(supervisor, db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
     except UnAuthorised:
@@ -201,18 +201,18 @@ async def waiting_approval_list_auth(deadline:str, user_id:int, token:str, db:Se
 
 
 # GET INCOMPLETED
-async def read_incomplete_list(deadline:str, user_id:int, db:Session):
-    res = db.execute("""SELECT public.get_list_of_incompleted_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
+async def read_incomplete_list(supervisor:int, db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where supervisor=:supervisor and start_status=0 and target is null or result_areas is null or resources is null""",{'supervisor':supervisor}) # GET FROM DB FUNCTION
     res = res.fetchall()
     return res    
 
-async def read_incomplete_list_auth(deadline:str, user_id:int, token:str, db:Session):
+async def read_incomplete_list_auth(supervisor:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
         token_data = utils.decode_token(data=token) 
         if token_data:
-            return await read_incomplete_list(deadline, user_id, db)
+            return await read_incomplete_list(supervisor, db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
     except UnAuthorised:
