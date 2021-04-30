@@ -132,18 +132,18 @@ async def read_appraiser_appraisees_auth(user_id:int, token:str, db: Session):
 
 
 # GET COMPLETED
-async def read_completed_list(deadline:str, user_id:int, db:Session):
-    res = db.execute("""SELECT public.get_list_of_approved_form(:deadline, :user_id)""",{'deadline':deadline, 'user_id':user_id}) # GET FROM DB FUNCTION
+async def read_completed_list(supervisor:int, db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where supervisor=:supervisor and start_status=1""",{'supervisor':supervisor})  # GET FROM DB FUNCTION
     res = res.fetchall()
     return res 
 
-async def read_completed_list_auth(deadline:str, user_id:int, token:str, db:Session):
+async def read_completed_list_auth(supervisor:int, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
         token_data = utils.decode_token(data=token) 
         if token_data:
-            return await read_completed_list(deadline, user_id, db)
+            return await read_completed_list(supervisor, db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
     except UnAuthorised:

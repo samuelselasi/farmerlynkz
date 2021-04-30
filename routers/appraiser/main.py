@@ -32,8 +32,8 @@ async def read_approved_forms(user_id:int, deadline='End', token:str=Depends(oau
 
 # GET COMPLETED
 @router.get("/completedlist/start/")
-async def read_completed_list(user_id:int, deadline='Start', token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
-    return await crud.read_completed_list_auth( deadline, user_id, token, db)
+async def read_completed_list(supervisor:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+    return await crud.read_completed_list_auth(supervisor, token, db)
 
 @router.get("/completedlist/mid/")
 async def read_completed_list(user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
