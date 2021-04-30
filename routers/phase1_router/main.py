@@ -31,8 +31,8 @@ async def verify_hash_form(hash:str, token:str=Depends(oauth2_scheme), db:Sessio
 
 # READ HASH TABLE
 @router.get("/hashdetails/")
-async def read_hash_form(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.read_hash_form_auth(token, db)
+async def read_hash_form(db:Session=Depends(get_db)):
+    return await crud.read_hash_form(db)
 
 # READ DEADLINES
 @router.get("/deadline/")
