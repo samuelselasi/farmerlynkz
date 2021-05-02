@@ -202,7 +202,7 @@ async def waiting_approval_list_auth(supervisor:int, token:str, db:Session):
 
 # GET INCOMPLETED
 async def read_incomplete_list(supervisor:int, db:Session):
-    res = db.execute("""SELECT * FROM view_users_form_details where supervisor=:supervisor and start_status=0 and target is null or result_areas is null or resources is null""",{'supervisor':supervisor}) # GET FROM DB FUNCTION
+    res = db.execute("""SELECT * FROM view_users_form_details where supervisor=:supervisor and start_status=0 and target is null and result_areas is null and resources is null""",{'supervisor':supervisor}) # GET FROM DB FUNCTION
     res = res.fetchall()
     return res    
 
