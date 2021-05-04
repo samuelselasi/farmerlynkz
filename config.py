@@ -18,6 +18,7 @@ class Settings(BaseSettings): # STORE VARIABLES IN ENV TO BE EXPORTED TO MAIN.PY
     API_BASE_URL:str = os.environ.get('API_BASE_URL') or 'http://0.0.0.0:8000'
     COMPANY_URL:str = os.environ.get('COMPANY_URL') or 'https://www.aiti-kace.com.gh'
     START_URL: str = os.environ.get('START_URL') or 'http://localhost:4200/forms/start'
+    MID_URL: str = os.environ.get('MID_URL') or 'http://localhost:4200/forms/mid-year'
     PASSWORD_URL: str = os.environ.get('PASSWORD_URL') or 'http://localhost:4200/forms/start'
 
     class Config:
