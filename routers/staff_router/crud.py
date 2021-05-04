@@ -234,7 +234,8 @@ async def deactivate_staff_auth(staff_id:int, token:str, db:Session):
 
 # REACTIVATE STAFF
 async def reactivate_staff(staff_id:int, db:Session):
-    res = db.execute(""" UPDATE public.staff SET staff_status=1 WHERE staff_id=:staff_id """, {'staff_id': staff_id}) #CHANGE STAFF STATUS FROM 1 TO 0 USING ID
+    res = db.execute(""" SELECT public.reactivate_staff (:staff_id) """, {'staff_id': staff_id}) #CHANGE STAFF STATUS FROM 1 TO 0 USING ID
+    res = res.fetchall()
     db.commit()
     return res
 

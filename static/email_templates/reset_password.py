@@ -29,7 +29,7 @@ reset_password_template = """
         </tr>
         <tr>
             <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 20px 0 30px 0;">
-            <p style="margin: 0;"><a href="'http://localhost:4200/login/changepassword'/{code}" target="_blank">click this link to fill form</a> </p>
+            <p style="margin: 0;"><a href="http://localhost:4200/login/changepassword/{code}" target="_blank">click this link to fill form</a> </p>
             
             </td>
         </tr>
