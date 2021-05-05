@@ -154,6 +154,30 @@ async def read_completed_list_auth(supervisor:int, token:str, db:Session):
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 
+async def read_completed_list_admin(db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where start_status=1""")  # GET FROM DB FUNCTION
+    res = res.fetchall()
+    return res 
+
+async def read_completed_list_admin_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        if data==1:
+            return await read_completed_list_admin(db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
+
 # GET APROVED
 async def read_approved_forms(supervisor:int, db:Session):
     res = db.execute("""SELECT * FROM view_users_form_details where supervisor=:supervisor and start_status=1""",{'supervisor':supervisor}) # GET FROM DB FUNCTION
@@ -167,6 +191,29 @@ async def read_approved_forms_auth(supervisor:int, token:str, db:Session):
         token_data = utils.decode_token(data=token) 
         if token_data:
             return await read_approved_forms(supervisor, db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
+async def read_approved_forms_admin(db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where start_status=1""") # GET FROM DB FUNCTION
+    res = res.fetchall()
+    return res 
+
+async def read_approved_forms_admin_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        if data==1:
+            return await read_approved_forms_admin(db)
         else:
             raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
     except UnAuthorised:
@@ -199,6 +246,29 @@ async def waiting_approval_list_auth(supervisor:int, token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"}) 
 
+async def waiting_approval_list_admin(db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where start_status=0 and target is not null and result_areas is not null and resources is not null""") # GET FROM DB FUNCTION
+    res = res.fetchall()
+    return res 
+
+async def waiting_approval_list_admin_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        if data==1:
+            return await waiting_approval_list_admin(db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
+
 
 # GET INCOMPLETED
 async def read_incomplete_list(supervisor:int, db:Session):
@@ -222,6 +292,28 @@ async def read_incomplete_list_auth(supervisor:int, token:str, db:Session):
     except jwt.exceptions.DecodeError:
         raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})        
 
+async def read_incomplete_list_admin(db:Session):
+    res = db.execute("""SELECT * FROM view_users_form_details where start_status=0 and target is null and result_areas is null and resources is null""") # GET FROM DB FUNCTION
+    res = res.fetchall()
+    return res    
+
+async def read_incomplete_list_admin_auth(token:str, db:Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token) 
+        data = await read_user_by_id(token_data['id'], db)
+        data = data.user_type_id
+        if data==1:
+            return await read_incomplete_list_admin(db)
+        else:
+            raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"}) 
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException( status_code=401, detail="access token expired", headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException( status_code=500, detail="decode error not enough arguments", headers={"WWW-Authenticate": "Bearer"})
 
 # GET SUPERVISORS
 async def read_supervisors(db: Session):
@@ -308,7 +400,6 @@ async def create_deadline_auth(deadline_type:str, start_date:str, ending:str, to
         token_data = utils.decode_token(data=token)
         data = await read_user_by_id(token_data['id'], db)
         data = data.user_type_id
-        print(data)
         if data==1:
             return await create_deadline(deadline_type, start_date, ending, db)
         else:

@@ -35,6 +35,7 @@ from static.email_templates.template_15 import template15
 from static.email_templates.template_16 import template16
 from static.email_templates.template_17 import template17
 from static.email_templates.template_18 import template18
+from static.email_templates.template_19 import template19
 
 router = APIRouter()
 
@@ -109,6 +110,16 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
             subject="Approve Appraisee Forms",
             recipients=[item["email"]],
             body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
+async def background_send_33(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Start Annual Plan",
+            recipients=[item[0]],
+            body=template19.format( target=[item[1]], resources=[item[2]],result_areas=[item[3]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -428,6 +439,11 @@ async def approve_completed_annual_plan(background_tasks:BackgroundTasks, db:Ses
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
 
+@router.post("/startannualplan/")
+async def start_annual_plan_(background_tasks:BackgroundTasks, supervisor:int, db:Session=Depends(get_db)):
+    res = db.execute("""select email, target, resources, result_areas from public.view_users_form_details where supervisor=:supervisor and start_status=0 and target is null and result_areas is null and resources is null""", {'supervisor':supervisor}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_33(res, background_tasks)
 
 # SCHEDULED REMINDERS FOR APPRAISEE
 
