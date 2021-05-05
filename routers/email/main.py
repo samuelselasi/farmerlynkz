@@ -439,7 +439,7 @@ async def approve_completed_annual_plan(background_tasks:BackgroundTasks, db:Ses
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
 
-@router.post("/startannualplan/")
+@router.post("/startannualplan/{supervisor}/")
 async def start_annual_plan_(background_tasks:BackgroundTasks, supervisor:int, db:Session=Depends(get_db)):
     res = db.execute("""select email, target, resources, result_areas from public.view_users_form_details where supervisor=:supervisor and start_status=0 and target is null and result_areas is null and resources is null""", {'supervisor':supervisor}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
