@@ -176,6 +176,13 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
     else:
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 
+async def save_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
+    res = db.execute("""INSERT INTO public.save_annual_plan(
+	                    result_areas, target, resources, appraisal_form_id)
+	                    values(:result_areas, :target, :resources, :appraisal_form_id) ; """,
+                        {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id}) # CREATE INTO TABLE
+    db.commit()
+
 # CREATE ANNUAL APPRAISAL
 async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):
     res = db.execute("""insert into public.annual_appraisal(comment, field, appraisal_form_id)
