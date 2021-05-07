@@ -124,6 +124,16 @@ async def background_send_33(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+async def background_send_34(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
+        message = MessageSchema(
+            subject="Start Appraisal Form",
+            recipients=[item[0]], # INDEX OF EMAIL FROM DB QUERY
+            body=template1.format(url=settings.START_URL,hash=item[1]), # VARIABLES IN TEMPLATES STORING URL AND HASH
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
 # BACKGROUND TASKS(WITH SCHEDULER)
 async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list: #CREATE VARIABLES FOR EMAIL TEMPLATES
@@ -414,6 +424,12 @@ async def start_annual_plan_(background_tasks:BackgroundTasks, db:Session=Depend
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
     return await background_send(res, background_tasks)
+
+@router.post("/startreviewemailstaff/")
+async def start_annual_plan_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+    res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_34(res, background_tasks)
 
 @router.post("/midyearreviewemail/")
 async def start_midyear_review_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
