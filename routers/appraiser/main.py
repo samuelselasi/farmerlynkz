@@ -18,8 +18,27 @@ async def read_appraiser_appraisees(user_id:int, token:str=Depends(oauth2_scheme
 
 # GET APPROVED
 @router.get("/approved/start/")
-async def read_approved_forms( supervisor:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
-    return await crud.read_approved_forms_auth(supervisor, token, db)
+async def read_approved_forms( user_id:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+    return await crud.read_approved_forms_auth(user_id, token, db)
+
+@router.get("/approved/start/admin/")
+async def read_approved_forms_admin( token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+    return await crud.read_approved_forms_admin_auth(token, db)
+
+@router.get("/approved/mid/")
+async def read_approved_forms( user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+    return await crud.read_approved_forms_auth( deadline, user_id, token, db)
+
+@router.get("/approved/end/")
+async def read_approved_forms(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
+    return await crud.read_approved_forms_auth( deadline, user_id, token, db)
+
+
+
+# GET DISAPPROVED
+@router.get("/disapproved/start/")
+async def read_disapproved_forms( user_id:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+    return await crud.read_disapproved_forms_auth(user_id, token, db)
 
 @router.get("/approved/start/admin/")
 async def read_approved_forms_admin( token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
@@ -36,8 +55,8 @@ async def read_approved_forms(user_id:int, deadline='End', token:str=Depends(oau
 
 # GET COMPLETED
 @router.get("/completedlist/start/")
-async def read_completed_list(supervisor:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
-    return await crud.read_completed_list_auth(supervisor, token, db)
+async def read_completed_list(user_id:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+    return await crud.read_completed_list_auth(user_id, token, db)
 
 @router.get("/completedlist/start/admin/")
 async def read_completed_list_admin(token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
@@ -54,8 +73,8 @@ async def read_completed_list(user_id:int, deadline='End', token:str=Depends(oau
 
 # GET WAITING APPROVAL
 @router.get("/waitingapproval/start/")
-async def waiting_approval_list(supervisor:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
-    return await crud.waiting_approval_list_auth(supervisor, token, db)
+async def waiting_approval_list(user_id:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+    return await crud.waiting_approval_list_auth(user_id, token, db)
 
 @router.get("/waitingapproval/start/admin")
 async def waiting_approval_list_admin(token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
@@ -72,8 +91,8 @@ async def waiting_approval_list(user_id:int, deadline='End', token:str=Depends(o
 
 # GET INCOMPLETED
 @router.get("/incompletedlist/start/")
-async def read_incompleted_list(supervisor:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
-    return await crud.read_incomplete_list_auth(supervisor, token, db)
+async def read_incompleted_list(user_id:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
+    return await crud.read_incomplete_list_auth(user_id, token, db)
 
 @router.get("/incompletedlist/start/admin/")
 async def read_incompleted_list_admin(token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):

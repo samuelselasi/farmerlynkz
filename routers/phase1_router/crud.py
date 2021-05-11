@@ -160,28 +160,25 @@ async def appraisal_form(department, grade, positions, date, staff_id, db:Sessio
     return JSONResponse(status_code=200, content={"message": "appraisal form has been created"})
 
 # CREATE ANNUAL PLAN
-async def create_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
+async def create_annual_plan(result_areas, target, resources, appraisal_form_id, submit, db:Session):
     query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Start'; """) # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
     if query >= date.today(): # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN 
         res = db.execute("""INSERT INTO public.annual_plan(
-	                    result_areas, target, resources, appraisal_form_id)
-	                    values(:result_areas, :target, :resources, :appraisal_form_id) on conflict (appraisal_form_id) do 
-	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources; """,
-                        {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id}) # CREATE INTO TABLE
+	                    result_areas, target, resources, appraisal_form_id, submit)
+	                    values(:result_areas, :target, :resources, :appraisal_form_id, :submit) on conflict (appraisal_form_id) do 
+	                    update set result_areas = EXCLUDED.result_areas, target = EXCLUDED.target, resources = EXCLUDED.resources, submit = EXCLUDED.submit; """,
+                        {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id, 'submit':submit}) # CREATE INTO TABLE
         db.commit()
-        await email.main.approve_annual_plan(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+        if submit==1:
+            await email.main.approve_annual_plan(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+        else:
+            pass    
         
         return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
     else:
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 
-async def save_annual_plan(result_areas, target, resources, appraisal_form_id, db:Session):
-    res = db.execute("""INSERT INTO public.save_annual_plan(
-	                    result_areas, target, resources, appraisal_form_id)
-	                    values(:result_areas, :target, :resources, :appraisal_form_id) ; """,
-                        {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id}) # CREATE INTO TABLE
-    db.commit()
 
 # CREATE ANNUAL APPRAISAL
 async def create_annual_appraisal(comment, field, appraisal_form_id, db:Session):

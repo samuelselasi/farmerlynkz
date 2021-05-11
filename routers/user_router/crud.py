@@ -96,10 +96,8 @@ async def create_user(payload:schemas.UserCreate, db:Session=Depends(get_db)):
     try:  
         if not db.query(models.UserType).filter(models.UserType.id==payload.user_type_id).first():
             raise NotFoundError('user type not found')
-        new_user = models.User(**payload.dict(exclude={'first_name','middle_name','last_name', 'password'}), password=models.User.generate_hash(payload.password))
+        new_user = models.User(**payload.dict(exclude={'password'}), password=models.User.generate_hash(payload.password))
         db.add(new_user)
-        user_info = models.UserInfo(**payload.dict(exclude={'email','password','user_type_id','department_type_id','status'}),user=new_user)
-        db.add(user_info) 
         db.commit()
         db.refresh(new_user) 
         return new_user

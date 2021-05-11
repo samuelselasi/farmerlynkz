@@ -8,6 +8,8 @@ class FormBase(BaseModel):
     target: str 
     resources: str 
     appraisal_form_id: int
+    submit:int
+    
 class UpdateAnnualPlan(BaseModel):
     result_areas: str
     target: str 

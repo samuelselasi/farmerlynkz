@@ -10,10 +10,10 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    staff_id = Column(Integer, nullable=True)
     email = Column(String, unique=True, index=True)
     password = Column(String, nullable=True)
     status = Column(Boolean, default=True)
-    user_info=relationship('UserInfo', backref='user',uselist=False, cascade=("all, delete"))
     user_type_id = Column(Integer, ForeignKey("user_type.id"), nullable=True )
     department_type_id = Column(Integer, ForeignKey("department_type.id"), nullable=True )
 
@@ -24,21 +24,7 @@ class User(Base):
     @staticmethod
     def verify_hash(password, hash):
         return sha256.verify(password, hash)
-class UserInfo(Base):
-    __tablename__ = "user_info"
 
-    id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
-    user_id = Column(Integer, ForeignKey("users.id") ,nullable=False, unique=True)
-
-    first_name = Column(String, nullable=True)
-    middle_name = Column(String, nullable=True)
-    last_name = Column(String, nullable=True)
-    # phone = Column(String, nullable=True)
-    # image_url = Column(String, nullable=True)
-    # is_verified = Column(Boolean,nullable=False)
-
-    date_created = Column(DateTime,  default=datetime.datetime.utcnow)
-    date_modified = Column(DateTime,  default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 class ResetPasswordToken(Base):
     __tablename__ = "reset_password_token"
 
@@ -68,7 +54,7 @@ class UserType(Base):
 @event.listens_for(UserType.__table__, 'after_create')
 def insert_initial_values(*args, **kwargs):
     db = SessionLocal()
-    db.add_all([ UserType(title='System Admin'), UserType(title='Appraiser'), UserType(title='HR Manager') ])
+    db.add_all([ UserType(title='System Admin'), UserType(title='Appraiser'), UserType(title='Appraisee') ])
     db.commit()
 
 class DepartmentType(Base):
