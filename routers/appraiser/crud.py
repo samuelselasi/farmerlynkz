@@ -409,20 +409,20 @@ async def approve_form_details_auth(appraisal_form_id:int, type_form:str, token:
 
 
 # DISAPROVE FORM DETAILS
-async def disapprove_form(appraisal_form_id:int, supervisor_comment:str, type_form:str,  db:Session):
-    res = db.execute(""" SELECT public.disapprove_form_details(:appraisal_form_id, :type_form, :supervisor_comment) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form, 'supervisor_comment':supervisor_comment}) # APPROVE FROM DB FUNCTION
+async def disapprove_form(appraisal_form_id:int, type_form:str, comment:str,  db:Session):
+    res = db.execute(""" SELECT public.disapprove_form_details(:appraisal_form_id, :type_form, :comment) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form, 'comment':comment}) # APPROVE FROM DB FUNCTION
     res = res.fetchall()
     db.commit()
     await email.main.annual_plan_disapproved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
     return res
 
-async def disapprove_form_details_auth(appraisal_form_id:int, supervisor_comment:str, type_form:str, token:str, db:Session):
+async def disapprove_form_details_auth(appraisal_form_id:int, type_form:str,  comment:str, token:str, db:Session):
     try:
         if await is_token_blacklisted(token, db):
             raise UnAuthorised('token blacklisted')
         token_data = utils.decode_token(data=token)
         if token_data:
-            return await disapprove_form(appraisal_form_id, supervisor_comment, type_form, db)
+            return await disapprove_form(appraisal_form_id, type_form, comment, db)
     except UnAuthorised:
         raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
     except jwt.exceptions.ExpiredSignatureError:

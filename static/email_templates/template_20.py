@@ -48,8 +48,7 @@ template20 =  """
                                     target = {target}</br>
                                     resources = {resources}</br>
                                     result areas = {result_areas}</br>
-                                    appraisal form id = {appraisal_form_id} </br>
-                                    supervisor comment = {supervisor_comment} </p></br>
+                                    appraisal form id = {appraisal_form_id} </p></br>
 
 
                         The forms will be avilable untill the start of the
