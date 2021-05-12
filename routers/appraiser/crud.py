@@ -341,7 +341,7 @@ async def read_incomplete_list_admin_auth(token:str, db:Session):
 
 # GET SUPERVISORS
 async def read_supervisors(db: Session):
-    res = db.execute(""" SELECT staff_id, fname, oname, sname FROM public.staff where roles=2 """) # GET FROM USERS TABLE
+    res = db.execute(""" SELECT staff_id, fname, oname, sname FROM public.staff where roles=2 or roles=1 """) # GET FROM USERS TABLE
     res = res.fetchall()
     return res
 
@@ -492,7 +492,7 @@ async def update_deadline_auth(deadline:schemas.update_deadline, token:str, db:S
 async def delete_deadline(deadline_id:int, db:Session):
     res = db.execute("""DELETE FROM public.deadline
 	WHERE deadline_id=:deadline_id;""",
-    {'deadline_id':deadline.deadline_id})
+    {'deadline_id':deadline_id})
     db.commit() 
     return JSONResponse(status_code=200, content={"message": "deadline has been deleted"}) #DELETE FROM TABLE
 

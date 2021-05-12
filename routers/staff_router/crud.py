@@ -17,7 +17,8 @@ import datetime
 
 # GET STAFF DETAILS
 async def read_staff(db:Session):
-    res = db.execute(""" SELECT public.get_staff(); """) # READ STAFF USING DB FUNCTION
+    res = db.execute(""" SELECT staff_id, fname, sname, oname, email, supervisor, gender, department, positions, grade, appointment, roles, staff_status
+	FROM public.staff; """) # READ STAFF USING DB FUNCTION
     res = res.fetchall()
     return res
 
@@ -466,7 +467,7 @@ async def delete_roles_auth(role_id:int, token:str, db:Session):
 async def delete_deadline(deadline_id: int, db: Session):
     res = db.execute("""DELETE FROM public.deadline
 	WHERE deadline_id=:deadline_id;""",
-    {'deadline_id':deadline.deadline_id})
+    {'deadline_id':deadline_id})
     db.commit() 
     return JSONResponse(status_code=200, content={"message": "deadline has been deleted"})
 

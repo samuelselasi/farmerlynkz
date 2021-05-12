@@ -26,8 +26,8 @@ async def read_annual_appraisal(token:str=Depends(oauth2_scheme), db:Session=Dep
 
 # GET HASH DETAILS
 @router.get("/formdetails/{hash}/")
-async def verify_hash_form(hash:str, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.verify_hash_form_auth(hash, token, db)
+async def verify_hash_form(hash:str, db:Session=Depends(get_db)):
+    return await crud.verify_hash_form(hash, db)
 
 # READ HASH TABLE
 @router.get("/hashdetails/")
