@@ -422,7 +422,7 @@ async def background_send_33(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Form Disaproved",
             recipients=[item[0]],
-            body=template20.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
+            body=template20.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]], comment=[item[10]]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -576,7 +576,7 @@ async def annual_plan_approved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM
 
 # @router.post("/annualplandisapproved/")
 async def annual_plan_disapproved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
-    res = db.execute(""" SELECT email, target, lastname, staff_id, firstname, resources, middlename, result_areas, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
+    res = db.execute(""" SELECT email, target, lastname, staff_id, firstname, resources, middlename, result_areas, appraisal_form_id, supervisor_email, comment FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
     res = res.fetchall()
     return await background_send_33(res)
 

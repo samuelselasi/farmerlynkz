@@ -78,3 +78,9 @@ class read_deadline_table(BaseModel):
     start_date: DeadlineTable
     ending: DeadlineTable
     deadline_id: DeadlineTable
+
+class DisaproveForm(BaseModel):
+    comment:str
+
+class disaprove_form(DisaproveForm):
+    pass     

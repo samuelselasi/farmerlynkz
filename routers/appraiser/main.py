@@ -144,8 +144,8 @@ async def approve_form_details(appraisal_form_id:int, type_form='Start', db:Sess
     return await crud.approve_form(appraisal_form_id, type_form, db)
 
 @router.post("/disapproveform/{appraisal_form_id}/")
-async def disapprove_form_details(appraisal_form_id:int, comment:str, type_form='Start', db:Session=Depends(get_db)):
-    return await crud.disapprove_form(appraisal_form_id, type_form, comment, db)
+async def disapprove_form_details(appraisal_form_id:int, payload:schemas.disaprove_form, type_form='Start', db:Session=Depends(get_db)):
+    return await crud.disapprove_form(appraisal_form_id, type_form, payload.comment, db)
 
 
 @router.get("/approveform/mid/{appraisal_form_id}/")

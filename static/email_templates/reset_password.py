@@ -24,7 +24,7 @@ reset_password_template = """
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
         <tr>
             <td style="color: #153643; font-family: Arial, sans-serif;">
-            <h1 style="font-size: 24px; margin: 0;">{code}</h1>
+            <h1 style="font-size: 24px; margin: 0;">Password Reset</h1>
             </td>
         </tr>
         <tr>
@@ -46,7 +46,7 @@ reset_password_template = """
                     </tr>
                     <tr>
                         <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 25px 0 0 0;">
-                        <p style="margin: 0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.</p>
+                        <p style="margin: 0;">Appraisal Management App password reset. Only supervisors are allowed to log into this app. Please ignore this email if youre not a supervisor or have already set your password. We apologize for any inconveniences caused. </p>
                         </td>
                     </tr>
                     </table>
@@ -61,7 +61,7 @@ reset_password_template = """
                     </tr>
                     <tr>
                         <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 25px 0 0 0;">
-                        <p style="margin: 0;">You have been provided with a temporal code to reset your password. Please note that the code will expire in less than 30 minutes. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.</p>
+                        <p style="margin: 0;">You have been provided with a temporal link to reset your password. Please note that the link will expire in less than 30 minutes. We can assure you that your password is secure in our system and on no account will an unauthorized person access your details.</p>
                         </td>
                     </tr>
                     </table>
