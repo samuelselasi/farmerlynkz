@@ -109,16 +109,16 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms",
-            recipients=[item["email"]],
+            recipients=[item["supervisor_email"]],
             body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
 
-async def background_send_33(user_hash_list, background_tasks) -> JSONResponse:
+async def background_send_35(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Start Annual Plan",
+            subject="Reminder To Start Annual Plan",
             recipients=[item[0]],
             body=template19.format( target=[item[1]], resources=[item[2]],result_areas=[item[3]]),
             subtype="html"
@@ -430,46 +430,63 @@ async def background_send_33(user_hash_list) -> JSONResponse:
 
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
 @router.post("/startreviewemail/")
-async def start_annual_plan_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+async def start_annual_plan(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
     return await background_send(res, background_tasks)
 
+# SEND START LINK TO INDIVIDUAL STAFF
 @router.post("/startreviewemailstaff/")
 async def start_annual_plan_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
     return await background_send_34(res, background_tasks)
 
+# SEND MID-YEAR LINK TO ALL STAFF
 @router.post("/midyearreviewemail/")
 async def start_midyear_review_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await background_send_2(res, background_tasks)
 
+# SEND MID-YEAR LINK TO INDIVIDUAL STAFF
+
+
+# SEND END OF YEAR LINK TO ALL STAFF
 @router.post("/endofyearreviewemail/")
 async def start_end_0f_year_review_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await background_send_3(res, background_tasks)
 
+
+# SEND END OF YEAR LINK TO INDIVIDUAL STAFF
+
+
+# SEND ANNUAL PLAN DETAILS TO APPROVED
 @router.post("/startformdetails/")
 async def send_annual_plan_details_to_approved(background_tasks:BackgroundTasks, db:Session=Depends(get_db)): # SEND FORM DETAILS TO APPROVED STAFF
     res = db.execute("""SELECT public.get_list_of_approved_form('Start', 1)""") # SELECT EMAIL FROM LIST OF APPROVED FUNCTION IN DB
     res = res.first()[0]
     return await background_send_4(res, background_tasks)
 
+
+# SEND REMIDER TO SUPERVISORS TO APPROVE
 @router.post("/approvestartreview/")
 async def approve_completed_annual_plan(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
 
-@router.post("/startannualplan/{supervisor}/")
-async def start_annual_plan_(background_tasks:BackgroundTasks, supervisor:int, db:Session=Depends(get_db)):
+
+# REMIND APPRAISEE TO CHECK EMAIL WITH LINK FOR START OF YEAR REVIEW
+@router.post("/startannualplanreminder/{supervisor}/")
+async def start_annual_plan_reminder(background_tasks:BackgroundTasks, supervisor:int, db:Session=Depends(get_db)):
     res = db.execute("""select email, target, resources, result_areas from public.view_users_form_details where supervisor=:supervisor and start_status=0 and target is null and result_areas is null and resources is null""", {'supervisor':supervisor}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
-    return await background_send_33(res, background_tasks)
+    return await background_send_35(res, background_tasks)
+
+
 
 # SCHEDULED REMINDERS FOR APPRAISEE
 

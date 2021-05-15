@@ -42,7 +42,7 @@ template19 =  """
 
                         <p>Follow the link in the mail that was sent earlier this year to complete the start of year details.</p>
 
-                        <strong><p>View your form details to keep track of your progress.</strong></br>
+                        <strong><p>You are expected to complete the form for your supervisor's approval.</strong></br>
                                     target = {target}</br>
                                     resources = {resources}</br>
                                     result areas = {result_areas} </p></br>
