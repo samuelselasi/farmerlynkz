@@ -14,7 +14,6 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from main import settings
 import asyncio
-import pytz
 
 # IMPORT EMAILTENPLATES
 from static.email_templates.template_1 import template1

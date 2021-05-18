@@ -18,12 +18,17 @@ async def authenticate(payload:schemas.Auth, db:Session):
         user = db.query(models.User).filter(models.User.email==payload.email).first() # CHECK IF EMAIL IS PRESENT IN DB
         if not user:
             raise NotFoundError('user not found')
-        if models.User.verify_hash(payload.password, user.password): # VERIFY PASSWORD
-            access_token = utils.create_token(data = {'email':payload.email,'id':user.id}) # CREATE ACCESS TOKEN IF EMAIL AND PASSWORD ARE PRESENT
-            refresh_token = utils.create_token(data = {'email':payload.email,'id':user.id})
-            return {"access_token": access_token.decode("utf-8"), "refresh_token": refresh_token.decode("utf-8"), "user": user}
+        user_type = db.execute(""" SELECT user_type_id FROM public.users where email=:email """, {'email':payload.email})
+        user_type = user_type.first()[0]
+        if user_type < 3:
+            if models.User.verify_hash(payload.password, user.password): # VERIFY PASSWORD
+                access_token = utils.create_token(data = {'email':payload.email,'id':user.id}) # CREATE ACCESS TOKEN IF EMAIL AND PASSWORD ARE PRESENT
+                refresh_token = utils.create_token(data = {'email':payload.email,'id':user.id})
+                return {"access_token": access_token.decode("utf-8"), "refresh_token": refresh_token.decode("utf-8"), "user": user}
+            else:
+                raise UnAuthorised('invalid password')
         else:
-            raise UnAuthorised('invalid password')
+            raise UnAuthorised('user is not allowed to log in')        
     except UnAuthorised:
         raise HTTPException(status_code=401, detail="{}".format(sys.exc_info()[1]))
     except NotFoundError:
