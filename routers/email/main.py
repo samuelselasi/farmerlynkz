@@ -36,6 +36,7 @@ from static.email_templates.template_17 import template17
 from static.email_templates.template_18 import template18
 from static.email_templates.template_19 import template19
 from static.email_templates.template_20 import template20
+from static.email_templates.template_21 import template21
 
 router = APIRouter()
 
@@ -305,7 +306,15 @@ async def background_send_22(user_hash_list) -> JSONResponse:
             subtype="html"
         )       
         await fm.send_message(message)
-
+async def background_send_18(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Approve Appraisee Forms (Alert)",
+            recipients=[item[9]],
+            body=template17.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
+            subtype="html"
+        )        
+        await fm.send_message(message)
 async def background_send_23(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -426,6 +435,15 @@ async def background_send_33(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
+async def background_send_36(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Approve Mid-Year REview",
+            recipients=[item[9]],
+            body=template21.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
+            subtype="html"
+        )        
+        await fm.send_message(message)
 
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
 @router.post("/startreviewemail/")
@@ -628,10 +646,10 @@ async def last_day_to_approve_reminder():
 
 
 # @router.post("/approveannualplan/")
-async def approve_mid_year_review(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "create_annual_plan" FUNCTION IN phase_1 Router, crud.py 
-    res = db.execute(""" SELECT email, target, lastname, staff_id, firstname, resources, middlename, result_areas, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
+async def approve_mid_year_review(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "create_mid_year_review" FUNCTION IN phase_2 Router, crud.py 
+    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
     res = res.fetchall()
-    return await background_send_31(res)
+    return await background_send_36(res)
 
 # @router.post("/annualplanapproved/")
 async def mid_year_review_approved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 

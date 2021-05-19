@@ -1,12 +1,17 @@
+from ..auth_router.crud import UnAuthorised, is_token_blacklisted, utils, HTTPException,jwt
+from fastapi import Depends, HTTPException, Response, status, Body, Header
 from fastapi import Depends, HTTPException, BackgroundTasks
 from starlette.responses import JSONResponse
+from datetime import datetime, date
 from sqlalchemy.orm import Session
-from . import schemas
+from . import models, schemas
+from .. import email
+
 
 
 # READ MID-YEAR REVIEW
 async def read_mid_year_review(db:Session):
-    res = db.execute("""SELECT midyear_review_id, progress_review, competency, remarks, mid_status, appraisal_form_id FROM public.midyear_review;""")
+    res = db.execute("""SELECT midyear_review_id, progress_review, remarks, mid_status, appraisal_form_id, competency FROM public.midyear_review;""")
     res = res.fetchall()
     return res
 
@@ -63,19 +68,19 @@ async def verify_hash_form(hash_:str, db:Session):
 
 
 # CREATE MID-YEAR REVIEW
-async def create_mid_year_review(progress_review, competency, remarks, appraisal_form_id, db:Session):
+async def create_mid_year_review(progress_review, remarks, appraisal_form_id, competency, db:Session):
     query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Mid'; """) # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
     if query >= date.today(): # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN 
         res = db.execute("""INSERT INTO public.midyear_review(
-	                    progress_review, competency, remarks, appraisal_form_id)
-	                    values(:progress_review, :competency, :remarks, :appraisal_form_id) on conflict (appraisal_form_id) do 
-	                    update set progress_review = EXCLUDED.progress_review, competency = EXCLUDED.competency, remarks = EXCLUDED.remarks; """,
-                        {'progress_review':progress_review, 'competency': competency, 'remarks':remarks, 'appraisal_form_id':appraisal_form_id}) # CREATE INTO TABLE
+	                    progress_review, remarks, appraisal_form_id, competency)
+	                    values(:progress_review, :remarks, :appraisal_form_id, :competency) on conflict (appraisal_form_id) do 
+	                    update set progress_review = EXCLUDED.progress_review, remarks = EXCLUDED.remarks,  competency = EXCLUDED.competency; """,
+                        {'progress_review':progress_review, 'remarks':remarks, 'appraisal_form_id':appraisal_form_id, 'competency': competency}) # CREATE INTO TABLE
         db.commit()
-        # await email.main.approve_annual_plan(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+        await email.main.approve_mid_year_review(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
         
-        return JSONResponse(status_code=200, content={"message": "annual plan has been created"})
+        return JSONResponse(status_code=200, content={"message": "mid-year review has been created"})
     else:
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 

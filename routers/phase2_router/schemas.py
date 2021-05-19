@@ -13,9 +13,9 @@ class update_mid_year_review(UpdateMidYearReview):
     pass
 class MidYearReview(BaseModel):
     progress_review: str 
-    competency: str
     remarks: str  
     appraisal_form_id: int 
+    competency: str
 class create_mid_year_review(MidYearReview):
     pass
 class FormBase(BaseModel):
