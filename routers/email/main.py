@@ -37,6 +37,8 @@ from static.email_templates.template_18 import template18
 from static.email_templates.template_19 import template19
 from static.email_templates.template_20 import template20
 from static.email_templates.template_21 import template21
+from static.email_templates.template_22 import template22
+from static.email_templates.template_23 import template23
 
 router = APIRouter()
 
@@ -115,6 +117,16 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+async def background_send_39(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Approve Appraisee Forms",
+            recipients=[item["supervisor_email"]],
+            body=template23.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
 async def background_send_35(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -131,6 +143,16 @@ async def background_send_34(user_hash_list, background_tasks) -> JSONResponse:
             subject="Start Appraisal Form",
             recipients=[item[0]], # INDEX OF EMAIL FROM DB QUERY
             body=template1.format(url=settings.START_URL,hash=item[1]), # VARIABLES IN TEMPLATES STORING URL AND HASH
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
+async def background_send_37(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
+        message = MessageSchema(
+            subject="Start Mid-Year Review",
+            recipients=[item[0]], # INDEX OF EMAIL FROM DB QUERY
+            body=template2.format(url=settings.MID_URL,hash=item[1]), # VARIABLES IN TEMPLATES STORING URL AND HASH
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -306,6 +328,7 @@ async def background_send_22(user_hash_list) -> JSONResponse:
             subtype="html"
         )       
         await fm.send_message(message)
+
 async def background_send_18(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -315,6 +338,7 @@ async def background_send_18(user_hash_list) -> JSONResponse:
             subtype="html"
         )        
         await fm.send_message(message)
+
 async def background_send_23(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -420,7 +444,7 @@ async def background_send_32(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review Approved",
             recipients=[item[0]],
-            body=template18.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
+            body=template18.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -434,6 +458,17 @@ async def background_send_33(user_hash_list) -> JSONResponse:
             subtype="html"
         )        
         await fm.send_message(message)
+
+async def background_send_38(user_hash_list) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Form Disaproved",
+            recipients=[item[0]],
+            body=template22.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]], comment=[item[10]]),
+            subtype="html"
+        )        
+        await fm.send_message(message)
+
 
 async def background_send_36(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
@@ -458,6 +493,12 @@ async def start_annual_plan_staff(email:str, background_tasks:BackgroundTasks, d
     res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
     return await background_send_34(res, background_tasks)
+
+@router.post("/midyearreviewemailstaff/")
+async def mid_year_review_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+    res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_37(res, background_tasks)
 
 # SEND MID-YEAR LINK TO ALL STAFF
 @router.post("/midyearreviewemail/")
@@ -495,6 +536,11 @@ async def approve_completed_annual_plan(background_tasks:BackgroundTasks, db:Ses
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
 
+@router.post("/approvemidyearreview/")
+async def approve_completed_mid_year_review(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('Mid', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
+    res = res.first()[0]
+    return await background_send_39(res, background_tasks)
 
 # REMIND APPRAISEE TO CHECK EMAIL WITH LINK FOR START OF YEAR REVIEW
 @router.post("/startannualplanreminder/{supervisor}/")
@@ -653,9 +699,15 @@ async def approve_mid_year_review(appraisal_form_id): # TAKE APPRAISAL FORM ID F
 
 # @router.post("/annualplanapproved/")
 async def mid_year_review_approved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
-    res = db.execute(""" SELECT email, target, lastname, staff_id, firstname, resources, middlename, result_areas, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
+    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
     res = res.fetchall()
     return await background_send_32(res)
+
+# @router.post("/annualplandisapproved/")
+async def mid_year_review_disapproved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
+    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email, comment FROM view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
+    res = res.fetchall()
+    return await background_send_38(res)
 
 # @router.post("/lastfivedaystoapprovereminder/")
 async def last_five_days_to_approve_mid_reminder():

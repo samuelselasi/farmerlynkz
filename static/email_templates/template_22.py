@@ -1,5 +1,5 @@
 
-template18 =  """
+template22 =  """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
 <head>
@@ -39,16 +39,17 @@ template18 =  """
                 <h3> <p>Dear Sir/Madam,</p> </h3>
 
                         <p>Your start of year review forms have been inspected
-                        approved by your supervisor.</p>
+                        disapproved by your supervisor.</p>
 
                         <p>Your appraisal form details will be provided and made available to you for future
                         reference in completing the mid-year and end of year review forms.</p>
 
                         <strong><p>View your form details to keep track of your progress.</strong></br>
                                     progress review = {progress_review}</br>
-                                    resources = {remarks}</br>
+                                    remarks = {remarks}</br>
                                     competency = {competency}</br>
-                                    appraisal form id = {appraisal_form_id} </p></br>
+                                    appraisal form id = {appraisal_form_id}</br>
+                                    supervisor's comment = {comment} </p></br>
 
 
                         The forms will be avilable untill the start of the

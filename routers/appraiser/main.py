@@ -144,17 +144,17 @@ async def read_yearly_form_deatails(staff_id:int, form_year:int, token:str=Depen
 async def approve_form_details(appraisal_form_id:int, type_form='Start', db:Session=Depends(get_db)):
     return await crud.approve_form(appraisal_form_id, type_form, db)
 
+@router.get("/approveformmid/{appraisal_form_id}/")
+async def approve_form_details_mid(appraisal_form_id:int, type_form='Mid', db:Session=Depends(get_db)):
+    return await crud.approve_form_mid(appraisal_form_id, type_form, db)
+
 @router.post("/disapproveform/{appraisal_form_id}/")
 async def disapprove_form_details(appraisal_form_id:int, payload:schemas.disaprove_form, type_form='Start', db:Session=Depends(get_db)):
     return await crud.disapprove_form(appraisal_form_id, type_form, payload.comment, db)
 
 @router.post("/disapproveformmid/{appraisal_form_id}/")
 async def disapprove_form_details_mid(appraisal_form_id:int, payload:schemas.disaprove_form, type_form='Mid', db:Session=Depends(get_db)):
-    return await crud.disapprove_form(appraisal_form_id, type_form, payload.comment, db)
-
-@router.get("/approveform/mid/{appraisal_form_id}/")
-async def approve_form_details(appraisal_form_id:int, type_form='Mid', token: str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.approve_form_details_auth(appraisal_form_id, type_form, token, db)
+    return await crud.disapprove_form_mid(appraisal_form_id, type_form, payload.comment, db)
 
 @router.get("/approveform/end/{appraisal_form_id}/")
 async def approve_form_details(appraisal_form_id:int, type_form='End', token: str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
