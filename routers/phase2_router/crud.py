@@ -67,20 +67,24 @@ async def verify_hash_form(hash_:str, db:Session):
     return res
 
 
+
 # CREATE MID-YEAR REVIEW
-async def create_mid_year_review(progress_review, remarks, appraisal_form_id, competency, db:Session):
+async def create_mid_year_review(progress_review, remarks, appraisal_form_id, competency, submit, db:Session):
     query = db.execute(""" SELECT ending FROM public.deadline WHERE deadline_type = 'Mid'; """) # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
     if query >= date.today(): # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN 
         res = db.execute("""INSERT INTO public.midyear_review(
-	                    progress_review, remarks, appraisal_form_id, competency)
-	                    values(:progress_review, :remarks, :appraisal_form_id, :competency) on conflict (appraisal_form_id) do 
-	                    update set progress_review = EXCLUDED.progress_review, remarks = EXCLUDED.remarks,  competency = EXCLUDED.competency; """,
-                        {'progress_review':progress_review, 'remarks':remarks, 'appraisal_form_id':appraisal_form_id, 'competency': competency}) # CREATE INTO TABLE
-        db.commit()
-        await email.main.approve_mid_year_review(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
-        
-        return JSONResponse(status_code=200, content={"message": "mid-year review has been created"})
+	                    progress_review, remarks, appraisal_form_id, competency, submit)
+	                    values(:progress_review, :remarks, :appraisal_form_id, :competency, :submit) on conflict (appraisal_form_id) do 
+	                    update set progress_review = EXCLUDED.progress_review, remarks = EXCLUDED.remarks,  competency = EXCLUDED.competency,  submit = EXCLUDED.submit; """,
+                        {'progress_review':progress_review, 'remarks':remarks, 'appraisal_form_id':appraisal_form_id, 'competency':competency, 'submit':submit}) # CREATE INTO TABLE
+        db.commit() 
+        if submit==1:
+            await email.main.approve_mid_year_review(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+        else:
+            pass   
+ 
+        return JSONResponse(status_code=200, content={"message": "mid-year review has been created"}) 
     else:
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 

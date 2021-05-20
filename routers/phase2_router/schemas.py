@@ -16,6 +16,7 @@ class MidYearReview(BaseModel):
     remarks: str  
     appraisal_form_id: int 
     competency: str
+    submit: int
 class create_mid_year_review(MidYearReview):
     pass
 class FormBase(BaseModel):

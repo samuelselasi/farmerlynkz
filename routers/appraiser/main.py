@@ -26,8 +26,8 @@ async def read_approved_forms_admin( token:str=Depends(oauth2_scheme),  db:Sessi
     return await crud.read_approved_forms_admin_auth(token, db)
 
 @router.get("/approved/mid/")
-async def read_approved_forms( user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.read_approved_forms_auth( deadline, user_id, token, db)
+async def read_approved_forms_mid( user_id:int, db:Session=Depends(get_db)):
+    return await crud.read_approved_forms_mid(user_id, db)
 
 @router.get("/approved/end/")
 async def read_approved_forms(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
@@ -44,9 +44,9 @@ async def read_disapproved_forms( user_id:int, db:Session=Depends(get_db)):
 async def read_approved_forms_admin( token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.read_approved_forms_admin_auth(token, db)
 
-@router.get("/approved/mid/")
-async def read_approved_forms( user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.read_approved_forms_auth( deadline, user_id, token, db)
+@router.get("/disapproved/mid/")
+async def read_disapproved_forms_mid( user_id:int, db:Session=Depends(get_db)):
+    return await crud.read_disapproved_forms_mid(user_id, db)
 
 @router.get("/approved/end/")
 async def read_approved_forms(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
@@ -63,8 +63,8 @@ async def read_completed_list_admin(token:str=Depends(oauth2_scheme),  db:Sessio
     return await crud.read_completed_list_admin_auth(token, db)
 
 @router.get("/completedlist/mid/")
-async def read_completed_list(user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.read_completed_list_auth( deadline, user_id, token, db)
+async def read_completed_list_mid(user_id:int, db:Session=Depends(get_db)):
+    return await crud.read_completed_list_mid(user_id, db)
 
 @router.get("/completedlist/end/")
 async def read_completed_list(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
@@ -73,16 +73,17 @@ async def read_completed_list(user_id:int, deadline='End', token:str=Depends(oau
 
 # GET WAITING APPROVAL
 @router.get("/waitingapproval/start/")
-async def waiting_approval_list(user_id:int, token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
-    return await crud.waiting_approval_list_auth(user_id, token, db)
+async def waiting_approval_list(user_id:int, db:Session=Depends(get_db)):
+    return await crud.waiting_approval_list(user_id, db)
+
 
 @router.get("/waitingapproval/start/admin")
 async def waiting_approval_list_admin(token:str=Depends(oauth2_scheme),  db:Session=Depends(get_db)):
     return await crud.waiting_approval_list_admin_auth(token, db)
 
 @router.get("/waitingapproval/mid/")
-async def waiting_approval_list(user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.waiting_approval_list_auth( deadline, user_id, token, db)
+async def waiting_approval_list_mid(user_id:int, db:Session=Depends(get_db)):
+    return await crud.waiting_approval_list_mid(user_id, db)
 
 @router.get("/waitingapproval/end/")
 async def waiting_approval_list(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
@@ -99,8 +100,8 @@ async def read_incompleted_list_admin(token:str=Depends(oauth2_scheme), db:Sessi
     return await crud.read_incomplete_list_admin_auth(token, db)
 
 @router.get("/incompletedlist/mid/")
-async def read_incompleted_list(user_id:int, deadline='Mid', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.read_incomplete_list_auth( deadline, user_id, token, db)  
+async def read_incompleted_list_mid(user_id:int, db:Session=Depends(get_db)):
+    return await crud.read_incomplete_list_mid(user_id, db)
 
 @router.get("/incompletedlist/end/")
 async def read_incompleted_list(user_id:int, deadline='End', token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
@@ -147,6 +148,9 @@ async def approve_form_details(appraisal_form_id:int, type_form='Start', db:Sess
 async def disapprove_form_details(appraisal_form_id:int, payload:schemas.disaprove_form, type_form='Start', db:Session=Depends(get_db)):
     return await crud.disapprove_form(appraisal_form_id, type_form, payload.comment, db)
 
+@router.post("/disapproveformmid/{appraisal_form_id}/")
+async def disapprove_form_details_mid(appraisal_form_id:int, payload:schemas.disaprove_form, type_form='Mid', db:Session=Depends(get_db)):
+    return await crud.disapprove_form(appraisal_form_id, type_form, payload.comment, db)
 
 @router.get("/approveform/mid/{appraisal_form_id}/")
 async def approve_form_details(appraisal_form_id:int, type_form='Mid', token: str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
