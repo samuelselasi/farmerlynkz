@@ -49,7 +49,7 @@ template22 =  """
                                     remarks = {remarks}</br>
                                     competency = {competency}</br>
                                     appraisal form id = {appraisal_form_id}</br>
-                                    supervisor's comment = {comment} </p></br>
+                                    supervisor's commens = {midyear_review_comment} </p></br>
 
 
                         The forms will be avilable untill the start of the

@@ -49,7 +49,7 @@ template20 =  """
                                     resources = {resources}</br>
                                     result areas = {result_areas}</br>
                                     appraisal form id = {appraisal_form_id}</br>
-                                    supervisor's comment = {comment} </p></br>
+                                    supervisor's comment = {annual_plan_comment} </p></br>
 
 
                         The forms will be avilable untill the start of the
