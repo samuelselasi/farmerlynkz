@@ -45,9 +45,9 @@ template18 =  """
                         reference in completing the mid-year and end of year review forms.</p>
 
                         <strong><p>View your form details to keep track of your progress.</strong></br>
-                                    progress review = {progress_review}</br>
-                                    resources = {remarks}</br>
-                                    competency = {competency}</br>
+                                    target = {target}</br>
+                                    resources = {resources}</br>
+                                    result areas = {result_areas}</br>
                                     appraisal form id = {appraisal_form_id} </p></br>
 
 

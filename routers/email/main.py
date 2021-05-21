@@ -444,7 +444,7 @@ async def background_send_32(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review Approved",
             recipients=[item[0]],
-            body=template18.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
+            body=template23.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -693,7 +693,7 @@ async def last_day_to_approve_reminder():
 
 # @router.post("/approveannualplan/")
 async def approve_mid_year_review(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "create_mid_year_review" FUNCTION IN phase_2 Router, crud.py 
-    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FFROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
+    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
     res = res.fetchall()
     return await background_send_36(res)
 
