@@ -39,6 +39,10 @@ from static.email_templates.template_20 import template20
 from static.email_templates.template_21 import template21
 from static.email_templates.template_22 import template22
 from static.email_templates.template_23 import template23
+from static.email_templates.template_24 import template24
+from static.email_templates.template_25 import template25
+from static.email_templates.template_26 import template26
+
 
 router = APIRouter()
 
@@ -157,13 +161,24 @@ async def background_send_37(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+async def background_send_40(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Appraisal Form Details",
+            recipients=[item["email"]],
+            body=template26.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
+
 # BACKGROUND TASKS(WITH SCHEDULER)
 async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list: #CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
             subject="Appraisal Form (Three Days To Start Reminder)",
             recipients=[item[1]], #INDEX OF EMAIL FROM DB
-            body=template4,
+            body=template6,
             subtype="html"
         )       
         await fm.send_message(message)      
@@ -173,7 +188,7 @@ async def background_send_7(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Last Five Days Reminder)",
             recipients=[item["email"]],
-            body=template7.format(url=settings.START_URL),
+            body=template7,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -183,7 +198,7 @@ async def background_send_8(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Last Four Days Reminder)",
             recipients=[item["email"]],
-            body=template8.format(url=settings.START_URL),
+            body=template8,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -193,7 +208,7 @@ async def background_send_9(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Last Three Days Reminder)",
             recipients=[item["email"]],
-            body=template9.format(url=settings.START_URL),
+            body=template9,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -203,7 +218,7 @@ async def background_send_10(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Last Two Days Reminder)",
             recipients=[item["email"]],
-            body=template10.format(url=settings.START_URL),
+            body=template10,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -213,7 +228,7 @@ async def background_send_11(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Appraisal Form (Last Day Reminder)",
             recipients=[item["email"]],
-            body=template11.format(url=settings.START_URL),
+            body=template11,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -232,7 +247,7 @@ async def background_send_13(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Five Days Reminder)",
-            recipients=[item["email"]],
+            recipients=[item["supervisor_email"]],
             body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
@@ -242,7 +257,7 @@ async def background_send_14(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Four Days Reminder)",
-            recipients=[item["email"]],
+            recipients=[item["supervisor_email"]],
             body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
@@ -252,7 +267,7 @@ async def background_send_15(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Three Days Reminder)",
-            recipients=[item["email"]],
+            recipients=[item["supervisor_email"]],
             body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
@@ -262,7 +277,7 @@ async def background_send_16(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Two Days Reminder)",
-            recipients=[item["email"]],
+            recipients=[item["supervisor_email"]],
             body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
@@ -272,7 +287,7 @@ async def background_send_17(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Appraisee Forms(Last Day Reminder)",
-            recipients=[item["email"]],
+            recipients=[item["supervisor_email"]],
             body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
@@ -314,7 +329,7 @@ async def background_send_21(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review (Last Five Days Reminder)",
             recipients=[item["email"]],
-            body=template7.format(url=settings.START_URL),
+            body=template13,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -324,7 +339,7 @@ async def background_send_22(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review (Last Four Days Reminder)",
             recipients=[item["email"]],
-            body=template8.format(url=settings.START_URL),
+            body=template14,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -344,7 +359,7 @@ async def background_send_23(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review (Last Three Days Reminder)",
             recipients=[item["email"]],
-            body=template9.format(url=settings.START_URL),
+            body=template15,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -354,7 +369,7 @@ async def background_send_24(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review (Last Two Days Reminder)",
             recipients=[item["email"]],
-            body=template10.format(url=settings.START_URL),
+            body=template16,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -364,7 +379,7 @@ async def background_send_25(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Mid-Year Review (Last Day Reminder)",
             recipients=[item["email"]],
-            body=template11.format(url=settings.START_URL),
+            body=template24,
             subtype="html"
         )       
         await fm.send_message(message)
@@ -374,7 +389,7 @@ async def background_send_26(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Start Mid-Year Review",
             recipients=[item[1]],
-            body=template1.format(url=settings.START_URL,hash=item[0]),
+            body=template12.format(url=settings.START_URL,hash=item[0]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -383,8 +398,8 @@ async def background_send_27(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Last Five Days Reminder)",
-            recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]],  resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            recipients=[item["supervisor_email"]],
+            body=template25.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -393,8 +408,8 @@ async def background_send_28(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Last Four Days Reminder)",
-            recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            recipients=[item["supervisor_email"]],
+            body=template25.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -403,8 +418,8 @@ async def background_send_29(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Last Three Days Reminder)",
-            recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            recipients=[item["supervisor_email"]],
+            body=template25.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -413,8 +428,8 @@ async def background_send_31(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Last Two Days Reminder)",
-            recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            recipients=[item["supervisor_email"]],
+            body=template25.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -423,8 +438,8 @@ async def background_send_30(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Last Day Reminder)",
-            recipients=[item["email"]],
-            body=template5.format( email=[item["email"]], target=[item["target"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], resources=[item["resources"]], middlename=[item["middlename"]], result_areas=[item["result_areas"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            recipients=[item["supervisor_email"]],
+            body=template25.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -434,7 +449,7 @@ async def background_send_31(user_hash_list) -> JSONResponse:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Alert)",
             recipients=[item[9]],
-            body=template17.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
+            body=template17.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
             subtype="html"
         )        
         await fm.send_message(message)
@@ -480,7 +495,11 @@ async def background_send_36(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
+
+
+
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
+
 @router.post("/startreviewemail/")
 async def start_annual_plan(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
@@ -494,11 +513,6 @@ async def start_annual_plan_staff(email:str, background_tasks:BackgroundTasks, d
     res = res.fetchall()
     return await background_send_34(res, background_tasks)
 
-@router.post("/midyearreviewemailstaff/")
-async def mid_year_review_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
-    res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
-    res = res.fetchall()
-    return await background_send_37(res, background_tasks)
 
 # SEND MID-YEAR LINK TO ALL STAFF
 @router.post("/midyearreviewemail/")
@@ -508,6 +522,11 @@ async def start_midyear_review_(background_tasks:BackgroundTasks, db:Session=Dep
     return await background_send_2(res, background_tasks)
 
 # SEND MID-YEAR LINK TO INDIVIDUAL STAFF
+@router.post("/midyearreviewemailstaff/")
+async def mid_year_review_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+    res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_37(res, background_tasks)
 
 
 # SEND END OF YEAR LINK TO ALL STAFF
@@ -526,7 +545,7 @@ async def start_end_0f_year_review_(background_tasks:BackgroundTasks, db:Session
 async def send_annual_plan_details_to_approved(background_tasks:BackgroundTasks, db:Session=Depends(get_db)): # SEND FORM DETAILS TO APPROVED STAFF
     res = db.execute("""SELECT public.get_list_of_approved_form('Start', 1)""") # SELECT EMAIL FROM LIST OF APPROVED FUNCTION IN DB
     res = res.first()[0]
-    return await background_send_4(res, background_tasks)
+    return await background_send_40(res, background_tasks)
 
 
 # SEND REMIDER TO SUPERVISORS TO APPROVE
@@ -613,31 +632,32 @@ async def start_mid_year_review():
 async def last_five_days_to_mid_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Mid', 1)""")
     res = res.first()[0]
-    return await background_send_27(res)
+    return await background_send_21(res)
 
 # @router.post("/lastfourdaysreminder/")
 async def last_four_days_to_mid_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Mid', 1)""")
     res = res.first()[0]
-    return await background_send_28(res)
+    return await background_send_22(res)
 
 # @router.post("/lastthreedaysreminder/")
 async def last_three_days_to_mid_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
-    return await background_send_29(res)
+    return await background_send_23(res)
 
 # @router.post("/lasttwodaysreminder/")
 async def last_two_days_to_mid_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
-    return await background_send_30(res)
+    return await background_send_24(res)
 
 # @router.post("/lastdayreminder/")
 async def last_day_to_mid_reminder():
     res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
     res = res.first()[0]
-    return await background_send_31(res)    
+    return await background_send_25(res)    
+
 
 
 # SCHEDULED REMINDERS FOR APPRAISER

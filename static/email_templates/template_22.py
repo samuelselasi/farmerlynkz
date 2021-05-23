@@ -41,10 +41,9 @@ template22 =  """
                         <p>Your start of year review forms have been inspected
                         disapproved by your supervisor.</p>
 
-                        <p>Your appraisal form details will be provided and made available to you for future
-                        reference in completing the mid-year and end of year review forms.</p>
+                        <p>Please refill the form withrespect to your supervisor's comment below.</p>
 
-                        <strong><p>View your form details to keep track of your progress.</strong></br>
+                        <strong><p>View your form details and comments from your supervisor.</strong></br>
                                     progress review = {progress_review}</br>
                                     remarks = {remarks}</br>
                                     competency = {competency}</br>

@@ -1,5 +1,5 @@
 
-template10 =  """
+template24 =  """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
 <head>
@@ -36,23 +36,23 @@ template10 =  """
 
                 <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
        
-                <h3> <p><p>Dear Sir/Madam,</p></h3>
+                <h3>  <p>Dear Sir/Madam,</p>  </h3>
+               
 
-                    <p>As a staff requirement, you are reminded that the yearly
-                    apparisal form will end in 2 days time.</p>
+                   
 
-                    <p>Your appraisal form details have been provided and made available to you in the mail sent on the start date. Please
-                    follow the link to complete your form.</p>
+                            <p>As a staff requirement, you are reminded that the yearly
+                            apparisal form will end today.</p>
 
+                            <p>Please follow the link in the email sent on the start date to complete your form. Please
+                            follow the link to complete your form.</p>
 
+                            You are expected to access and fill the form provided in
+                            <strong>before midnight</strong> <br/>
 
-                    You are expected to access and fill the form provided in
-                    <strong>two days time  </strong> <br/>
-
-                    Thank You. <br/>
-                    Appraiser-App Admin
-                </p>
-
+                            Thank You. <br/>
+                            Appraiser-App Admin
+                        </p>
 
             </p>
            
@@ -103,6 +103,5 @@ template10 =  """
     </table>
 </body>
 </html>
-
 """
 

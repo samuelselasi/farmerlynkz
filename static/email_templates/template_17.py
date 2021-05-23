@@ -44,8 +44,7 @@ template17 = """
                     <p>Please review and approve forms of appraisee under you
                     for the start of the yearly appraisal form details.</p>
 
-                    <p>The appraisal form details will be provided and made available to
-                    you  below.</p>
+                    <p>The appraisal form details is currently available here.</p>
 
                     <strong><p>Kindly review the form details.</strong></br>
                                
@@ -55,7 +54,7 @@ template17 = """
                                     appraisal form id = {appraisal_form_id} </p></br>
 
 
-                    You are expected to review and approve the form details
+                    You are expected to review and provide your verdict of the form details
                     <strong>before the start of Mid-Year Review today  </strong> <br/>
 
                     Thank You. <br/>

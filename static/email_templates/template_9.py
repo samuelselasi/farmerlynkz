@@ -41,11 +41,9 @@ template9 =  """
                         <p>As a staff requirement, you are reminded that the yearly
                         apparisal form will end in 3 days time.</p>
 
-                        <p>Your appraisal form details have been provided and made available to you in this mail. Please
+                        <p>Your appraisal form details have been provided and made available to you in the mail sent on the start date. Please
                         follow the link to complete your form.</p>
 
-                        <strong><p>Please fill the form by opening the link provided.</strong></br>
-                        <a href="{url}" target="_blank">click this link to fill form</a> </p>
 
                         You are expected to access and fill the form provided in
                         <strong>three days time  </strong> <br/>

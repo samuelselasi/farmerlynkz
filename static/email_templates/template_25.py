@@ -1,5 +1,5 @@
 
-template10 =  """
+template25 =  """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
 <head>
@@ -36,23 +36,27 @@ template10 =  """
 
                 <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
        
-                <h3> <p><p>Dear Sir/Madam,</p></h3>
+                <h3> <p>Dear Sir/Madam,</p> </h3>
 
-                    <p>As a staff requirement, you are reminded that the yearly
-                    apparisal form will end in 2 days time.</p>
+                        <p>Please review and approve or disapprove forms of appraisee under you
+                        for the start of the yearly appraisal form details.</p>
 
-                    <p>Your appraisal form details have been provided and made available to you in the mail sent on the start date. Please
-                    follow the link to complete your form.</p>
+                        <p>The appraisal form details of your appraisee will be provided and made available to you for future
+                        reference in completing the mid-year and end of year review forms.</p>
 
+                        <strong><p>View the form details to keep track of its progress.</strong></br>
+                        
+                                    progress_review = {progress_review}</br>
+                                    remarks = {remarks}</br>
+                                    competency = {competency}</br>
+                                    appraisal form id = {appraisal_form_id} </p></br>
 
+                        The forms will be avilable untill the start of the
+                        <strong>Mid-Year Review process  </strong> <br/>
 
-                    You are expected to access and fill the form provided in
-                    <strong>two days time  </strong> <br/>
-
-                    Thank You. <br/>
-                    Appraiser-App Admin
-                </p>
-
+                        Thank You. <br/>
+                        Appraiser-App Admin
+                     </p>
 
             </p>
            
@@ -105,4 +109,3 @@ template10 =  """
 </html>
 
 """
-

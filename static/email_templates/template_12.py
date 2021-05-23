@@ -1,5 +1,4 @@
 
-
 template12 = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
@@ -37,28 +36,26 @@ template12 = """
 
                 <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
        
-                <h3> <p>Dear Supervisor,</p></h3>
+                <h3> <p>Dear All,</p> </h3> </div>
+               
 
-            <p>Please review and approve forms of appraisee under you
-            for the start of the yearly appraisal form details.</p>
-
-            <p>The appraisal form details will be provided and made available to
-            you  below.</p>
-
-            <strong><p>Kindly review the form details.</strong></br>
+                    <p>As a requirement for the completion
+                        of your Annual appraisal form, the performance planning
+                        form is provided to all staff.</p>
                        
-                                    target = {target}</br>
-                                    resources = {resources}</br>
-                                    result areas = {result_areas}</br>
-                                    appraisal form id = {appraisal_form_id} </p></br>
-
-
-            You are expected to review and approve the form details
-            <strong>before the start of Mid-Year Review in 5 days time  </strong> <br/>
-
-            Thank You. <br/>
-            Appraiser-App Admin </p>
-                        </p>
+                        <p>Your midyear review form for the year has
+                        been made available to you.</p>
+                       
+                        <strong><p>Please fill the form by opening the link provided.</strong></br>
+                        <a href="{url}/{hash}" target="_blank">click this link to fill form</a> </p>
+                       
+                        You are expected to access and fill the form by
+                        <strong>the end of this month </strong> <br/>
+                       
+                        Thank You. <br/>
+                        Performance Planning Form
+                    </p>
+            </p>
            
             </p>
  
@@ -107,6 +104,4 @@ template12 = """
     </table>
 </body>
 </html>
-
 """
-

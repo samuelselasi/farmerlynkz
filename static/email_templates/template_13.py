@@ -36,25 +36,23 @@ template13 =  """
 
                 <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
        
-                <h3> <p>Dear All,</p> </h3> </div>
+                <h3>  <p>Dear Sir/Madam,</p>  </h3>
                
 
-                    <p>As a requirement for the completion
-                        of your Annual appraisal form, the performance planning
-                        form is provided to all staff.</p>
-                       
-                        <p>Your performance planning form for the year has
-                        been made available to you.</p>
-                       
-                        <strong><p>Please fill the form by opening the link provided.</strong></br>
-                        
-                       
-                        You are expected to access and fill the form by
-                        <strong>the end of this month </strong> <br/>
-                       
-                        Thank You. <br/>
-                        Performance Planning Form
-                    </p>
+                   
+
+                            <p>As a staff requirement, you are reminded that the midyear review will end in 5 days time.</p>
+
+                            <p>Please follow the link in the email sent on the start date to complete your form. Please
+                            follow the link to complete your form.</p>
+
+                            You are expected to access and fill the form provided in
+                            <strong>five days time  </strong> <br/>
+
+                            Thank You. <br/>
+                            Appraiser-App Admin
+                        </p>
+
             </p>
            
             </p>

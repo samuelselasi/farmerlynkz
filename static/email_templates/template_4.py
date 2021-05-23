@@ -40,17 +40,16 @@ template4 =  """
                
 
                     <p>As a requirement for the completion
-                    of your Annual appraisal form, the End of Year Review
-                    Form is provided to all staff.</p>
+                    of your Annual appraisal form, the MIdyear Review
+                    Form will be provided to all staff in three days time.</p>
 
-                    <p>Your End of Year Review form for the year has
-                    been made available to you.</p>
+                    <p>KIndly follow the link you receive on the start date to fill your foms.</p>
 
                     <strong><p>Please fill the form by opening the link provided.</strong></br>
                 
 
                     You are expected to access and fill the form by
-                    <strong>the end of this month </strong> <br/>
+                    <strong>in three days time </strong> <br/>
 
                     Thank You. <br/>
                     Appraiser-App Admin

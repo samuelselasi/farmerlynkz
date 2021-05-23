@@ -36,28 +36,23 @@ template16 =  """
 
                 <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
        
-                <h3><p>Dear Supervisor,</p> </h3>
+                <h3>  <p>Dear Sir/Madam,</p>  </h3>
+               
 
-                    <p>Please review and approve forms of appraisee under you
-                    for the start of the yearly appraisal form details.</p>
+                   
 
-                    <p>The appraisal form details will be provided and made available to
-                    you  below.</p>
+                            <p>As a staff requirement, you are reminded that the yearly
+                            apparisal form will end in 2 days time.</p>
 
-                    <strong><p>Kindly review the form details.</strong></br>
-                               
-                                    target = {target}</br>
-                                    resources = {resources}</br>
-                                    result areas = {result_areas}</br>
-                                    appraisal form id = {appraisal_form_id} </p></br>
+                            <p>Please follow the link in the email sent on the start date to complete your form. Please
+                            follow the link to complete your form.</p>
 
+                            You are expected to access and fill the form provided in
+                            <strong>two days time</strong> <br/>
 
-                    You are expected to review and approve the form details
-                    <strong>before the start of Mid-Year Review today  </strong> <br/>
-
-                    Thank You. <br/>
-                    Appraiser-App Admin
-                </p>
+                            Thank You. <br/>
+                            Appraiser-App Admin
+                        </p>
 
             </p>
            
