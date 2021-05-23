@@ -71,6 +71,8 @@ background_tasks = BackgroundTasks()
 
 
 # BACKGROUND TASKS(WITHOUT SCHEDULER)
+
+# START ANNUAL PLAN
 async def background_send(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -81,6 +83,7 @@ async def background_send(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# START MID-YEAR REVIEW
 async def background_send_2(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -91,6 +94,7 @@ async def background_send_2(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# START END OF YEAR REVIEW
 async def background_send_3(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -101,6 +105,7 @@ async def background_send_3(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# ANNUAL PLAN DETAILS
 async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -111,6 +116,7 @@ async def background_send_4(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# APPROVE ANNUAL PLAN
 async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -121,6 +127,7 @@ async def background_send_5(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# APPROVE MID-YEAR REVIEW
 async def background_send_39(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -131,6 +138,7 @@ async def background_send_39(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# REMIND STAFF TO FILL ANNUAL PLAN (NO LINK)
 async def background_send_35(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -141,6 +149,7 @@ async def background_send_35(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# START ANNUAL PLAN(INDIVIDUAL)
 async def background_send_34(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -151,6 +160,7 @@ async def background_send_34(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# START MID-YEAR REVIEW(INDIVIDUAL)
 async def background_send_37(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -161,6 +171,7 @@ async def background_send_37(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# SEND ANNUAL PLAN DETAILS TO APPROVED
 async def background_send_40(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -171,8 +182,10 @@ async def background_send_40(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # BACKGROUND TASKS(WITH SCHEDULER)
+
 async def background_send_6(user_hash_list) -> JSONResponse:
     for item in user_hash_list: #CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -183,6 +196,7 @@ async def background_send_6(user_hash_list) -> JSONResponse:
         )       
         await fm.send_message(message)      
 
+# LAST DAYS TO END START OF YEAR REVIEW
 async def background_send_7(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -233,6 +247,7 @@ async def background_send_11(user_hash_list) -> JSONResponse:
         )       
         await fm.send_message(message)
 
+# START ANNUAL PLAN
 async def background_send_12(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -243,6 +258,7 @@ async def background_send_12(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
+# LAST DAYS TO APPROVE START OF YEAR REVIEW
 async def background_send_13(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -293,6 +309,8 @@ async def background_send_17(user_hash_list) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+
+# APPROVE START OF YEAR REVIEW
 async def background_send_18(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -313,7 +331,6 @@ async def background_send_19(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
-
 async def background_send_20(user_hash_list) -> JSONResponse:
     for item in user_hash_list: #CREATE VARIABLES FOR EMAIL TEMPLATES
         message = MessageSchema(
@@ -324,6 +341,8 @@ async def background_send_20(user_hash_list) -> JSONResponse:
         )       
         await fm.send_message(message)      
 
+
+# LAST DAYS FOR MID-YEAR REVIEW
 async def background_send_21(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -342,16 +361,6 @@ async def background_send_22(user_hash_list) -> JSONResponse:
             body=template14,
             subtype="html"
         )       
-        await fm.send_message(message)
-
-async def background_send_18(user_hash_list) -> JSONResponse:
-    for item in user_hash_list:
-        message = MessageSchema(
-            subject="Approve Appraisee Forms (Alert)",
-            recipients=[item[9]],
-            body=template17.format( email=[item[0]], target=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], resources=[item[5]], middlename=[item[6]], result_areas=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
-            subtype="html"
-        )        
         await fm.send_message(message)
 
 async def background_send_23(user_hash_list) -> JSONResponse:
@@ -384,6 +393,8 @@ async def background_send_25(user_hash_list) -> JSONResponse:
         )       
         await fm.send_message(message)
 
+
+# START MID-YEAR REVIEW
 async def background_send_26(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -394,6 +405,8 @@ async def background_send_26(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
+
+# LAST DAYS TO APPROVE MID-YEAR REVIEW
 async def background_send_27(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -424,7 +437,7 @@ async def background_send_29(user_hash_list) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
-async def background_send_31(user_hash_list) -> JSONResponse:
+async def background_send_30(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Last Two Days Reminder)",
@@ -434,7 +447,7 @@ async def background_send_31(user_hash_list) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
-async def background_send_30(user_hash_list) -> JSONResponse:
+async def background_send_31(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
             subject="Approve Mid-Year Review (Last Day Reminder)",
@@ -444,16 +457,10 @@ async def background_send_30(user_hash_list) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
-async def background_send_31(user_hash_list) -> JSONResponse:
-    for item in user_hash_list:
-        message = MessageSchema(
-            subject="Approve Mid-Year Review (Alert)",
-            recipients=[item[9]],
-            body=template17.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
-            subtype="html"
-        )        
-        await fm.send_message(message)
 
+
+
+# MID-YEAR REVIEW APPROVED
 async def background_send_32(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -464,6 +471,7 @@ async def background_send_32(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
+# START OF YEAR REVIEW DISAPPROVED
 async def background_send_33(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -474,6 +482,7 @@ async def background_send_33(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
+# MID-YEAR REVIEW DISAPPROVED
 async def background_send_38(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -484,7 +493,7 @@ async def background_send_38(user_hash_list) -> JSONResponse:
         )        
         await fm.send_message(message)
 
-
+# APPROVE MID-YEAR REVIEW
 async def background_send_36(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
@@ -500,6 +509,7 @@ async def background_send_36(user_hash_list) -> JSONResponse:
 
 # EMAIL ENDPOINTS FOR MANUALLY SENT EMAILS
 
+# START ANNUAL PLAN
 @router.post("/startreviewemail/")
 async def start_annual_plan(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
@@ -512,7 +522,6 @@ async def start_annual_plan_staff(email:str, background_tasks:BackgroundTasks, d
     res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
     return await background_send_34(res, background_tasks)
-
 
 # SEND MID-YEAR LINK TO ALL STAFF
 @router.post("/midyearreviewemail/")
@@ -528,7 +537,6 @@ async def mid_year_review_staff(email:str, background_tasks:BackgroundTasks, db:
     res = res.fetchall()
     return await background_send_37(res, background_tasks)
 
-
 # SEND END OF YEAR LINK TO ALL STAFF
 @router.post("/endofyearreviewemail/")
 async def start_end_0f_year_review_(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
@@ -536,9 +544,12 @@ async def start_end_0f_year_review_(background_tasks:BackgroundTasks, db:Session
     res = res.fetchall()
     return await background_send_3(res, background_tasks)
 
-
 # SEND END OF YEAR LINK TO INDIVIDUAL STAFF
-
+@router.post("/endofyearreviewmailstaff/")
+async def end_of_year_review_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+    res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_37(res, background_tasks)
 
 # SEND ANNUAL PLAN DETAILS TO APPROVED
 @router.post("/startformdetails/")
@@ -547,14 +558,14 @@ async def send_annual_plan_details_to_approved(background_tasks:BackgroundTasks,
     res = res.first()[0]
     return await background_send_40(res, background_tasks)
 
-
-# SEND REMIDER TO SUPERVISORS TO APPROVE
+# SEND REMINDER TO SUPERVISORS TO APPROVE SUBMITTED ANNUAL PLAN FORMS
 @router.post("/approvestartreview/")
 async def approve_completed_annual_plan(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Start', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
     res = res.first()[0]
     return await background_send_5(res, background_tasks)
 
+# SEND REMINDER TO SUPERVISORS TO APPROVE SUBMITTED MIDYEAR REVIEW FORMS
 @router.post("/approvemidyearreview/")
 async def approve_completed_mid_year_review(background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT public.get_list_of_waiting_approval('Mid', 1)""") # SELECT EMAIL FROM WAITING APPROVAL FUNCTION
@@ -569,8 +580,13 @@ async def start_annual_plan_reminder(background_tasks:BackgroundTasks, superviso
     return await background_send_35(res, background_tasks)
 
 
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # SCHEDULED REMINDERS FOR APPRAISEE
+
+# START OF YEAR
 
 # @router.post("/threedaysreminder/")
 async def three_days_to_start_reminder():
@@ -615,6 +631,7 @@ async def last_day_reminder():
     return await background_send_11(res)    
 
 
+# MID YEAR
 
 # @router.post("/threedaysreminder/")
 async def three_days_to_mid_reminder():
@@ -627,6 +644,7 @@ async def start_mid_year_review():
     res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
     res = res.fetchall()
     return await background_send_26(res)  
+
 
 # @router.post("/lastfivedaysreminder/")
 async def last_five_days_to_mid_reminder():
@@ -642,25 +660,75 @@ async def last_four_days_to_mid_reminder():
 
 # @router.post("/lastthreedaysreminder/")
 async def last_three_days_to_mid_reminder():
-    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Mid', 1)""")
     res = res.first()[0]
     return await background_send_23(res)
 
 # @router.post("/lasttwodaysreminder/")
 async def last_two_days_to_mid_reminder():
-    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Mid', 1)""")
     res = res.first()[0]
     return await background_send_24(res)
 
 # @router.post("/lastdayreminder/")
 async def last_day_to_mid_reminder():
-    res = db.execute("""SELECT public.get_list_of_incompleted_form('Start', 1)""")
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('Mid', 1)""")
     res = res.first()[0]
     return await background_send_25(res)    
 
 
+# END OF YEAR
+
+# @router.post("/threedaysreminder/")
+async def three_days_to_end_reminder():
+    res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
+    res = res.fetchall()
+    return await background_send_20(res)   
+
+# @router.post("/startday/")
+async def start_end_year_review():
+    res = db.execute("""SELECT * FROM public.hash_table""") # SELECT EMAIL FROM HASH TABLE
+    res = res.fetchall()
+    return await background_send_26(res)  
+
+# @router.post("/lastfivedaysreminder/")
+async def last_five_days_to_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('End', 1)""")
+    res = res.first()[0]
+    return await background_send_21(res)
+
+# @router.post("/lastfourdaysreminder/")
+async def last_four_days_to_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('End', 1)""")
+    res = res.first()[0]
+    return await background_send_22(res)
+
+# @router.post("/lastthreedaysreminder/")
+async def last_three_days_to_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('End', 1)""")
+    res = res.first()[0]
+    return await background_send_23(res)
+
+# @router.post("/lasttwodaysreminder/")
+async def last_two_days_to_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('End', 1)""")
+    res = res.first()[0]
+    return await background_send_24(res)
+
+# @router.post("/lastdayreminder/")
+async def last_day_to_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_incompleted_form('End', 1)""")
+    res = res.first()[0]
+    return await background_send_25(res)    
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # SCHEDULED REMINDERS FOR APPRAISER
+
+# START OF YEAR
 
 # @router.post("/approveannualplan/")
 async def approve_annual_plan(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "create_annual_plan" FUNCTION IN phase_1 Router, crud.py 
@@ -711,19 +779,21 @@ async def last_day_to_approve_reminder():
     return await background_send_17(res)
 
 
-# @router.post("/approveannualplan/")
+# MID YEAR
+
+# @router.post("/approvemidyearreview/")
 async def approve_mid_year_review(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "create_mid_year_review" FUNCTION IN phase_2 Router, crud.py 
     res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
     res = res.fetchall()
     return await background_send_36(res)
 
-# @router.post("/annualplanapproved/")
+# @router.post("/midyearreviewapproved/")
 async def mid_year_review_approved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
     res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
     res = res.fetchall()
     return await background_send_32(res)
 
-# @router.post("/annualplandisapproved/")
+# @router.post("/midyearreviewdisapproved/")
 async def mid_year_review_disapproved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
     res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email, midyear_review_comment FROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
     res = res.fetchall()
@@ -760,45 +830,117 @@ async def last_day_to_approve_mid_reminder():
     return await background_send_31(res)
 
 
+# END OF YEAR
+
+# @router.post("/approveendyearreview/")
+async def approve_end_year_review(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "create_mid_year_review" FUNCTION IN phase_2 Router, crud.py 
+    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL OF SUPERVISOR FROM DB USING APPRAISAL FORM ID IN ANNUAL PLAN FORM  
+    res = res.fetchall()
+    return await background_send_36(res)
+
+# @router.post("/midyearreviewapproved/")
+async def end_year_review_approved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
+    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email FROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
+    res = res.fetchall()
+    return await background_send_32(res)
+
+# @router.post("/endyearreviewdisapproved/")
+async def end_year_review_disapproved(appraisal_form_id): # TAKE APPRAISAL FORM ID FROM "approve_form" FUNCTION IN appraiser Router, crud.py 
+    res = db.execute(""" SELECT email, progress_review, lastname, staff_id, firstname, remarks, middlename, competency, appraisal_form_id, supervisor_email, midyear_review_comment FROM public.view_users_form_details where appraisal_form_id=:appraisal_form_id  """, {'appraisal_form_id':appraisal_form_id}) # SELECT EMAIL FROM DB USING APPRAISAL FORM ID IN APPROVE FORM  
+    res = res.fetchall()
+    return await background_send_38(res)
+
+# @router.post("/lastfivedaystoapprovereminder/")
+async def last_five_days_to_approve_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('End', 1)""")
+    res = res.first()[0]
+    return await background_send_27(res)
+
+# @router.post("/lastfourdaystoapprovereminder/")
+async def last_four_days_to_approve_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('End', 1)""")
+    res = res.first()[0]
+    return await background_send_28(res)
+
+# @router.post("/lastthreedaystoapprovereminder/")
+async def last_three_days_to_approve_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('End', 1)""")
+    res = res.first()[0]
+    return await background_send_29(res)
+
+# @router.post("/lasttwodaystoapprovereminder/")
+async def last_two_days_to_approve_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('End', 1)""")
+    res = res.first()[0]
+    return await background_send_30(res)
+
+# @router.post("/lastdaytoapprovereminder/")
+async def last_day_to_approve_end_reminder():
+    res = db.execute("""SELECT public.get_list_of_waiting_approval('End', 1)""")
+    res = res.first()[0]
+    return await background_send_31(res)
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 jobstores = { 'default': SQLAlchemyJobStore(url='sqlite:///./sql_app.db')}
 executors = { 'default': ThreadPoolExecutor(20), 'processpool': ProcessPoolExecutor(5)}
 job_defaults = { 'coalesce': False, 'max_instances': 3}
 
-#  DATES TO EXECUTE SCHEDULED JOBS
+#  DEADLINES
 db=SessionLocal()
 
-deadline=db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'Start' """) # GET DEADLINES FROM DEADLINE TABLE
+deadline=db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'Start' """)
 deadline=deadline.fetchall()
 
 mid_deadline=db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'Mid' """)
 mid_deadline=mid_deadline.fetchall()
 
+end_deadline=db.execute(""" SELECT * FROM deadline WHERE deadline_type = 'End' """)
+end_deadline=end_deadline.fetchall()
+
+
+# DATES 
+
 start_date=deadline[0][1]
 mid_start_date=mid_deadline[0][1]
+end_start_date=end_deadline[0][1]
 
 end_date=deadline[0][2]
 mid_end_date=mid_deadline[0][2]
+end_end_date=end_deadline[0][2]
 
 send_date=start_date-timedelta(3) # THREE DAYS TO START
 mid_send_date=mid_start_date-timedelta(3)
+end_send_date=end_start_date-timedelta(3)
 
 send_date_2=end_date-timedelta(5) # LAST FIVE DAYS REMINDER
 mid_send_date_2=mid_end_date-timedelta(5)
+end_send_date_2=end_end_date-timedelta(5)
 
 send_date_3=end_date-timedelta(4) # LAST FOUR DAYS REMINDER
 mid_send_date_3=mid_end_date-timedelta(4)
+end_send_date_3=end_end_date-timedelta(4)
 
 send_date_4=end_date-timedelta(3) # LAST THREE DAYS REMINDER
 mid_send_date_4=mid_end_date-timedelta(3)
+end_send_date_4=end_end_date-timedelta(3)
 
 send_date_5=end_date-timedelta(2) # LAST TWO DAYS REMINDER
 mid_send_date_5=mid_end_date-timedelta(2)
+end_send_date_5=end_end_date-timedelta(2)
 
 send_date_6=end_date # LAST DAY REMINDER
 mid_send_date_6=mid_end_date
+end_send_date_6=end_end_date
+
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # JOB SCHEDULER
+
+# START
 scheduler = AsyncIOScheduler()  
 scheduler.add_job(func=three_days_to_start_reminder, trigger='date', run_date=send_date)
 scheduler.add_job(func=start_annual_plan, trigger='date', run_date=start_date)
@@ -813,7 +955,7 @@ scheduler.add_job(func=last_three_days_to_approve_reminder, trigger='date', run_
 scheduler.add_job(func=last_two_days_to_approve_reminder, trigger='date', run_date=send_date_5)
 scheduler.add_job(func=last_day_to_approve_reminder, trigger='date', run_date=send_date_6)
 
-
+# MID
 scheduler.add_job(func=three_days_to_mid_reminder, trigger='date', run_date=mid_send_date)
 scheduler.add_job(func=start_mid_year_review, trigger='date', run_date=mid_start_date)
 scheduler.add_job(func=last_five_days_to_mid_reminder, trigger='date', run_date=mid_send_date_2)
@@ -827,5 +969,18 @@ scheduler.add_job(func=last_three_days_to_approve_mid_reminder, trigger='date', 
 scheduler.add_job(func=last_two_days_to_approve_mid_reminder, trigger='date', run_date=mid_send_date_5)
 scheduler.add_job(func=last_day_to_approve_mid_reminder, trigger='date', run_date=mid_send_date_6)
 
+# END
+scheduler.add_job(func=three_days_to_end_reminder, trigger='date', run_date=end_send_date)
+scheduler.add_job(func=start_end_year_review, trigger='date', run_date=end_start_date)
+scheduler.add_job(func=last_five_days_to_end_reminder, trigger='date', run_date=end_send_date_2)
+scheduler.add_job(func=last_four_days_to_end_reminder, trigger='date', run_date=end_send_date_3)
+scheduler.add_job(func=last_three_days_to_end_reminder, trigger='date', run_date=end_send_date_4)
+scheduler.add_job(func=last_two_days_to_end_reminder, trigger='date', run_date=end_send_date_5)
+scheduler.add_job(func=last_day_to_end_reminder, trigger='date', run_date=end_send_date_6)
+scheduler.add_job(func=last_five_days_to_approve_end_reminder, trigger='date', run_date=end_send_date_2)
+scheduler.add_job(func=last_four_days_to_approve_end_reminder, trigger='date', run_date=end_send_date_3)
+scheduler.add_job(func=last_three_days_to_approve_end_reminder, trigger='date', run_date=end_send_date_4)
+scheduler.add_job(func=last_two_days_to_approve_end_reminder, trigger='date', run_date=end_send_date_5)
+scheduler.add_job(func=last_day_to_approve_end_reminder, trigger='date', run_date=end_send_date_6)
 
 scheduler.start() 
