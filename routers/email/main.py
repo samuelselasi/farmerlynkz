@@ -488,7 +488,7 @@ async def background_send_38(user_hash_list) -> JSONResponse:
 async def background_send_36(user_hash_list) -> JSONResponse:
     for item in user_hash_list:
         message = MessageSchema(
-            subject="Approve Mid-Year REview",
+            subject="Approve Mid-Year Review",
             recipients=[item[9]],
             body=template21.format( email=[item[0]], progress_review=[item[1]], lastname=[item[2]], staff_id=[item[3]], firstname=[item[4]], remarks=[item[5]], middlename=[item[6]], competency=[item[7]], appraisal_form_id=[item[8]], supervisor_email=[item[9]]),
             subtype="html"

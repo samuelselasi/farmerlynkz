@@ -40,7 +40,7 @@ template23 =  """
 
                         <p>Your Midyear Review forms have been inspected and approved by your supervisor.</p>
 
-                        <p>The appraisal form details owill be provided and made available to you for future
+                        <p>The appraisal form details will be provided and made available to you for future
                         reference in completing the mid-year and end of year review forms.</p>
 
                         <strong><p>View the form details to keep track of its progress.</strong></br>
