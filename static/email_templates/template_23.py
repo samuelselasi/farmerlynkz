@@ -38,10 +38,9 @@ template23 =  """
        
                 <h3> <p>Dear Sir/Madam,</p> </h3>
 
-                        <p>Your Midyear Review forms have been inspected and approved by your supervisor.</p>
+                        <p>Please inspect and give your verdict on the following form details.</p>
 
-                        <p>The appraisal form details will be provided and made available to you for future
-                        reference in completing the mid-year and end of year review forms.</p>
+                        <p>An appraisee has submitted midyear review forms right now.</p>
 
                         <strong><p>View the form details to keep track of its progress.</strong></br>
                         
@@ -50,7 +49,7 @@ template23 =  """
                                     competency = {competency}</br>
                                     appraisal form id = {appraisal_form_id} </p></br>
 
-                        The forms will be avilable untill the start of the
+                        Please go to the dashboard of the apprasisal management system to approve or disapprove the
                         <strong>Mid-Year Review process  </strong> <br/>
 
                         Thank You. <br/>
