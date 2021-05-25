@@ -245,7 +245,7 @@ async def read_approved_forms_mid_auth(user_id:int, token:str, db:Session):
 
 # GET DISAPROVED
 async def read_disapproved_forms(user_id:int, db:Session):
-    res = db.execute("""SELECT public.get_list_of_disapproved_form('Start', :user_id)""",{'user_id':user_id}) # GET FROM DB FUNCTION
+    res = db.execute("""SELECT public.get_list_of_disapproved_form('Mid', :user_id)""",{'user_id':user_id}) # GET FROM DB FUNCTION
     res = res.fetchall()
     return res 
 
