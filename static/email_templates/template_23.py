@@ -40,7 +40,7 @@ template23 =  """
 
                         <p>Please inspect and give your verdict on the following form details.</p>
 
-                        <p>An appraisee has submitted midyear review forms right now.</p>
+                        <p>An appraisee submitted midyear review forms right now.</p>
 
                         <strong><p>View the form details to keep track of its progress.</strong></br>
                         

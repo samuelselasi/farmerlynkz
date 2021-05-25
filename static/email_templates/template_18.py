@@ -38,7 +38,7 @@ template18 =  """
        
                 <h3> <p>Dear Sir/Madam,</p> </h3>
 
-                        <p>Your start of year review forms have been inspected
+                        <p>Your start of year review forms have been inspected and
                         approved by your supervisor.</p>
 
                         <p>Your appraisal form details will be provided and made available to you for future

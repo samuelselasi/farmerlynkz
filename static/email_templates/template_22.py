@@ -38,7 +38,7 @@ template22 =  """
        
                 <h3> <p>Dear Sir/Madam,</p> </h3>
 
-                        <p>Your start of year review forms have been inspected
+                        <p>Your mid-year review forms have been inspected and
                         disapproved by your supervisor.</p>
 
                         <p>Please refill the form withrespect to your supervisor's comment below.</p>
@@ -51,8 +51,8 @@ template22 =  """
                                     supervisor's commens = {midyear_review_comment} </p></br>
 
 
-                        The forms will be avilable untill the start of the
-                        <strong>Mid-Year Review process  </strong> <br/>
+                        The forms will be avilable untill the deadline for phase-2 is reached
+                        <strong></strong> <br/>
 
                         Thank You. <br/>
                         Appraiser-App Admin
