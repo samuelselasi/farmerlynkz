@@ -267,7 +267,7 @@ async def read_disapproved_forms_auth(user_id:int, token:str, db:Session):
 
 
 async def read_disapproved_forms_mid(user_id:int, db:Session):
-    res = db.execute("""SELECT public.get_list_of_disapproved_form('mID', :user_id)""",{'user_id':user_id}) # GET FROM DB FUNCTION
+    res = db.execute("""SELECT public.get_list_of_disapproved_form('Mid', :user_id)""",{'user_id':user_id}) # GET FROM DB FUNCTION
     res = res.fetchall()
     return res 
 
