@@ -4,10 +4,10 @@ import os
 class Settings(BaseSettings): # STORE VARIABLES IN ENV TO BE EXPORTED TO MAIN.PY
     SECRET_KEY : str = os.environ.get('SECRET_KEY') or "fsdfsdfsdfsdflhiugysadf87w940e-=r0werpolwe$16$5*dfsdfsdf&&#$rrr$$)7a9563OO93f7099f6f0f4caa6cf63b88e8d3e7"
     ALGORITHM: str = os.environ.get('ALGORITHM') or "HS256"
-    MAIL_USERNAME : str = os.environ.get('MAIL_USERNAME') or "3e5c9235cc950f"
-    MAIL_PASSWORD : str = os.environ.get('MAIL_PASSWORD') or "b26ae0b1a53260"
+    MAIL_USERNAME : str = os.environ.get('MAIL_USERNAME') or "847757583aba64"
+    MAIL_PASSWORD : str = os.environ.get('MAIL_PASSWORD') or "dbac104863818f"
     MAIL_FROM : str = os.environ.get('MAIL_FROM') or "admin@aiti.com"
-    MAIL_PORT : int = os.environ.get('MAIL_PORT') or 25 or 465 or 587 or 2525
+    MAIL_PORT : int = os.environ.get('MAIL_PORT') or 2525
     MAIL_SERVER : str = os.environ.get('MAIL_SERVER') or "smtp.mailtrap.io"
     MAIL_TLS : bool = os.environ.get('MAIL_TLS') or False
     MAIL_SSL : bool = os.environ.get('MAIL_SSL') or False

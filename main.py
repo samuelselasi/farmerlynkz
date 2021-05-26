@@ -52,6 +52,9 @@ from routers.staff_router import main as staff
 from routers.auth_router import main as auth
 from routers.user_router import main as user
 from routers.email import main as email
+from routers.email import start as start
+from routers.email import mid as mid
+from routers.email import end as end
 
 # CUSTOMIZE ALL ENDPOINT HEADERS
 api.include_router(auth.router, prefix="/auth", tags=["User Login"])
@@ -63,6 +66,9 @@ api.include_router(phase2.router, prefix="/api/midyearreview", tags=["Mid-Year R
 api.include_router(phase3.router, prefix="/api/endofyearreview", tags=["End of Year Review"])
 api.include_router(phase4.router, prefix="/api/decisionmaking", tags=["Decision Making"])
 api.include_router(email.router, prefix="/email", tags=["E-mails"])
+api.include_router(start.router, prefix="/start", tags=["Start of Year Review Emails"])
+api.include_router(mid.router, prefix="/mid", tags=["Mid-Year Review Emails"])
+api.include_router(end.router, prefix="/end", tags=["End of Year Emails"])
 
 # DEFAULT ENDPOINT
 @api.get("/")

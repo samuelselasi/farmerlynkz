@@ -534,7 +534,7 @@ async def approve_form(appraisal_form_id:int, type_form:str, db:Session):
     res = db.execute(""" SELECT public.approve_form_details(:appraisal_form_id, :type_form) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form}) # APPROVE FROM DB FUNCTION
     res = res.fetchall()
     db.commit()
-    await email.main.annual_plan_approved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
+    await email.start.annual_plan_approved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
     return res
 
 async def approve_form_details_auth(appraisal_form_id:int, type_form:str, token:str, db:Session):
@@ -556,7 +556,7 @@ async def approve_form_mid(appraisal_form_id:int, type_form:str, db:Session):
     res = db.execute(""" SELECT public.approve_form_details(:appraisal_form_id, :type_form) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form}) # APPROVE FROM DB FUNCTION
     res = res.fetchall()
     db.commit()
-    await email.main.mid_year_review_approved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
+    await email.mid.mid_year_review_approved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
     return res
 
 async def approve_form_details_mid_auth(appraisal_form_id:int, type_form:str, token:str, db:Session):
@@ -603,7 +603,7 @@ async def disapprove_form(appraisal_form_id:int, type_form:str, comment:str,  db
     res = db.execute(""" SELECT public.disapprove_form_details(:appraisal_form_id, :type_form, :comment) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form, 'comment':comment}) # APPROVE FROM DB FUNCTION
     res = res.fetchall()
     db.commit()
-    await email.main.annual_plan_disapproved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
+    await email.start.annual_plan_disapproved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
     return res
 
 async def disapprove_form_details_auth(appraisal_form_id:int, type_form:str,  comment:str, token:str, db:Session):
@@ -625,7 +625,7 @@ async def disapprove_form_mid(appraisal_form_id:int, type_form:str, comment:str,
     res = db.execute(""" SELECT public.disapprove_form_details(:appraisal_form_id, :type_form, :comment) """, {'appraisal_form_id':appraisal_form_id, 'type_form':type_form, 'comment':comment}) # APPROVE FROM DB FUNCTION
     res = res.fetchall()
     db.commit()
-    await email.main.mid_year_review_disapproved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
+    await email.mid.mid_year_review_disapproved(appraisal_form_id) # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
     return res
 
 async def disapprove_form_details_mid_auth(appraisal_form_id:int, type_form:str,  comment:str, token:str, db:Session):

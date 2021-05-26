@@ -171,7 +171,7 @@ async def create_annual_plan(result_areas, target, resources, appraisal_form_id,
                         {'result_areas':result_areas, 'target':target,'resources':resources, 'appraisal_form_id':appraisal_form_id, 'submit':submit}) # CREATE INTO TABLE
         db.commit()
         if submit==1:
-            await email.main.approve_annual_plan(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+            await email.start.approve_annual_plan(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
         else:
             pass    
         

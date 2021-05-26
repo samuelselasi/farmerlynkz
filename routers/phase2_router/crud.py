@@ -80,7 +80,7 @@ async def create_mid_year_review(progress_review, remarks, appraisal_form_id, co
                         {'progress_review':progress_review, 'remarks':remarks, 'appraisal_form_id':appraisal_form_id, 'competency':competency, 'submit':submit}) # CREATE INTO TABLE
         db.commit() 
         if submit==1:
-            await email.main.approve_mid_year_review(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+            await email.mid.approve_mid_year_review(appraisal_form_id) # SEND ANNUAL PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
         else:
             pass   
  
