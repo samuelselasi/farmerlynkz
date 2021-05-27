@@ -40,7 +40,7 @@ template1 = """
                
 
                     <p>As a requirement for the completion
-                        of your Annual appraisal form, the performance planning
+                        of your Annual appraisal form, the start of year
                         form is provided to all staff.</p>
                        
                         <p>Your performance planning form for the year has
