@@ -53,6 +53,16 @@ async def background_send_3(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# START END OF YEAR REVIEW(INDIVIDUAL)
+async def background_send_45(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
+        message = MessageSchema(
+            subject="Start End of Year Review",
+            recipients=[item[0]], # INDEX OF EMAIL FROM DB QUERY
+            body=template3.format(url=settings.END_URL,hash=item[1]), # VARIABLES IN TEMPLATES STORING URL AND HASH
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +76,13 @@ async def start_end_0f_year_review_(background_tasks:BackgroundTasks, db:Session
     res = db.execute("""SELECT * FROM public.hash_table""")
     res = res.fetchall()
     return await background_send_3(res, background_tasks)
+
+# SEND END OF YEAR LINK TO INDIVIDUAL STAFF
+@router.post("/endofyearreviewmailstaff/")
+async def end_of_year_review_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
+    res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_45(res, background_tasks)
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

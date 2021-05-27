@@ -42,6 +42,7 @@ from static.email_templates.template_23 import template23
 from static.email_templates.template_24 import template24
 from static.email_templates.template_25 import template25
 from static.email_templates.template_26 import template26
+from static.email_templates.template_27 import template27
 
 
 router = APIRouter()
@@ -171,6 +172,17 @@ async def background_send_37(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# START END OF YEAR REVIEW(INDIVIDUAL)
+async def background_send_45(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
+        message = MessageSchema(
+            subject="Start End of Year Review",
+            recipients=[item[0]], # INDEX OF EMAIL FROM DB QUERY
+            body=template3.format(url=settings.END_URL,hash=item[1]), # VARIABLES IN TEMPLATES STORING URL AND HASH
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
 # SEND ANNUAL PLAN DETAILS TO APPROVED
 async def background_send_40(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list:
@@ -182,7 +194,18 @@ async def background_send_40(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
-# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# SEND MID-YEAR REVIEW DETAILS TO APPROVED
+async def background_send_41(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Mid-Year Review Details",
+            recipients=[item["email"]],
+            body=template27.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
+# ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 # BACKGROUND TASKS(WITH SCHEDULER)
 
@@ -549,7 +572,7 @@ async def start_end_0f_year_review_(background_tasks:BackgroundTasks, db:Session
 async def end_of_year_review_staff(email:str, background_tasks:BackgroundTasks, db:Session=Depends(get_db)):
     res = db.execute("""SELECT email, hash FROM public.hash_table where email=:email""", {'email':email}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
     res = res.fetchall()
-    return await background_send_37(res, background_tasks)
+    return await background_send_45(res, background_tasks)
 
 # SEND ANNUAL PLAN DETAILS TO APPROVED
 @router.post("/startformdetails/")
@@ -557,6 +580,13 @@ async def send_annual_plan_details_to_approved(background_tasks:BackgroundTasks,
     res = db.execute("""SELECT public.get_list_of_approved_form('Start', 1)""") # SELECT EMAIL FROM LIST OF APPROVED FUNCTION IN DB
     res = res.first()[0]
     return await background_send_40(res, background_tasks)
+
+# SEND MID-YEAR DETAILS TO APPROVED
+@router.post("/midformdetails/")
+async def send_midyear_review_details_to_approved(background_tasks:BackgroundTasks, db:Session=Depends(get_db)): # SEND FORM DETAILS TO APPROVED STAFF
+    res = db.execute("""SELECT public.get_list_of_approved_form('Mid', 1)""") # SELECT EMAIL FROM LIST OF APPROVED FUNCTION IN DB
+    res = res.first()[0]
+    return await background_send_41(res, background_tasks)
 
 # SEND REMINDER TO SUPERVISORS TO APPROVE SUBMITTED ANNUAL PLAN FORMS
 @router.post("/approvestartreview/")

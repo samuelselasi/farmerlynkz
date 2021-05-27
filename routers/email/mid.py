@@ -22,7 +22,7 @@ from static.email_templates.template_22 import template22
 from static.email_templates.template_23 import template23
 from static.email_templates.template_24 import template24
 from static.email_templates.template_25 import template25
-
+from static.email_templates.template_27 import template27
 
 
 router = APIRouter()
@@ -84,6 +84,17 @@ async def background_send_37(user_hash_list, background_tasks) -> JSONResponse:
             subject="Start Mid-Year Review",
             recipients=[item[0]], # INDEX OF EMAIL FROM DB QUERY
             body=template2.format(url=settings.MID_URL,hash=item[1]), # VARIABLES IN TEMPLATES STORING URL AND HASH
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
+# SEND MID-YEAR REVIEW DETAILS TO APPROVED
+async def background_send_41(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Mid-Year Review Details",
+            recipients=[item["email"]],
+            body=template27.format( email=[item["email"]], progress_review=[item["progress_review"]], lastname=[item["lastname"]], staff_id=[item["staff_id"]], firstname=[item["firstname"]], remarks=[item["remarks"]], middlename=[item["middlename"]], supervisor=[item["supervisor"]], competency=[item["competency"]], supervisor_email=[item["supervisor_email"]], appraisal_form_id=[item["appraisal_form_id"]]),
             subtype="html"
         )        
         background_tasks.add_task(fm.send_message,message)
@@ -274,7 +285,12 @@ async def approve_completed_mid_year_review(background_tasks:BackgroundTasks, db
     res = res.first()[0]
     return await background_send_39(res, background_tasks)
 
-
+# SEND MID-YEAR DETAILS TO APPROVED
+@router.post("/midformdetails/")
+async def send_midyear_review_details_to_approved(background_tasks:BackgroundTasks, db:Session=Depends(get_db)): # SEND FORM DETAILS TO APPROVED STAFF
+    res = db.execute("""SELECT public.get_list_of_approved_form('Mid', 1)""") # SELECT EMAIL FROM LIST OF APPROVED FUNCTION IN DB
+    res = res.first()[0]
+    return await background_send_41(res, background_tasks)
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
