@@ -46,7 +46,7 @@ reset_password_template = """
                     </tr>
                     <tr>
                         <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; padding: 25px 0 0 0;">
-                        <p style="margin: 0;">Appraisal Management App password reset. Only supervisors are allowed to log into this app. Please ignore this email if youre not a supervisor or have already set your password. We apologize for any inconveniences caused. </p>
+                        <p style="margin: 0;">Appraisal Management App password reset code is {code}. Only supervisors are allowed to log into this app. Please ignore this email if youre not a supervisor or have already set your password. We apologize for any inconveniences caused. </p>
                         </td>
                     </tr>
                     </table>

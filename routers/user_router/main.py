@@ -66,8 +66,8 @@ async def update_password(id:int, payload:schemas.ResetPassword, token:str=Depen
 
 # UPDATE PASSWORD BY EMAIL
 @router.patch("/password/", description="change user password", status_code=status.HTTP_202_ACCEPTED)
-async def update_password_(email:str, payload:schemas.ResetPassword, token:str=Depends(oauth2_scheme), db:Session=Depends(get_db)):
-    return await crud.reset_password_auth(email, payload, token, db)
+async def update_password_(email:str, payload:schemas.ResetPassword, db:Session=Depends(get_db)):
+    return await crud.reset_password_(email, payload, db)
 
 # CHANGE PASSWORD(IN USE)
 @router.put("/change/password")

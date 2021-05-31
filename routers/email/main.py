@@ -150,6 +150,17 @@ async def background_send_35(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# REMIND STAFF TO FILL MID-YEAR REVIEW (NO LINK)
+async def background_send_46(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Reminder To Start Mid-Year Review",
+            recipients=[item[0]],
+            body=template19.format( progress_review=[item[1]], remarks=[item[2]],competency=[item[3]]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
+
 # START ANNUAL PLAN(INDIVIDUAL)
 async def background_send_34(user_hash_list, background_tasks) -> JSONResponse:
     for item in user_hash_list: # CREATE VARIABLES FOR EMAIL TEMPLATES
@@ -609,6 +620,11 @@ async def start_annual_plan_reminder(background_tasks:BackgroundTasks, superviso
     res = res.fetchall()
     return await background_send_35(res, background_tasks)
 
+@router.post("/midyearreviewreminder/{supervisor}/")
+async def start_midyear_review_reminder(background_tasks:BackgroundTasks, supervisor:int, db:Session=Depends(get_db)):
+    res = db.execute("""select email, progress_review, remarks, competency from public.view_users_form_details where supervisor=:supervisor and mid_status=0 and progress_review is null and remarks is null and competency is null""", {'supervisor':supervisor}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_35(res, background_tasks)
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
