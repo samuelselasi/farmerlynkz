@@ -49,7 +49,7 @@ template19 =  """
 
 
                         The forms will be avilable untill the start of the
-                        <strong>Mid-Year Review process  </strong> <br/>
+                        <strong>Mid-Year Review</strong> <br/>
 
                         Thank You. <br/>
                         Appraiser-App Admin

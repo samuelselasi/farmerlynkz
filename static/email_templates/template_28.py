@@ -1,4 +1,5 @@
-reset_password_template = """
+
+template28 =  """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB">
 <head>
@@ -35,22 +36,25 @@ reset_password_template = """
 
                 <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
        
-                <h3> <p>Dear Supervisor,</p> </h3> </div>
-               
+                <h3> <p>Dear Sir/Madam,</p> </h3>
 
-                    <p>You have requested to change your password.</p>
-                       
-                        <p>Due to security reasons, we have provided you with a new link to reset your password.</p>
-                       
-                        <strong><p>Please fill the form by opening the link provided.</strong></br>
-                        <a href="http://196.43.196.108:5445/login/changepassword/{code}" target="_blank">click this link to reset your password</a> </p>
-                       
-                        Please note that this link will expire 
-                        <strong>in a few minutes</strong> <br/>
-                       
+                        <p>You are expected to complete your annual plan details as soon as possible for inspection and approval.</p>
+
+                        <p>Follow the link in the mail that was sent earlier this year to complete the start of year details.</p>
+
+                        <strong><p>You are expected to complete the form for your supervisor's approval.</strong></br>
+                                    progress review = {progress_review}</br>
+                                    remarks = {remarks}</br>
+                                    competency = {competency} </p></br>
+
+
+                        The forms will be avilable untill the start of the
+                        <strong>End of Year Review</strong> <br/>
+
                         Thank You. <br/>
-                        Performance Planning Form
-                    </p>
+                        Appraiser-App Admin
+                     </p>
+
             </p>
            
             </p>
@@ -100,4 +104,5 @@ reset_password_template = """
     </table>
 </body>
 </html>
+
 """

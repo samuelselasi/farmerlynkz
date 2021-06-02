@@ -23,6 +23,7 @@ from static.email_templates.template_23 import template23
 from static.email_templates.template_24 import template24
 from static.email_templates.template_25 import template25
 from static.email_templates.template_27 import template27
+from static.email_templates.template_28 import template28
 
 
 router = APIRouter()
@@ -99,6 +100,16 @@ async def background_send_41(user_hash_list, background_tasks) -> JSONResponse:
         )        
         background_tasks.add_task(fm.send_message,message)
 
+# REMIND STAFF TO FILL MID-YEAR REVIEW (NO LINK)
+async def background_send_46(user_hash_list, background_tasks) -> JSONResponse:
+    for item in user_hash_list:
+        message = MessageSchema(
+            subject="Reminder To Start Mid-Year Review",
+            recipients=[item[0]],
+            body=template28.format( progress_review=[item[1]], remarks=[item[2]],competency=[item[3]]),
+            subtype="html"
+        )        
+        background_tasks.add_task(fm.send_message,message)
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -291,6 +302,13 @@ async def send_midyear_review_details_to_approved(background_tasks:BackgroundTas
     res = db.execute("""SELECT public.get_list_of_approved_form('Mid', 1)""") # SELECT EMAIL FROM LIST OF APPROVED FUNCTION IN DB
     res = res.first()[0]
     return await background_send_41(res, background_tasks)
+
+# REMIND APPRAISEE TO CHECK EMAIL WITH LINK FOR MID-YEAR REVIEW
+@router.post("/midyearreviewreminder/{supervisor}/")
+async def start_midyear_review_reminder(background_tasks:BackgroundTasks, supervisor:int, db:Session=Depends(get_db)):
+    res = db.execute("""select email, progress_review, remarks, competency from public.view_users_form_details where supervisor=:supervisor and mid_status=0 and progress_review is null and remarks is null and competency is null""", {'supervisor':supervisor}) # SELECT EMAIL AND HASH PAIR FROM HASH TABLE 
+    res = res.fetchall()
+    return await background_send_46(res, background_tasks)
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

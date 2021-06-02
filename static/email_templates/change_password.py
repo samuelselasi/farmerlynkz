@@ -36,21 +36,18 @@ change = """
 
                 <img alt="aiti.png" src="https://www.aiti-kace.com.gh/sites/default/files/aiti.png" style="width:199px;height:69px;">
        
-                <h3> <p>Dear All,</p> </h3> </div>
+                <h3> <p>Dear Supervisor,</p> </h3> </div>
                
 
-                    <p>As a requirement for the completion
-                        of your Annual appraisal form, the performance planning
-                        form is provided to all staff.</p>
+                    <p>You have requested to change your password.</p>
                        
-                        <p>Your performance planning form for the year has
-                        been made available to you.</p>
+                        <p>Due to security reasons, we have provided you with a new link to reset your password.</p>
                        
                         <strong><p>Please fill the form by opening the link provided.</strong></br>
-                        <a href="{url}/{code}" target="_blank">click this link to fill form</a> </p>
+                        <a href="http://196.43.196.108:5445/login/changepassword/{code}" target="_blank">click this link to reset your password</a> </p>
                        
-                        You are expected to access and fill the form by
-                        <strong>the end of this month </strong> <br/>
+                        Please note that this link will expire 
+                        <strong>in a few minutes</strong> <br/>
                        
                         Thank You. <br/>
                         Performance Planning Form
