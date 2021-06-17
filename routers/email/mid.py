@@ -25,7 +25,7 @@ from static.email_templates.template_25 import template25
 from static.email_templates.template_27 import template27
 from static.email_templates.template_28 import template28
 
-
+USE_CREDENTIALS = settings.USE_CREDENTIALS
 router = APIRouter()
 
 def get_db():
@@ -44,7 +44,8 @@ fm = FastMail(
         MAIL_PORT = settings.MAIL_PORT,
         MAIL_SERVER = settings.MAIL_SERVER,
         MAIL_TLS = settings.MAIL_TLS,
-        MAIL_SSL = settings.MAIL_SSL
+        MAIL_SSL = settings.MAIL_SSL,
+        USE_CREDENTIALS = settings.USE_CREDENTIALS
     )
 )
 

@@ -64,7 +64,8 @@ fm = FastMail(
         MAIL_PORT = settings.MAIL_PORT,
         MAIL_SERVER = settings.MAIL_SERVER,
         MAIL_TLS = settings.MAIL_TLS,
-        MAIL_SSL = settings.MAIL_SSL
+        MAIL_SSL = settings.MAIL_SSL,
+        USE_CREDENTIALS = settings.USE_CREDENTIALS
     )
 )
 
