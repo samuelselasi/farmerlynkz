@@ -4,13 +4,13 @@ import os
 class Settings(BaseSettings): # STORE VARIABLES IN ENV TO BE EXPORTED TO MAIN.PY
     SECRET_KEY : str = os.environ.get('SECRET_KEY') or "fsdfsdfsdfsdflhiugysadf87w940e-=r0werpolwe$16$5*dfsdfsdf&&#$rrr$$)7a9563OO93f7099f6f0f4caa6cf63b88e8d3e7"
     ALGORITHM: str = os.environ.get('ALGORITHM') or "HS256"
-    MAIL_USERNAME : str = os.environ.get('MAIL_USERNAME') or "managementappraiser@gmail.com"
+    MAIL_USERNAME : str = os.environ.get('MAIL_USERNAME') or "appraisalmanagement2021@gmail.com"
     MAIL_PASSWORD : str = os.environ.get('MAIL_PASSWORD') or "2021password"
-    MAIL_FROM : str = os.environ.get('MAIL_FROM') or "managementappraisal@gmail.com"
+    MAIL_FROM : str = os.environ.get('MAIL_FROM') or "appraisalmanagement2021@gmail.com"
     MAIL_PORT : int = os.environ.get('MAIL_PORT') or 587
     MAIL_SERVER : str = os.environ.get('MAIL_SERVER') or "smtp.gmail.com"
     MAIL_TLS : bool = os.environ.get('MAIL_TLS') or True
-    MAIL_SSL : bool = os.environ.get('MAIL_SSL') or True
+    MAIL_SSL : bool = os.environ.get('MAIL_SSL') or False
     USE_CREDENTIALS : bool = os.environ.get('USE_CREDENTIALS') or True
     ACCESS_TOKEN_DURATION_IN_MINUTES: float = os.environ.get('ACCESS_TOKEN_DURATION_IN_MINUTES') or 30.5
     REFRESH_TOKEN_DURATION_IN_MINUTES: float = os.environ.get('REFRESH_TOKEN_DURATION_IN_MINUTES') or 87000.5
