@@ -30,10 +30,10 @@ async def create_annual_appraisal(payload: schemas.create_annual_appraisal, db: 
 
 
 @router.post("/competencedetails/")
-async def create_competence_details(competence_id: int, grade: int, submit: int, appraisal_form_id: int, db: Session = Depends(get_db)):
-    return await crud.competence_details(competence_id, grade, submit, appraisal_form_id, db)
+async def create_competence_details(payload: schemas.create_competence_details, db: Session = Depends(get_db)):
+    return await crud.competence_details(payload, db)
 
 
 @router.post("/performancedetails/")
-async def create_performance_details(assessment: int, final_score: int, weight: int, comment: str, submit: int,  approval_date: datetime, appraisal_form_id: int, db: Session = Depends(get_db)):
-    return await crud.performance_details(assessment, final_score, weight, comment, submit,  approval_date, appraisal_form_id, db)
+async def create_performance_details(payload: schemas.create_performance_details, db: Session = Depends(get_db)):
+    return await crud.performance_details(payload, db)
