@@ -10,12 +10,12 @@ router = APIRouter()
 
 
 @router.get("/competencedetails/")
-async def read_competence_details(db: Session = Depends(get_db)):
-    return await crud.read_competence_details(db)
+async def read_competency_details(db: Session = Depends(get_db)):
+    return await crud.read_competency_details(db)
 
 
 @router.get("/performancedetails/")
-async def read_cperformance_details(db: Session = Depends(get_db)):
+async def read_performance_details(db: Session = Depends(get_db)):
     return await crud.read_performance_details(db)
 
 
@@ -24,13 +24,18 @@ async def read_annual_appraisal(db: Session = Depends(get_db)):
     return await crud.read_annual_appraisal(db)
 
 
+@router.get("/competencies/")
+async def read_competencies(db: Session = Depends(get_db)):
+    return await crud.read_competencies(db)
+
+
 @router.post("/annualappraisal/")
 async def create_annual_appraisal(payload: schemas.create_annual_appraisal, db: Session = Depends(get_db)):
     return await crud.create_annual_appraisal(payload, db)
 
 
-@router.post("/competencedetails/")
-async def create_competence_details(payload: schemas.create_competence_details, db: Session = Depends(get_db)):
+@router.post("/competencydetails/")
+async def create_competency_details(payload: schemas.create_competence_details, db: Session = Depends(get_db)):
     return await crud.competence_details(payload, db)
 
 

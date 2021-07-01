@@ -1,58 +1,59 @@
 version: "3.8"
 services:
-      # db:
-      #   build:
-      #       context: .
-      #       dockerfile: dockerfile.postgres
-    
-      #   environment:
-      #       POSTGRES_USER: "appraisal2"
-      #       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      #       POSTGRES_DB: ${POSTGRES_DB}
-      #       POSTGRES_HOST_AUTH_METHOD: trust
+  # db:
+  #   build:
+  #       context: .
+  #       dockerfile: dockerfile.postgres
 
-      #   restart: always
-      #   ports:
-      #   - 8434:5432
+  #   environment:
+  #       POSTGRES_USER: "appraisal2"
+  #       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #       POSTGRES_DB: ${POSTGRES_DB}
+  #       POSTGRES_HOST_AUTH_METHOD: trust
 
-      #   networks:
-      #   - test_network
+  #   restart: always
+  #   ports:
+  #   - 8434:5432
 
-      #   volumes:
-      #   - postgres-data:/var/lib/postgresql/data
-  
-      # pgadmin4:
-      #   build: 
-      #     context: .
-      #     dockerfile: dockerfile.pgadmin
-      #   restart: always
-      #   environment:
-      #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-      #   ports:
-      #     - "${PGADMIN_PORT}:80"
-      #   depends_on:
-      #     - db
-      #   networks:
-      #     - test_network    
-      #   volumes:
-      #       - ./pgadmin_data:/var/lib/pgadmin/data
-      backend:
-        build:
-          context: .
-          dockerfile: Dockerfile
-        environment:
-         DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
-       
-        ports: 
-          - "${API_PORT}:81"
-        networks: 
-          - test_network 
+  #   networks:
+  #   - test_network
 
-networks: 
-    test_network:
-        driver: bridge
+  #   volumes:
+  #   - postgres-data:/var/lib/postgresql/data
+
+  # pgadmin4:
+  #   build:
+  #     context: .
+  #     dockerfile: dockerfile.pgadmin
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+  #   ports:
+  #     - "${PGADMIN_PORT}:80"
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - test_network
+  #   volumes:
+  #       - ./pgadmin_data:/var/lib/pgadmin/data
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
+
+    ports:
+      - "${API_PORT}:81"
+    networks:
+      - test_network
+
+networks:
+  test_network:
+    driver: bridge
 
 volumes:
   postgres-data:
-    driver: local        
+    driver: local
