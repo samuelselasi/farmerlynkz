@@ -6,7 +6,6 @@ from pydantic import BaseModel
 class CompetenceDetails(BaseModel):
     competency_id: int
     appraisal_form_id: int
-    status: int
     grade: int
     submit: int
 
@@ -20,7 +19,6 @@ class PerformanceDetails(BaseModel):
     weight: int
     comments: str
     final_score: int
-    status: int
     approved_date: datetime
     submit: int
 

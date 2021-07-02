@@ -58,15 +58,15 @@ async def create_annual_appraisal(payload: schemas.AnnualAppraisal, db: Session)
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 
 
-async def competence_details(competency_id, appraisal_form_id, status, grade, submit, db: Session):
+async def competence_details(competency_id, appraisal_form_id, grade, submit, db: Session):
     query = db.execute(
         """ SELECT ending FROM public.deadline WHERE deadline_type = 'End'; """)  # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
     if query >= date.today():  # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN
-        res = db.execute("""INSERT INTO public.competency_details(competency_id, appraisal_form_id, status, grade, submit)
-	                            values(:competency_id, :appraisal_form_id, :status, :grade, :submit) on conflict (appraisal_form_id) do 
-	                                update set competency_id = EXCLUDED.competency_id, status = EXCLUDED.status , grade = EXCLUDED.grade, submit = EXCLUDED.submit; """,
-                         {'competency_id': competency_id, 'appraisal_form_id': appraisal_form_id, 'status': status, 'grade': grade, 'submit': submit, })  # CREATE INTO TABLE
+        res = db.execute("""INSERT INTO public.competency_details(competency_id, appraisal_form_id, grade, submit)
+	                            values(:competency_id, :appraisal_form_id, :grade, :submit) on conflict (appraisal_form_id) do 
+	                                update set competency_id = EXCLUDED.competency_id, grade = EXCLUDED.grade, submit = EXCLUDED.submit; """,
+                         {'competency_id': competency_id, 'appraisal_form_id': appraisal_form_id, 'grade': grade, 'submit': submit, })  # CREATE INTO TABLE
         db.commit()
         if submit == 1:
             # SEND COMPETENCE DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
@@ -79,15 +79,15 @@ async def competence_details(competency_id, appraisal_form_id, status, grade, su
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 
 
-async def performance_details(appraisal_form_id, weight, comments, final_score, status, approved_date, submit, db: Session):
+async def performance_details(appraisal_form_id, weight, comments, final_score, approved_date, submit, db: Session):
     query = db.execute(
         """ SELECT ending FROM public.deadline WHERE deadline_type = 'End'; """)  # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
     if query >= date.today():  # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN
-        res = db.execute("""INSERT INTO public.competence_details(appraisal_form_id, weight, comments, final_score, status, approved_date, submit)
-	                            values(:appraisal_form_id, :weight, :comments, :final_score, :status, :approved_date, :submit) on conflict (appraisal_form_id) do 
-	                                update set appraisal_form_id = EXCLUDED.appraisal_form_id, weight = EXCLUDED.weight, comments = EXCLUDED.comments, final_score = EXCLUDED.final_score, status = EXCLUDED.status, approved_date = EXCLUDED.approved_date, submit = EXCLUDED.submit; """,
-                         {'appraisal_form_id': appraisal_form_id, 'weight': weight, 'comments': comments, 'final_score': final_score, 'status': status, 'approved_date': approved_date, 'submit': submit})  # CREATE INTO TABLE
+        res = db.execute("""INSERT INTO public.performance_details(appraisal_form_id, weight, comments, final_score, approved_date, submit)
+	                            values(:appraisal_form_id, :weight, :comments, :final_score, :approved_date, :submit) on conflict (appraisal_form_id) do 
+	                                update set weight = EXCLUDED.weight, comments = EXCLUDED.comments, final_score = EXCLUDED.final_score, approved_date = EXCLUDED.approved_date, submit = EXCLUDED.submit; """,
+                         {'appraisal_form_id': appraisal_form_id, 'weight': weight, 'comments': comments, 'final_score': final_score, 'approved_date': approved_date, 'submit': submit})  # CREATE INTO TABLE
         db.commit()
         if submit == 1:
             # SEND PERFORMANCE PLAN DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
