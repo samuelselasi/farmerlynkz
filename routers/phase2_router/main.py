@@ -59,7 +59,7 @@ async def read_deadline_table(db:Session=Depends(get_db)):
 # CREATE MID-YEAR REVIEW
 @router.post("/midyearreview/")
 async def create_mid_year_review(payload: schemas.create_mid_year_review, db: Session = Depends(get_db)):
-    return await crud.create_mid_year_review(payload.progress_review, payload.remarks, payload.appraisal_form_id, payload.competency, payload.submit, db)
+    return await crud.create_mid_year_review(payload.progress_review, payload.appraisal_form_id, payload.competency, payload.submit, db)
 
 # UPDATE PHASE-2 DETAILS
 @router.put("/midyearreview/")
