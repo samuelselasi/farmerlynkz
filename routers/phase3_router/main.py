@@ -29,6 +29,11 @@ async def read_competencies(db: Session = Depends(get_db)):
     return await crud.read_competencies(db)
 
 
+@router.get("/endofyearreview/")
+async def end_of_year_review(db: Session = Depends(get_db)):
+    return await crud.read_endofyear_review(db)
+
+
 @router.post("/annualappraisal/")
 async def create_annual_appraisal(payload: schemas.create_annual_appraisal, db: Session = Depends(get_db)):
     return await crud.create_annual_appraisal(payload, db)

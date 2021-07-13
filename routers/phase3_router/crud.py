@@ -33,8 +33,14 @@ async def read_competencies(db: Session):
     res = res.fetchall()
     return res
 
-# CREATE END OF YEAR REVIEW
 
+async def read_endofyear_review(db: Session):
+    res = db.execute(""" SELECT * FROM public.endofyear_review; """)
+    res = res.fetchall()
+    return res
+
+
+# CREATE END OF YEAR REVIEW
 
 async def create_annual_appraisal(payload: schemas.AnnualAppraisal, db: Session):
     query = db.execute(
@@ -64,8 +70,8 @@ async def competence_details(competency_id, appraisal_form_id, grade, submit, db
     query = query.first()[0]
     if query >= date.today():  # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN
         res = db.execute("""INSERT INTO public.competency_details(competency_id, appraisal_form_id, grade, submit)
-	                            values(:competency_id, :appraisal_form_id, :grade, :submit) on conflict (appraisal_form_id) do 
-	                                update set competency_id = EXCLUDED.competency_id, grade = EXCLUDED.grade, submit = EXCLUDED.submit; """,
+	                            values(:competency_id, :appraisal_form_id, :grade, :submit) on conflict (competency_id, appraisal_form_id) do 
+	                                update set grade = EXCLUDED.grade, submit = EXCLUDED.submit; """,
                          {'competency_id': competency_id, 'appraisal_form_id': appraisal_form_id, 'grade': grade, 'submit': submit, })  # CREATE INTO TABLE
         db.commit()
         if submit == 1:
