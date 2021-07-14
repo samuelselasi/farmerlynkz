@@ -709,7 +709,7 @@ async def approve_form_details_auth(appraisal_form_id: int, type_form: str, toke
 
 
 async def approve_form_mid(appraisal_form_id: int, remarks: str, db: Session):
-    res = db.execute(""" SELECT public.approve_mid_form_details(:appraisal_form_id, :remarks """, {
+    res = db.execute(""" SELECT public.approve_mid_form_details(:appraisal_form_id, :remarks) """, {
                      'appraisal_form_id': appraisal_form_id, 'remarks': remarks})  # APPROVE FROM DB FUNCTION
     res = res.fetchall()
     db.commit()
