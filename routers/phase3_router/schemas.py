@@ -3,11 +3,17 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-class CompetenceDetails(BaseModel):
+class CompDetails(BaseModel):
     competency_id: int
-    appraisal_form_id: int
     grade: int
-    submit: int
+
+
+class create_comp_details(CompDetails):
+    pass
+
+
+class CompetenceDetails(BaseModel):
+    competencies: List[CompDetails]
 
 
 class create_competence_details(CompetenceDetails):
