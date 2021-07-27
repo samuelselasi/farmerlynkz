@@ -1,5 +1,5 @@
 from datetime import datetime, time, timedelta
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic import BaseModel
 
 
@@ -8,12 +8,14 @@ class CompDetails(BaseModel):
     grade: int
 
 
+
 class create_comp_details(CompDetails):
     pass
 
 
 class CompetenceDetails(BaseModel):
-    competencies: List[CompDetails]
+    competencies: List[Union[CompDetails, CompDetails,
+                             CompDetails, CompDetails, CompDetails]]
 
 
 class create_competence_details(CompetenceDetails):
@@ -117,7 +119,8 @@ class AbilityToWorkEffectivelyInATeam(BaseModel):
 class AnnualAppraisal(BaseModel):
     appraisal_form_id: int
     submit: int
-    organization_and_management: List[OrganizationAndManagement]
+    organization_and_management: List[Union[OrganizationAndManagement,
+                                      InnovationAndStrategicThinking, LeadershipAndDecisionMaking]]
     innovation_and_strategic_thinking: List[InnovationAndStrategicThinking]
     leadership_and_decision_making: List[LeadershipAndDecisionMaking]
     developing_and_improving: List[DevelopingAndImproving]
