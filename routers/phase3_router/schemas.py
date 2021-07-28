@@ -4,8 +4,8 @@ from pydantic import BaseModel
 
 
 class CompDetails(BaseModel):
-    appraisal_form_id: int
     competency_id: int
+    appraisal_form_id: int
     grade: int
     submit: int
 
