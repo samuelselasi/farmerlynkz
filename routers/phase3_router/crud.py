@@ -65,13 +65,15 @@ async def create_annual_appraisal(payload: schemas.AnnualAppraisal, db: Session)
 
 
 async def competence_details(competency_id, appraisal_form_id, grade, submit, db: Session):
+
     query = db.execute(
         """ SELECT ending FROM public.deadline WHERE deadline_type = 'End'; """)  # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
     if query >= date.today():  # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN
         res = db.execute("""INSERT INTO public.competency_details(competency_id, appraisal_form_id, grade, submit)
-	                            values(:competency_id, :appraisal_form_id, :grade, :submit) on conflict (competency_id, appraisal_form_id) do 
-	                                update set grade = EXCLUDED.grade, submit = EXCLUDED.submit; """,
+values(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade),(:competency_id, :appraisal_form_id, :grade)
+on conflict (competency_id, appraisal_form_id) do 
+update set grade = EXCLUDED.grade, submit = EXCLUDED.submit; """,
                          {'competency_id': competency_id, 'appraisal_form_id': appraisal_form_id, 'grade': grade, 'submit': submit, })  # CREATE INTO TABLE
         db.commit()
         if submit == 1:

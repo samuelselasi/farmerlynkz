@@ -4,9 +4,10 @@ from pydantic import BaseModel
 
 
 class CompDetails(BaseModel):
+    appraisal_form_id: int
     competency_id: int
     grade: int
-
+    submit: int
 
 
 class create_comp_details(CompDetails):
@@ -14,8 +15,7 @@ class create_comp_details(CompDetails):
 
 
 class CompetenceDetails(BaseModel):
-    competencies: List[Union[CompDetails, CompDetails,
-                             CompDetails, CompDetails, CompDetails]]
+    competencies: List[Union[CompDetails]]
 
 
 class create_competence_details(CompetenceDetails):
@@ -24,9 +24,9 @@ class create_competence_details(CompetenceDetails):
 
 class PerformanceDetails(BaseModel):
     appraisal_form_id: int
-    weight: int
+    weight: str
     comments: str
-    final_score: int
+    final_score: str
     approved_date: datetime
     submit: int
 
