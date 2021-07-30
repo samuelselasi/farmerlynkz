@@ -64,7 +64,7 @@ async def create_annual_appraisal(payload: schemas.AnnualAppraisal, db: Session)
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 
 
-async def competence_details(competency_id, appraisal_form_id, grade, submit, db: Session):
+async def competence_details(payload: schemas.CompDetails, db: Session):
 
     query = db.execute(
         """ SELECT ending FROM public.deadline WHERE deadline_type = 'End'; """)  # READ DEADLINE FOR PHASE-1
@@ -80,9 +80,9 @@ async def competence_details(competency_id, appraisal_form_id, grade, submit, db
                             END LOOP;
                             END;
                             $$; """,
-                         {'competency_id': competency_id, 'appraisal_form_id': appraisal_form_id, 'grade': grade, 'submit': submit, })  # CREATE INTO TABLE
+                         {'competency_id': payload.competency_id, 'appraisal_form_id': payload.appraisal_form_id, 'grade': payload.grade, 'submit': payload.submit, })  # CREATE INTO TABLE
         db.commit()
-        if submit == 1:
+        if payload.submit == 1:
             # SEND COMPETENCE DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
             # await email.start.approve_annual_plan(appraisal_form_id)
             # else:
