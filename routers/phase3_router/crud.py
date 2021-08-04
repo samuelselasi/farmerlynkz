@@ -6,7 +6,7 @@ from datetime import datetime, date
 from sqlalchemy.orm import Session
 from . import models, schemas
 from .. import email
-
+from typing import List
 # READ END OF YEAR REVIEW
 
 
@@ -64,13 +64,14 @@ async def create_annual_appraisal(payload: schemas.AnnualAppraisal, db: Session)
         return JSONResponse(status_code=404, content={"message": "deadline has passed!"})
 
 
-async def competence_details(payload: schemas.CompDetails, db: Session):
+async def competence_details(payload: List[schemas.CompDetails],  db: Session):
 
     query = db.execute(
         """ SELECT ending FROM public.deadline WHERE deadline_type = 'End'; """)  # READ DEADLINE FOR PHASE-1
     query = query.first()[0]
     if query >= date.today():  # CHECK IF DEADLINE HAS NOT PASSED BEFORE CREATING ANNUAL PLAN
-        res = db.execute("""do $$
+        for payload in payload:
+            db.execute("""do $$
                             BEGIN
                             FOR i in 1..32 LOOP
                             INSERT INTO public.competency_details(competency_id, appraisal_form_id, grade, submit)
@@ -80,13 +81,13 @@ async def competence_details(payload: schemas.CompDetails, db: Session):
                             END LOOP;
                             END;
                             $$; """,
-                         {'competency_id': payload.competency_id, 'appraisal_form_id': payload.appraisal_form_id, 'grade': payload.grade, 'submit': payload.submit, })  # CREATE INTO TABLE
+                       {'competency_id': payload.competency_id, 'appraisal_form_id': payload.appraisal_form_id, 'grade': payload.grade, 'submit': payload.submit, })  # CREATE INTO TABLE
+            if payload.submit == 1:
+                # SEND COMPETENCE DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
+                # await email.start.approve_annual_plan(appraisal_form_id)
+                # else:
+                pass
         db.commit()
-        if payload.submit == 1:
-            # SEND COMPETENCE DETAILS TO SUPERVISOR'S EMAIL TO REVIEW AND APPROVE
-            # await email.start.approve_annual_plan(appraisal_form_id)
-            # else:
-            pass
 
         return JSONResponse(status_code=200, content={"message": "competence details has been created"})
     else:

@@ -1,6 +1,13 @@
 from datetime import datetime, time, timedelta
 from typing import List, Optional, Union
 from pydantic import BaseModel
+from enum import Enum
+
+
+class Action(str, Enum):
+
+    submit = 'submit'
+    save = 'save'
 
 
 class CompDetails(BaseModel):
@@ -15,7 +22,7 @@ class create_comp_details(CompDetails):
 
 
 class CompetenceDetails(BaseModel):
-    competencies: List[Union[CompDetails]]
+    competencies: List[CompDetails]
 
 
 class create_competence_details(CompetenceDetails):
