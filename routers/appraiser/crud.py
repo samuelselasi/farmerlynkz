@@ -766,9 +766,38 @@ async def approve_form_details_end_auth(appraisal_form_id: int, type_form: str, 
                             "WWW-Authenticate": "Bearer"})
 
 
+async def approve_competncy_details(appraisal_form_id: int, competency_id: int, db: Session):
+    res = db.execute("""SELECT public.approve_competency_details(:appraisal_form_id, :competency_id) """, {
+                     'appraisal_form_id': appraisal_form_id, 'competency_id': competency_id})  # APPROVE FROM DB FUNCTION
+    res = res.fetchall()
+    db.commit()
+    # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
+    await email.end.end_year_review_approved(appraisal_form_id)
+    return res
+
+
+async def approve_competency_details_auth(appraisal_form_id: int, competency_id: int, token: str, db: Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await approve_competncy_details(appraisal_form_id, competency_id, db)
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(
+            sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="access token expired", headers={
+                            "WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException(status_code=500, detail="decode error not enough arguments", headers={
+                            "WWW-Authenticate": "Bearer"})
+
 # DISAPROVE FORM DETAILS
 
 # START
+
+
 async def disapprove_form(appraisal_form_id: int, type_form: str, comment: str,  db: Session):
     res = db.execute(""" SELECT public.disapprove_form_details(:appraisal_form_id, :type_form, :comment) """, {
                      'appraisal_form_id': appraisal_form_id, 'type_form': type_form, 'comment': comment})  # APPROVE FROM DB FUNCTION
@@ -785,7 +814,7 @@ async def disapprove_form_details_auth(appraisal_form_id: int, type_form: str,  
             raise UnAuthorised('token blacklisted')
         token_data = utils.decode_token(data=token)
         if token_data:
-            return await disapprove_form(appraisal_form_id, type_form, comment, db)
+            return await disapprove_competency_details(appraisal_form_id, type_form, comment, db)
     except UnAuthorised:
         raise HTTPException(status_code=401, detail="{}".format(
             sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
@@ -857,7 +886,36 @@ async def disapprove_form_details_end_auth(appraisal_form_id: int, type_form: st
                             "WWW-Authenticate": "Bearer"})
 
 
+async def disapprove_competency_details(appraisal_form_id: int, competency_id: int, comments: str,  db: Session):
+    res = db.execute(""" SELECT public.disapprove_competency_details(:appraisal_form_id, :competency_id, :comments) """, {
+                     'appraisal_form_id': appraisal_form_id, 'competency_id': competency_id, 'comments': comments})  # APPROVE FROM DB FUNCTION
+    res = res.fetchall()
+    db.commit()
+    # SEND APPROVED ANNUAL PLAN DETAILS TO STAFF'S EMAIL
+    # await email.end.end_year_review_disapproved(appraisal_form_id)
+    return res
+
+
+async def disapprove_competency_details_auth(appraisal_form_id: int, competency_id: int,  comments: str, token: str, db: Session):
+    try:
+        if await is_token_blacklisted(token, db):
+            raise UnAuthorised('token blacklisted')
+        token_data = utils.decode_token(data=token)
+        if token_data:
+            return await disapprove_competency_details(appraisal_form_id, competency_id, comments, db)
+    except UnAuthorised:
+        raise HTTPException(status_code=401, detail="{}".format(
+            sys.exc_info()[1]), headers={"WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="access token expired", headers={
+                            "WWW-Authenticate": "Bearer"})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException(status_code=500, detail="decode error not enough arguments", headers={
+                            "WWW-Authenticate": "Bearer"})
+
 # CREATE APPRAISER DETAILS
+
+
 async def create_deadline(deadline_type, start_date, ending, db: Session):
     res = db.execute("""insert into public.deadline(deadline_type,start_date,ending)
     values(:deadline_type, :start_date, :ending) on conflict (deadline_type) do 

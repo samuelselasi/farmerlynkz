@@ -116,7 +116,15 @@ class DisaproveForm(BaseModel):
     comment: str
 
 
+class DisaproveCompetencyDetails(BaseModel):
+    comments: str
+
+
 class disaprove_form(DisaproveForm):
+    pass
+
+
+class disaprove_competency_details(DisaproveCompetencyDetails):
     pass
 
 

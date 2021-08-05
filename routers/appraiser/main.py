@@ -149,6 +149,11 @@ async def approve_form_details_end(appraisal_form_id: int, type_form='End', toke
     return await crud.approve_form_details_end_auth(appraisal_form_id, type_form, token, db)
 
 
+@router.get("/approvecompetencydetails/{appraisal_form_id}/{competency_id}/")
+async def approve_competency_details(appraisal_form_id: int, competency_id=int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    return await crud.approve_competency_details_auth(appraisal_form_id, competency_id, token, db)
+
+
 # DISAPPROVE FORM DETAILS
 @router.post("/disapproveform/{appraisal_form_id}/")
 async def disapprove_form_details(appraisal_form_id: int, payload: schemas.disaprove_form, type_form='Start', token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -165,7 +170,13 @@ async def disapprove_form_details_end(appraisal_form_id: int, payload: schemas.d
     return await crud.disapprove_form_details_end_auth(appraisal_form_id, type_form, payload.comment, token, db)
 
 
+@router.post("/disapprovecompetencydetails/{appraisal_form_id}/{competency_id}/")
+async def disapprove_competency_details(appraisal_form_id: int, payload: schemas.disaprove_competency_details, competency_id=int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    return await crud.disapprove_competency_details_auth(appraisal_form_id, competency_id, payload.comments, token, db)
+
 # CREATE APPRAISER DETAILS
+
+
 @router.post("/deadline/")
 async def create_deadline(payload: schemas.create_deadline, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     return await crud.create_deadline_auth(payload.deadline_type, payload.start_date, payload.ending, token, db)
