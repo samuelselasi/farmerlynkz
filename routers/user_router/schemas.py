@@ -1,6 +1,8 @@
+from xmlrpc.client import DateTime
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 import datetime
+from sqlalchemy import DateTime
 
 
 class UserBase(BaseModel):
@@ -10,9 +12,12 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: Optional[str]
     user_type_id: int
-    department_type_id: int
-    staff_id: int
     status: Optional[bool]
+    firstname: str
+    lastname: str
+    othernames: Optional[str]
+    phone: int
+    dateofbirth: datetime.datetime
 
 
 class UserUpdate(BaseModel):
@@ -34,7 +39,12 @@ class ChangePassword(BaseModel):
 class User(UserBase):
     id: int
     user_type_id: int
-    staff_id: int
+    status: Optional[bool]
+    firstname: str
+    lastname: str
+    othernames: Optional[str]
+    phone: int
+    dateofbirth: datetime.datetime
 
     class Config:
         orm_mode = True

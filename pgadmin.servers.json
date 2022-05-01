@@ -4,8 +4,8 @@
 			"Name": "Database",
             "Group": "Server Group 1",
 	    	"Port": 5432,
-            "Username":"appraisal2",
-	    	"Host": "db",
+            "Username":"sel",
+	    	"Host": "localhost",
 	    	"SSLMode": "prefer",
 	    	"MaintenanceDB": "postgres"
 		}

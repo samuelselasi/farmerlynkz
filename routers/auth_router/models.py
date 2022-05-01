@@ -4,6 +4,8 @@ from database import Base, SessionLocal
 from ..user_router.models import User
 import datetime, utils
 
+
+
 class ResetPasswordCodes(Base):
     __tablename__ = 'reset_password_codes'
 
