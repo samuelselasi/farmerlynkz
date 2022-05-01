@@ -1,6 +1,4 @@
 from exceptions import NotFoundError, UnAuthorised, UnAcceptableError, ExpectationFailure
-from static.email_templates.reset_password import reset_password_template
-from services.email import send_in_background, Mail
 from ..user_router.crud import read_user_by_id
 from fastapi import Depends, HTTPException
 from datetime import datetime, timedelta
