@@ -4,7 +4,6 @@ import string
 import random
 import jwt
 import sys
-import shutil
 from exceptions import FileReadFailed
 from typing import Optional
 from main import settings
@@ -56,7 +55,7 @@ async def read_xcl_file_contents(file, header):
         return pd.read_excel(file, names=header)
     except ValueError:
         raise ValueError
-    except:
+    except FileReadFailed:
         raise FileReadFailed('{}'.format(sys.exc_info()[0]))
 
 # READ CSV FILE CONTENTS
@@ -68,7 +67,7 @@ async def read_csv_file_contents(file, header):
         return pd.read_excel(file, names=header)
     except ValueError:
         raise ValueError
-    except:
+    except FileReadFailed:
         raise FileReadFailed()
 
 # BOOLEAN LOGIC

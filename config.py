@@ -4,7 +4,8 @@ import os
 
 class Settings(BaseSettings):  # STORE VARIABLES IN ENV TO BE EXPORTED TO MAIN.PY
     SECRET_KEY: str = os.environ.get(
-        'SECRET_KEY') or "fsdfsdfsdfsdflhiugysadf87w940e-=r0werpolwe$16$5*dfsdfsdf&&#$rrr$$)7a9563OO93f7099f6f0f4caa6cf63b88e8d3e7"
+        'SECRET_KEY') or ("fsdfsdfsdfsdflhiugysadf87w940e-=r0werpolwe$16$5"
+                          "*dfsdfsdf&&#$rrr$$)7a9563OO93f7099f6f0f4caa6cf63b88e8d3e7")
     ALGORITHM: str = os.environ.get('ALGORITHM') or "HS256"
     MAIL_USERNAME: str = os.environ.get('MAIL_USERNAME') or "847757583aba64"
     MAIL_PASSWORD: str = os.environ.get('MAIL_PASSWORD') or "dbac104863818f"

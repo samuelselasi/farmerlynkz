@@ -6,14 +6,14 @@ services:
         dockerfile: dockerfile.postgres
 
     environment:
-        POSTGRES_USER: "sel"
+        POSTGRES_USER: ${postgres}
         POSTGRES_PASSWORD: ${sel}
         POSTGRES_DB: ${farmerlynkz}
         POSTGRES_HOST_AUTH_METHOD: trust
 
     restart: always
     ports:
-    - 8434:5432
+    - 81:81
 
     networks:
     - test_network
@@ -30,7 +30,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
-    - "5432:80"
+    - "5432:5432"
     depends_on:
       - db
     networks:

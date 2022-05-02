@@ -1,12 +1,24 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from . import crud, schemas, models
-from typing import List, Optional
-from database import SessionLocal, engine, SQLALCHEMY_DATABASE_URL, metadata
+from . import crud, schemas
+# import crud
+# import schemas
+from typing import List
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, MetaData
 
 
 router = APIRouter()
+
+
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:sel@localhost:5432/farmerlynkz"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+metadata = MetaData()
+
 db = SessionLocal()
 # INITIATE AUTHENTICATION SCHEME
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
@@ -40,7 +52,7 @@ async def read_user_by_id(id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/{email}/", description="get user by email", response_model=schemas.User)
-async def read_user_by_email(email: str, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+async def getuserbm(email: str, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user = await crud.read_user_by_email_auth(email, token, db)
     if not user:
         raise HTTPException(
@@ -67,29 +79,11 @@ async def create_user(payload: schemas.UserCreate, db: Session = Depends(get_db)
     return await crud.create_user(payload, db)
 
 
-# VERIFY PASSWORD
-@router.post("/verify/password", description="verify user password")
-async def verify_password(id: int, payload: schemas.ResetPassword, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    return await crud.verify_password_auth(id, payload, token, db)
-
-
-# UPDATE USER BY ID
-@router.patch("/update/{id}", description="update user by id", response_model=schemas.User, status_code=202)
-async def update_user(id: int, payload: schemas.UserUpdate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    return await crud.update_user_auth(id, payload, token, db)
-
-# UPDATE PASSWORD BY ID
-
-
-# @router.patch("/{id}/password/", description="change user password", status_code=status.HTTP_202_ACCEPTED)
-async def update_password(id: int, payload: schemas.ResetPassword, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    return await crud.reset_password_auth(id, payload, token, db)
-
 # UPDATE PASSWORD BY EMAIL
 
 
-@router.patch("/password/", description="change user password", status_code=status.HTTP_202_ACCEPTED)
-async def update_password_(email: str, payload: schemas.ResetPassword, db: Session = Depends(get_db)):
+@router.patch("/password/", description="changeuserpassword", status_code=status.HTTP_202_ACCEPTED)
+async def update_pwd_(email: str, payload: schemas.ResetPassword, db: Session = Depends(get_db)):
     return await crud.reset_password_(email, payload, db)
 
 # CHANGE PASSWORD(IN USE)

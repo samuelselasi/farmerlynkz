@@ -2,10 +2,10 @@
 	"Servers": {
 		"1": {
 			"Name": "Database",
-            "Group": "Server Group 1",
+            "Group": "Servers",
 	    	"Port": 5432,
             "Username":"sel",
-	    	"Host": "localhost",
+	    	"Host": "db",
 	    	"SSLMode": "prefer",
 	    	"MaintenanceDB": "postgres"
 		}

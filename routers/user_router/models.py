@@ -1,9 +1,33 @@
-from sqlalchemy import event, Boolean, Column, ForeignKey, Integer, String, DateTime, Numeric, Date
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import event, Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 from passlib.hash import pbkdf2_sha256 as sha256
-from database import Base, SessionLocal
 import datetime
 import secrets
+import string
+import random
+
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, MetaData
+
+
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:sel@localhost:5432/farmerlynkz"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+metadata = MetaData()
+
+
+uppercase_and_digits = string.ascii_uppercase + string.digits
+lowercase_and_digits = string.ascii_lowercase + string.digits
+
+# GENERATE ACCESS CODES
+
+
+def gen_alphanumeric_code(length):
+    code = ''.join((random.choice(uppercase_and_digits)
+                   for i in range(length)))
+    return code
 
 
 class User(Base):
@@ -80,3 +104,30 @@ def insert_initial_values(*args, **kwargs):
 #     db.add_all([DepartmentType(title='Admin'), DepartmentType(title='Moderator'), DepartmentType(
 #         title='Farmer')])
 #     db.commit()
+
+
+class ResetPasswordCodes(Base):
+    __tablename__ = 'reset_password_codes'
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    code = Column(String, unique=True)
+    user_id = Column(Integer, unique=True)
+    user_email = Column(String, unique=True)
+    status = Column(Boolean, nullable=False, default=True)
+    date_created = Column(DateTime, default=datetime.datetime.utcnow)
+    date_modified = Column(
+        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    @staticmethod
+    def generate_code():
+        return gen_alphanumeric_code(32)
+
+
+class RevokedToken(Base):
+    __tablename__ = 'revoked_tokens'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    jti = Column(String)
+    date_created = Column(DateTime, default=datetime.datetime.utcnow)
+    date_modified = Column(
+        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)

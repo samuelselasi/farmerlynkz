@@ -1,13 +1,23 @@
 from fastapi import APIRouter, Depends, BackgroundTasks
-from . import crud, schemas, models
-from sqlalchemy.orm import Session
-from database import SessionLocal, engine, SQLALCHEMY_DATABASE_URL, metadata
+from . import crud, schemas
+# import crud
+# import schemas
+from sqlalchemy.orm import Session, sessionmaker
 from fastapi.security import OAuth2PasswordBearer
+
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, MetaData
 
 
 router = APIRouter()
+
+
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:sel@localhost:5432/farmerlynkz"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+metadata = MetaData()
 db = SessionLocal()
-# INITIATE AUTHENTICATION SCHEME
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/authenticate")
 
 
@@ -37,12 +47,14 @@ async def logout(payload: schemas.Token, db: Session = Depends(get_db)):
 
 
 # REFRESH ACCESS TOKEN
-@router.post("/refresh", description="refresh user access/refresh tokens", response_model=schemas.Token)
+@router.post("/refresh", description="refresh user access/refresh tokens",
+             response_model=schemas.Token)
 async def refresh_token(payload: schemas.Token, db: Session = Depends(get_db)):
     return await crud.refresh_token(payload, db)
 
 
 # RESET PASSWORD
 @router.post("/request", description="authenticate user details")
-async def request_password_reset(payload: schemas.UserBase, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
+async def request_password_reset(payload: schemas.UserBase,
+                                 background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     return await crud.request_password_reset_(payload, db, background_tasks)

@@ -1,14 +1,9 @@
 # IMPORT DEPENDENCIES
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, FastAPI, WebSocket, WebSocketDisconnect
-from database import SessionLocal, engine, SQLALCHEMY_DATABASE_URL, metadata
+from fastapi import FastAPI
+from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
-from fastapi.responses import HTMLResponse
-from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from schedulers import scheduler
-from sockets import manager
-import pytz, os, config
+import config
 
 
 api = FastAPI(docs_url="/api/docs")
@@ -57,4 +52,4 @@ api.include_router(user.router, prefix="/user", tags=["User"])
 # DEFAULT ENDPOINT
 @api.get("/")
 def welcome():
-    return "BACKEND OF APPRAISAL MANAGEMENT APP (url/api/docs)"
+    return "BACKEND OF FARMERLYNKZ APPLICATION"

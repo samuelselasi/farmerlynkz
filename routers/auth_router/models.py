@@ -1,9 +1,21 @@
+import utils
 from sqlalchemy import event, Boolean, Column, ForeignKey, Integer, String, DateTime
-from sqlalchemy.orm import relationship, backref
-from database import Base, SessionLocal
-from ..user_router.models import User
-import datetime, utils
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import relationship, sessionmaker
+from passlib.hash import pbkdf2_sha256 as sha256
+import datetime
+import secrets
 
+
+from sqlalchemy.ext.declarative import declarative_base
+
+
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:sel@localhost:5432/farmerlynkz"
+# SQLALCHEMY_DATABASE_URL = "postgresql://appraisal2:password@db:8434/appraisal"
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+metadata = MetaData()
 
 
 class ResetPasswordCodes(Base):
@@ -15,15 +27,78 @@ class ResetPasswordCodes(Base):
     user_email = Column(String, unique=True)
     status = Column(Boolean, nullable=False, default=True)
     date_created = Column(DateTime, default=datetime.datetime.utcnow)
-    date_modified = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    date_modified = Column(
+        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     @staticmethod
     def generate_code():
         return utils.gen_alphanumeric_code(32)
+
+
 class RevokedToken(Base):
     __tablename__ = 'revoked_tokens'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     jti = Column(String)
     date_created = Column(DateTime, default=datetime.datetime.utcnow)
-    date_modified = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    date_modified = Column(
+        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    email = Column(String, unique=True, index=True)
+    password = Column(String, nullable=True)
+    status = Column(Boolean, default=True)
+    user_type_id = Column(Integer, ForeignKey("user_type.id"), nullable=True)
+    firstname = Column(String, index=True)
+    lastname = Column(String, index=True)
+    othernames = Column(String, index=True, nullable=True)
+    phone = Column(Integer, index=True, nullable=True)
+    dateofbirth = Column(DateTime, index=True)
+
+    @staticmethod
+    def generate_hash(password):
+        return sha256.hash(password)
+
+    @staticmethod
+    def verify_hash(password, hash):
+        return sha256.verify(password, hash)
+
+
+class ResetPasswordToken(Base):
+    __tablename__ = "reset_password_token"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    token = Column(String, index=True)
+    date_created = Column(DateTime, default=datetime.datetime.utcnow)
+
+    @staticmethod
+    def generate_token():
+        token = secrets.token_urlsafe(4)
+        return sha256.hash(token)
+
+    @staticmethod
+    def verify_token(token, hash):
+        return sha256.verify(token, hash)
+
+
+class UserType(Base):
+    __tablename__ = "user_type"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    title = Column(String, unique=True, index=True)
+
+    users = relationship('User', backref="user_type")
+
+
+@event.listens_for(UserType.__table__, 'after_create')
+def insert_initial_values(*args, **kwargs):
+    db = SessionLocal()
+    db.add_all([UserType(title='System Admin'), UserType(
+        title='Appraiser'), UserType(title='Appraisee')])
+    db.commit()
