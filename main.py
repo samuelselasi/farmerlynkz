@@ -35,6 +35,7 @@ def get_db():
 # IMPORT MODELS
 from routers.auth_router import models
 from routers.user_router import models
+from routers.crops_router import models
 models.Base.metadata.create_all(bind=engine)
 
 # IMPORT ALL ROUTERS
@@ -42,12 +43,12 @@ models.Base.metadata.create_all(bind=engine)
 
 from routers.auth_router import main as auth
 from routers.user_router import main as user
-
+from routers.crops_router import main as crops
 
 # CUSTOMIZE ALL ENDPOINT HEADERS
 api.include_router(auth.router, prefix="/auth", tags=["User Login"])
 api.include_router(user.router, prefix="/user", tags=["User"])
-
+api.include_router(crops.router, prefix="/crops", tags=["Crops"])
 
 # DEFAULT ENDPOINT
 @api.get("/")

@@ -1,59 +1,27 @@
-version: "3.8"
+version: '3.8'
+
 services:
-  db:
-    build:
-        context: .
-        dockerfile: dockerfile.postgres
-
-    environment:
-        POSTGRES_USER: ${postgres}
-        POSTGRES_PASSWORD: ${sel}
-        POSTGRES_DB: ${farmerlynkz}
-        POSTGRES_HOST_AUTH_METHOD: trust
-
-    restart: always
-    ports:
-    - 81:81
-
-    networks:
-    - test_network
-
+  web:
+    build: .
+    command: uvicorn main:api --host 0.0.0.0
     volumes:
-    - postgres-data:/var/lib/postgresql/data
-
-  pgadmin4:
-    build:
-      context: .
-      dockerfile: dockerfile.pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      - /code
     ports:
-    - "5432:5432"
+      - 8009:91
+    environment:
+      - DATABASE_URL=postgresql://postgres:sel@localhost:5432/farmerlynkz
     depends_on:
       - db
-    networks:
-      - test_network
+  db:
+    image: postgres:12-alpine
     volumes:
-        - ./pgadmin_data:/var/lib/pgadmin/data
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432
     environment:
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
-
-    ports:
-    - "8000:81"
-    networks:
-      - test_network
-
-networks:
-  test_network:
-    driver: bridge
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=sel
+      - POSTGRES_DB=farmerlynkz
 
 volumes:
-  postgres-data:
-    driver: local
+  postgres_data:  
